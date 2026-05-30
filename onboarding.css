@@ -1,0 +1,102 @@
+/* --- FÍSICA DE NAVEGAÇÃO ESPACIAL --- */
+.step-container { display: none; opacity: 0; }
+
+.step-container.active { display: block; opacity: 1; transform: translateX(0); }
+
+.enter-forward { animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.exit-forward { animation: slideOutLeft 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+.enter-backward { animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.exit-backward { animation: slideOutRight 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutLeft {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-30px); }
+}
+@keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(30px); }
+}
+
+input[type="radio"]:checked + div {
+    transform: scale(1.01);
+    background-color: #ffffff;
+    border-color: #0F172A !important;
+    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1);
+}
+
+label:active div,
+input[type="radio"] + div:active {
+    transform: scale(0.98) !important;
+    background-color: #F8FAFC !important;
+    transition: transform 0.1s ease !important;
+}
+
+input[type="radio"] + div:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.1s ease;
+    background-color: #F1F5F9; 
+}
+
+.shadow-premium {
+    box-shadow: 
+        0 30px 60px -15px rgba(20, 20, 25, 0.06), 
+        0 10px 20px -5px rgba(20, 20, 25, 0.03),  
+        0 0 0 1px rgba(0, 0, 0, 0.03);            
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-slideIn { animation: slideIn 0.2s ease-out forwards; }
+
+html { background-color: #F9F7F5; }
+
+body {
+    background-color: #F9F7F5;
+    opacity: 0; 
+    animation: onboardingFade 0.6s ease-out forwards;
+}
+
+@keyframes onboardingFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.bg-white.w-full.max-w-\[480px\], .bg-white.w-full.max-w-md {
+    opacity: 0; 
+    animation: onboardingAterragem 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+@keyframes onboardingAterragem {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+#brandLogo {
+    opacity: 0; 
+    animation: logoPop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    transition: opacity 0.4s ease, height 0.4s ease, margin-bottom 0.4s ease;
+}
+
+@keyframes logoPop {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.logo-hidden { 
+    opacity: 0 !important; 
+    height: 0 !important; 
+    margin-bottom: 0 !important; 
+    overflow: hidden;
+    pointer-events: none;
+}

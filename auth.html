@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="h-full bg-[#F9F7F5]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticação | Shopyump</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { navy: { 900: '#0F172A', 800: '#1E293B' } },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    boxShadow: { 'premium': '0 20px 40px -15px rgba(15,23,42,0.05)' }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="auth.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // ATENÇÃO: COLOQUE AQUI AS SUAS CREDENCIAIS REAIS DO SUPABASE SE ESTIVEREM DIFERENTES
+        const supabaseUrl = 'https://vfcldjzrgwvgtoamaqes.supabase.co';
+        const supabaseKey = 'sb_publishable_iBlXDRF7XbG43GS7yujLfg_ak9Sow7k'; // Deve ser a key public 'anon' q começa com eyJ
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    </script>
+</head>
+<body class="h-full">
+
+    <main id="auth-root" class="h-full"></main>
+
+    <script src="view-login.js"></script>
+    <script src="view-register.js"></script>
+    <script src="view-verify.js"></script>
+    <script src="view-forgot.js"></script> 
+    <script src="view-reset.js"></script>
+    <script src="auth-router.js"></script>
+
+</body>
+</html>
