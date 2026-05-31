@@ -350,7 +350,7 @@ document.body.insertAdjacentHTML('beforeend', `
 
         </div>
     </template>
-\`);
+`);
 
 // criar-produto.js - Módulo completo integrado no SPA do Dashboard
 // Combina: modais, motor-arrasto, editor-fotos, categorias, variantes, logica, app
@@ -414,7 +414,7 @@ window.inicializarGestosModais = function() {
 
             let diff = e.touches[0].clientY - startY;
             if (diff > 0) { // Só puxa para baixo
-                sheet.style.transform = \`translateY(\${diff}px)\`;
+                sheet.style.transform = `translateY(${diff}px)`;
                 sheet.style.transition = 'none';
             }
         }, {passive: true});
@@ -761,7 +761,7 @@ function adicionarFotoGrelha(src) {
     // Borda exterior clareada (de border-slate-200 para border-slate-100)
     div.className = "photo-slot aspect-square rounded-xl border-[3px] border-slate-100 ring-2 ring-white ring-inset shadow-md shrink-0 relative bg-white flex items-center justify-center cursor-move active:scale-95 transition-all duration-300";
     div.style.backgroundColor = isEdited && selectedBgColor !== 'transparent' ? selectedBgColor : '#ffffff';
-    div.innerHTML = \`<img src="\${src}" class="w-full h-full object-cover rounded-[10px] p-[2px] pointer-events-none drop-shadow-xl">\`;
+    div.innerHTML = `<img src="${src}" class="w-full h-full object-cover rounded-[10px] p-[2px] pointer-events-none drop-shadow-xl">`;
     div.onclick = function() { abrirMenuImagem(this); };
 
     galeria.insertBefore(div, btnAddSlot);
@@ -1086,51 +1086,51 @@ function renderizarCategorias() {
     
     let html = '';
     categoriasEstrutura.forEach(cat => {
-        html += \`
+        html += `
         <div class="border-b border-slate-50 mb-1">
-            <button onclick="smartToggle('\${cat.id}', this, 'main')" class="w-full flex items-center justify-between p-4 group active:bg-slate-50 rounded-2xl transition-all">
+            <button onclick="smartToggle('${cat.id}', this, 'main')" class="w-full flex items-center justify-between p-4 group active:bg-slate-50 rounded-2xl transition-all">
                 <div class="flex items-center gap-4">
                     <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] text-white shadow-sm">
-                        <i class="fas \${cat.icone}"></i>
+                        <i class="fas ${cat.icone}"></i>
                     </div>
-                    <span class="font-bold text-sm text-slate-800">\${cat.nome}</span>
+                    <span class="font-bold text-sm text-slate-800">${cat.nome}</span>
                 </div>
                 <i class="fas fa-chevron-down text-slate-300 text-xs transition-transform duration-300"></i>
             </button>
             
-            <div id="\${cat.id}" class="expand-content" data-level="main">
+            <div id="${cat.id}" class="expand-content" data-level="main">
                 <div class="flex flex-col py-2">
-                    \${cat.subcategorias.map((sub, idx) => {
-                        const subId = \`\${cat.id}-sub-\${idx}\`;
+                    ${cat.subcategorias.map((sub, idx) => {
+                        const subId = `${cat.id}-sub-${idx}`;
                         
                         if (sub.itens && sub.itens.length > 0) {
-                            return \`
-                            <button onclick="smartToggle('\${subId}', this, 'sub')" class="flex w-full items-center justify-between py-3 pl-14 pr-6 text-sm font-bold text-slate-600 active:bg-slate-50">
-                                <span>\${sub.nome}</span>
+                            return `
+                            <button onclick="smartToggle('${subId}', this, 'sub')" class="flex w-full items-center justify-between py-3 pl-14 pr-6 text-sm font-bold text-slate-600 active:bg-slate-50">
+                                <span>${sub.nome}</span>
                                 <i class="fas fa-plus text-[10px] text-slate-300 transition-transform"></i>
                             </button>
-                            <div id="\${subId}" class="expand-content" data-level="sub">
+                            <div id="${subId}" class="expand-content" data-level="sub">
                                 <div class="flex flex-col py-2 pl-16 pr-6 space-y-4 border-l-2 border-slate-100 ml-14 mb-2">
-                                    \${sub.itens.map(item => \`
-                                        <div onclick="selecionarCategoriaFinal('\${cat.nome} > \${sub.nome} > \${item}', '\${sub.icone}')" 
+                                    ${sub.itens.map(item => `
+                                        <div onclick="selecionarCategoriaFinal('${cat.nome} > ${sub.nome} > ${item}', '${sub.icone}')" 
                                              class="text-sm text-slate-500 font-medium cursor-pointer active:text-[#0F172A] active:font-bold py-1">
-                                            \${item}
+                                            ${item}
                                         </div>
-                                    \`).join('')}
+                                    `).join('')}
                                 </div>
-                            </div>\`;
+                            </div>`;
                         } else {
                             // NÍVEL 2: SUBCATEGORIA (CLIQUE DIRETO)
-                            return \`
-                            <div onclick="selecionarCategoriaFinal('\${cat.nome} > \${sub.nome}', '\${sub.icone}')" 
+                            return `
+                            <div onclick="selecionarCategoriaFinal('${cat.nome} > ${sub.nome}', '${sub.icone}')" 
                                  class="flex w-full items-center py-3 pl-14 pr-6 text-sm font-bold text-slate-600 cursor-pointer active:bg-slate-50">
-                                \${sub.nome}
-                            </div>\`;
+                                ${sub.nome}
+                            </div>`;
                         }
                     }).join('')}
                 </div>
             </div>
-        </div>\`;
+        </div>`;
     });
     container.innerHTML = html;
 }
@@ -1165,7 +1165,7 @@ function abrirGavetaCategorias() {
 // 3. ACORDEÃO INTELIGENTE (Fecha outros ao abrir um novo)
 function smartToggle(id, btn, level) {
     const target = document.getElementById(id);
-    const openItems = document.querySelectorAll(\`.expand-content.is-open[data-level="\${level}"]\`);
+    const openItems = document.querySelectorAll(`.expand-content.is-open[data-level="${level}"]`);
     
     openItems.forEach(item => {
         if (item !== target) {

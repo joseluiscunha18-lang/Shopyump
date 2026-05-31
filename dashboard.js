@@ -5,16 +5,22 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h2 class="text-3xl font-medium text-slate-900 tracking-tight leading-none">Olá, Zé</h2>
+                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none">Olá, ...</h2>
                         <div class="flex items-center gap-2 mt-2">
                             <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
-                            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em]">Loja Ativa</p>
+                            <p id="dash-loja-nome" class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em]">A carregar...</p>
                         </div>
                     </div>
-                    <button class="bg-white/35 backdrop-blur-xl border border-white/50 px-4 py-2.5 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5 mt-1">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-800">7 Dias</span>
-                        <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
+                    <div class="flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm mt-1 p-1 gap-1">
+                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
+                            <i class="fa-regular fa-copy text-[14px]" id="icone-copiar"></i>
+                        </button>
+                        <div class="w-[1px] h-4 bg-slate-400/30"></div>
+                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-800 gap-1.5">
+                            <span class="text-[10px] font-black uppercase tracking-widest">Loja</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600"></i>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
@@ -326,7 +332,7 @@ function aplicarEstadoZero() {
             if (containerProduto) {
                 containerProduto.className = "w-full mt-3";
                 containerProduto.innerHTML = `
-                    <button onclick="SPA.navegar('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
+                    <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
                         <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
                             <i class="fa-solid fa-plus text-xl"></i>
                         </div>
@@ -353,5 +359,62 @@ document.addEventListener('spa:page-loaded', (e) => {
             // Se já tiver produtos, ele corre a tua função normal e anima os números!
             initDashboard();
         }
+        
+        // Load dynamically store name and actions
+        carregarDadosLojaDashboard();
     }
 });
+
+async function carregarDadosLojaDashboard() {
+    try {
+        const { data: sessionData } = await window.supabaseClient.auth.getSession();
+        const userId = sessionData?.session?.user?.id;
+        
+        if (userId) {
+            const { data: loja } = await window.supabaseClient
+                .from('lojas')
+                .select('nome, vendedor_nome, slug')
+                .eq('perfil_id', userId)
+                .maybeSingle();
+                
+            if (loja) {
+                const h2Saudacao = document.getElementById('dash-saudacao');
+                const pLojaNome = document.getElementById('dash-loja-nome');
+                
+                if (h2Saudacao) h2Saudacao.innerText = 'Olá, ' + (loja.vendedor_nome || 'Lojista');
+                if (pLojaNome) pLojaNome.innerText = loja.nome;
+                
+                // Configurar botões de link
+                const btnVerLoja = document.getElementById('btn-ver-loja');
+                const urlLoja = `https://shopyump.vercel.app/loja.html?s=${loja.slug}`;
+                
+                if (btnVerLoja) {
+                    btnVerLoja.href = urlLoja;
+                }
+                
+                // Configurar o botão de copiar
+                const btnCopiar = document.getElementById('btn-copiar-loja');
+                if (btnCopiar) {
+                    btnCopiar.onclick = () => {
+                        navigator.clipboard.writeText(urlLoja).then(() => {
+                            const icone = document.getElementById('icone-copiar');
+                            if (icone) {
+                                icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
+                                setTimeout(() => {
+                                    icone.className = 'fa-regular fa-copy text-[14px]';
+                                }, 2000);
+                            }
+                        });
+                    };
+                }
+            } else {
+                const h2Saudacao = document.getElementById('dash-saudacao');
+                const pLojaNome = document.getElementById('dash-loja-nome');
+                if (h2Saudacao) h2Saudacao.innerText = 'Olá!';
+                if (pLojaNome) pLojaNome.innerText = 'Sem Loja';
+            }
+        }
+    } catch (e) {
+        console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
