@@ -4,33 +4,35 @@ document.addEventListener('DOMContentLoaded', inicializarAuth);
 
 function inicializarAuth() {
     // Espião Global de Sessão
-    window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-            sessionStorage.setItem('shopyump_auth', 'true');
-            sessionStorage.setItem('shopyump_user', session.user.id);
-            
-            const root = document.getElementById('auth-root');
-            if (root) {
-                root.style.opacity = '0';
-                root.style.transition = 'opacity 0.4s ease';
-            }
-            
-            // VERIFICA SE JÁ TEM LOJA
-            const { data: loja, error } = await window.supabaseClient
-                .from('lojas')
-                .select('id')
-                .eq('perfil_id', session.user.id)
-                .maybeSingle();
-
-            setTimeout(() => {
-                if (loja) {
-                    window.location.href = 'index.html'; // Dashboard
-                } else {
-                    window.location.href = 'onboarding.html'; // Onboarding
+    if(window.supabaseClient) {
+        window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                sessionStorage.setItem('shopyump_auth', 'true');
+                sessionStorage.setItem('shopyump_user', session.user.id);
+                
+                const root = document.getElementById('auth-root');
+                if (root) {
+                    root.style.opacity = '0';
+                    root.style.transition = 'opacity 0.4s ease';
                 }
-            }, 400);
-        }
-    });
+                
+                // VERIFICA SE JÁ TEM LOJA
+                const { data: loja, error } = await window.supabaseClient
+                    .from('lojas')
+                    .select('id')
+                    .eq('perfil_id', session.user.id)
+                    .maybeSingle();
+
+                setTimeout(() => {
+                    if (loja) {
+                        window.location.href = 'dashboard.html'; // Dashboard
+                    } else {
+                        window.location.href = 'onboarding.html'; // Onboarding
+                    }
+                }, 400);
+            }
+        });
+    }
 
     window.addEventListener('hashchange', routerAuth);
     
@@ -65,11 +67,11 @@ function routerAuth() {
                 if (typeof iniciarLogicaVerify === 'function') iniciarLogicaVerify();
                 break;
             case '#forgot':
-                root.innerHTML = typeof renderForgot === 'function' ? renderForgot() : '';
+                root.innerHTML = typeof renderForgot === 'function' ? renderForgot() : '<div>Em breve...</div>';
                 if (typeof iniciarLogicaForgot === 'function') iniciarLogicaForgot();
                 break;
             case '#reset':
-                root.innerHTML = typeof renderReset === 'function' ? renderReset() : '';
+                root.innerHTML = typeof renderReset === 'function' ? renderReset() : '<div>Em breve...</div>';
                 if (typeof iniciarLogicaReset === 'function') iniciarLogicaReset();
                 break;
             default:

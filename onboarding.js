@@ -9,10 +9,10 @@
         return;
     }
     
-    // Verificar se já tem loja e redirigir para index.html se já tiver
+    // Verificar se já tem loja e redirigir para dashboard.html se já tiver
     const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', session.user.id).maybeSingle();
     if (loja) {
-        window.location.href = 'index.html';
+        window.location.href = 'dashboard.html';
     }
 })();
 
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
             
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         });
     }
 

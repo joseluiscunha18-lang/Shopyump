@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="bg-gray-50 h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja Pública - Shopyump</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase Core e Credenciais -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://bpufeystnepnmvnprnaz.supabase.co';
+        const supabaseKey = 'sb_publishable_jXe-pPbg78tfbssQwEZDjw_KICuIs6X';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    </script>
+</head>
+<body class="h-full flex flex-col font-sans">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 id="shopTitle" class="text-xl font-black text-slate-900 tracking-tight">a carregar...</h1>
+            <div id="sellerContact" class="text-sm font-bold text-slate-500"></div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
+        <!-- Loader inicial -->
+        <div id="loader" class="flex flex-col items-center justify-center py-20">
+            <i class="fas fa-circle-notch fa-spin text-3xl text-slate-900 mb-4"></i>
+            <p class="text-sm font-bold text-slate-500 uppercase tracking-widest">A procurar montra...</p>
+        </div>
+
+        <!-- Grade de Produtos -->
+        <div id="productGrid" class="hidden grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            <!-- Produtos renderizados por JS -->
+        </div>
+
+        <!-- Estado Vazio -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-4">
+                <i class="fa-solid fa-store-slash text-2xl"></i>
+            </div>
+            <h2 class="text-lg font-bold text-slate-900">Esta loja ainda não tem produtos</h2>
+            <p class="text-sm text-slate-500 mt-2">Pede ao vendedor para atualizar o catálogo.</p>
+        </div>
+    </main>
+
+    <script>
+        async function renderizarLoja() {
+            // 1. Extrair o slug da URL atual (ex: /loja/minha-loja-fixe)
+            const pathSegments = window.location.pathname.split('/');
+            const slugIndex = pathSegments.indexOf('loja');
+            const slug = slugIndex !== -1 ? pathSegments[slugIndex + 1] : null;
+
+            if (!slug) {
+                mostrarErro("Loja não encontrada.");
+                return;
+            }
+
+            // 2. Procurar a Loja no Supabase
+            const { data: loja, error: erroLoja } = await supabase
+                .from('lojas')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+
+            if (erroLoja || !loja) {
+                mostrarErro("A loja que procuras não existe.");
+                return;
+            }
+
+            // Atualiza Metadados
+            document.title = loja.nome + " | Loja Oficial";
+            document.getElementById('shopTitle').innerText = loja.nome;
+            document.getElementById('sellerContact').innerText = loja.vendedor_nome ? \`Por \${loja.vendedor_nome}\` : '';
+
+            // 3. Procurar Produtos Ativos
+            const { data: produtos, error: erroProdutos } = await supabase
+                .from('produtos')
+                .select('*')
+                .eq('loja_id', loja.id)
+                .eq('ativo', true)
+                .order('created_at', { ascending: false });
+
+            document.getElementById('loader').classList.add('hidden');
+
+            if (!produtos || produtos.length === 0) {
+                document.getElementById('emptyState').style.display = 'flex';
+                return;
+            }
+
+            // 4. Desenhar os Produtos
+            const grid = document.getElementById('productGrid');
+            grid.classList.remove('hidden');
+
+            const numWhatsappLimpo = loja.whatsapp ? loja.whatsapp.replace(/\\D/g, '') : '';
+
+            produtos.forEach(prod => {
+                const fotoCapa = (prod.fotos && prod.fotos.length > 0) ? prod.fotos[0] : 'https://placehold.co/400?text=Sem+Foto&font=inter';
+                
+                // Formatação do preço MT
+                const formatPreco = (val) => Number(val).toLocaleString('pt-MZ', { minimumFractionDigits: 2 }) + ' MT';
+                
+                const hasPromo = prod.preco_promo && prod.preco_promo > 0;
+                const precoBloco = hasPromo 
+                    ? \`<p class="text-[10px] text-slate-400 line-through mb-0.5">\${formatPreco(prod.preco)}</p>
+                       <p class="text-sm md:text-base font-black text-emerald-600">\${formatPreco(prod.preco_promo)}</p>\`
+                    : \`<p class="text-sm md:text-base font-black text-slate-900">\${formatPreco(prod.preco)}</p>\`;
+
+                // Link para WhatsApp a pré-preencher a mensagem com o produto
+                const msgWpp = encodeURIComponent(\`Olá! \uD83D\uDC4B Teria interesse em saber mais sobre o produto: *\${prod.nome}* que vi na loja online.\`);
+                const urlWhatsapp = \`https://wa.me/\${numWhatsappLimpo}?text=\${msgWpp}\`;
+
+                grid.insertAdjacentHTML('beforeend', \`
+                    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+                        <div class="aspect-square bg-slate-50 w-full relative">
+                            <img src="\${fotoCapa}" alt="\${prod.nome}" class="w-full h-full object-cover">
+                            \${hasPromo ? '<span class="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md shadow-sm">Promo</span>' : ''}
+                        </div>
+                        <div class="p-4 flex flex-col flex-1">
+                            <h3 class="text-xs md:text-sm font-bold text-slate-900 line-clamp-2 leading-snug">\${prod.nome}</h3>
+                            <p class="text-[10px] text-slate-400 font-semibold mb-3 mt-1 uppercase tracking-widest line-clamp-1">\${prod.categoria || 'Moda'}</p>
+                            
+                            <div class="mt-auto flex items-end justify-between">
+                                <div>\${precoBloco}</div>
+                                <a href="\${urlWhatsapp}" target="_blank" class="w-9 h-9 rounded-full bg-[#0F172A] text-white flex items-center justify-center hover:bg-slate-800 transition-colors shrink-0">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                \`);
+            });
+        }
+
+        function mostrarErro(msg) {
+            document.getElementById('loader').classList.add('hidden');
+            const em = document.getElementById('emptyState');
+            em.innerHTML = \`
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-400 mb-4">
+                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                </div>
+                <h2 class="text-lg font-bold text-slate-900">\${msg}</h2>
+                <a href="/" class="mt-4 text-xs font-bold text-emerald-600 hover:underline">Voltar para a homepage</a>
+            \`;
+            em.style.display = 'flex';
+        }
+
+        renderizarLoja();
+    </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Professional Dashboard - Zé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 900: '#0F172A', 800: '#1E293B' }
+                    }
+                }
+            }
+        }
+        // Aplicar tema antes do render
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/dashboard.css">
+    <style>
+        /* Transição de entrada de página */
+        #spa-view {
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+        #spa-view.saindo {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        #spa-view.entrando {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body class="pb-24 transition-colors duration-500 bg-[#F9F7F5] dark:bg-[#020617] text-navy-900 dark:text-slate-100">
+
+    <!-- ── Toast Global ──────────────────────────────────────────────── -->
+    <div id="toast-sucesso" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[200] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-300 pointer-events-none">
+        <svg class="w-5 h-5 text-emerald-400 dark:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toast-msg" class="text-[11px] font-black uppercase tracking-widest">Atualizado</span>
+    </div>
+
+    <!-- ── Overlay Sidebar ───────────────────────────────────────────── -->
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ── Sidebar / Menu Z ──────────────────────────────────────────── -->
+    <aside id="menuZ">
+        <div class="profile-card dark:bg-navy-800 dark:border-navy-900/50">
+            <div class="w-14 h-14 rounded-2xl bg-[#0f172a] dark:bg-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-lg">M</div>
+            <div>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base leading-tight">MarkDesign</h3>
+                <p class="text-[10px] font-bold text-gray-400 dark:text-emerald-500/80 mt-0.5 uppercase tracking-wider">Conta Ativa</p>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto no-scrollbar">
+            <p class="section-title">Definições da Conta</p>
+            <div class="menu-card">
+                <div class="nav-item" onclick="navegarAnimado('perfil')">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Perfil</span>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <div class="nav-item" onclick="navegarAnimado('seguranca')">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        <span>Segurança</span>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <div class="nav-item">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span>Idioma</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[12px] text-slate-400 font-semibold tracking-tight">Português</span>
+                        <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <p class="section-title">Negócio & Estilo</p>
+            <div class="menu-card">
+                <div class="nav-item cursor-pointer" onclick="toggleModoNovato()">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>Modo Novato</span>
+                    </div>
+                    <div class="w-9 h-5 bg-slate-300 shadow-inner dark:bg-slate-700 rounded-full relative transition-all duration-300">
+                        <div id="toggle-novato-bola" class="w-4 h-4 bg-white rounded-full absolute left-0.5 top-0.5 shadow-md border border-slate-200 dark:border-transparent transition-transform duration-300"></div>
+                    </div>
+                </div>
+                <div class="nav-item cursor-pointer" onclick="toggleDarkMode()">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                        <span>Modo Escuro</span>
+                    </div>
+                    <div class="w-9 h-5 bg-slate-300 shadow-inner dark:bg-emerald-500 rounded-full relative transition-all duration-300">
+                        <div class="w-4 h-4 bg-white rounded-full absolute left-0.5 top-0.5 shadow-md border border-slate-200 dark:border-transparent transition-transform duration-300 dark:translate-x-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="section-title">Plataforma</p>
+            <div class="menu-card">
+                <div class="nav-item">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622"></path></svg>
+                        <span>Subscrição</span>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <div class="nav-item">
+                    <div class="flex items-center gap-3">
+                        <svg class="icon-elite" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12v-1a8 8 0 1116 0v1"></path><rect x="2" y="12" width="4" height="6" rx="1" stroke-linecap="round" stroke-linejoin="round"></rect><rect x="18" y="12" width="4" height="6" rx="1" stroke-linecap="round" stroke-linejoin="round"></rect><path stroke-linecap="round" stroke-linejoin="round" d="M18 18v1a3 3 0 01-3 3h-4"></path></svg>
+                        <span>Suporte</span>
+                    </div>
+                    <svg class="w-4 h-4 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                </div>
+                <div class="nav-item text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" onclick="Sair()">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </div>
+                </div>
+            </div>
+            
+            <script>
+                async function Sair() {
+                    if(window.supabaseClient) {
+                        await window.supabaseClient.auth.signOut();
+                    }
+                    sessionStorage.removeItem('shopyump_auth');
+                    window.location.href = '/auth.html';
+                }
+            </script>
+
+            <div class="legal-footer flex-col items-center gap-1 mb-4 mt-2">
+                <div class="flex gap-3">
+                    <a href="#">Privacidade</a>
+                    <a href="#">Termos</a>
+                </div>
+                <div class="mt-4 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-600">
+                    <svg class="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <span>Powered by Z-SaaS</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ── Header ────────────────────────────────────────────────────── -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 h-20 px-6 flex justify-between items-center z-[100]">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()" class="p-1 -ml-1 text-slate-800 dark:text-white active:scale-90 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h8"></path></svg>
+            </button>
+            <div class="flex flex-col ml-1">
+                <span id="header-titulo" class="text-[13px] font-black uppercase tracking-[0.15em] text-slate-900 dark:text-white leading-none">MarkDesign</span>
+                <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
+                    <span id="header-subtitulo" class="text-[8px] font-black text-slate-500 uppercase tracking-[0.1em]">Painel de Gestão</span>
+                </div>
+            </div>
+        </div>
+        <!-- Botão Voltar (visível só em sub-páginas) -->
+        <button id="btn-voltar" onclick="navegarAnimado('dashboard')" class="hidden p-2 -mr-1 text-slate-800 dark:text-white active:scale-90 transition-transform">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+    </header>
+
+    <!-- ── SPA View (conteúdo das páginas) ──────────────────────────── -->
+    <div id="spa-view"></div>
+
+    <!-- ── Bottom Nav ────────────────────────────────────────────────── -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b2c] border-t border-slate-100 dark:border-slate-800 px-2 py-3 flex justify-around items-center z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] transition-colors duration-300">
+        <button onclick="navegarAnimado('dashboard')" id="nav-inicio" class="flex flex-col items-center gap-1 w-16 text-emerald-600 dark:text-emerald-500">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span class="text-[8px] font-black uppercase tracking-tighter">Início</span>
+        </button>
+        <button onclick="navegarAnimado('produtos')" id="nav-produtos" class="flex flex-col items-center gap-1 w-16 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 8l-2-2H5L3 8v10a2 2 0 002 2h14a2 2 0 002-2V8z"></path></svg>
+            <span class="text-[8px] font-black uppercase tracking-tighter">Produtos</span>
+        </button>
+        <div class="relative -top-5">
+            <button onclick="navegarAnimado('criar-produto')" class="w-14 h-14 bg-slate-900 dark:bg-emerald-600 rounded-full flex items-center justify-center text-white shadow-xl dark:shadow-emerald-600/20 border-[5px] border-[#f6f6f7] dark:border-[#0b0f1a] active:scale-90 transition-all duration-200">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
+            </button>
+        </div>
+        <button onclick="navegarAnimado('vendas')" id="nav-vendas" class="flex flex-col items-center gap-1 w-16 text-slate-400 dark:text-slate-500">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"></path></svg>
+            <span class="text-[8px] font-black uppercase tracking-tighter">Vendas</span>
+        </button>
+        <button onclick="navegarAnimado('editar-loja')" id="nav-loja" class="flex flex-col items-center gap-1 min-w-[70px] text-slate-400 dark:text-slate-500">
+            <div class="w-9 h-9 rounded-full bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center mb-0.5 border border-slate-200/20">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"></path><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+            </div>
+            <span class="text-[7px] font-black uppercase tracking-tighter whitespace-nowrap">Editar Loja</span>
+        </button>
+    </nav>
+
+    <!-- Supabase e App Lógica -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://bpufeystnepnmvnprnaz.supabase.co';
+        const supabaseKey = 'sb_publishable_jXe-pPbg78tfbssQwEZDjw_KICuIs6X';
+        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+    </script>
+    <script>
+        // Verificação de autenticação no dashboard
+        (async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                window.location.href = '/auth.html';
+            }
+        })();
+    </script>
+
+    <script src="/global.js"></script>
+    <script src="/dashboard.js"></script>
+    <script src="/perfil.js"></script>
+    <script src="/seguranca.js"></script>
+    <script src="/criar-produto.js"></script>
+    <script src="/produto.js"></script>
+    <script src="/vendas.js"></script>
+    <script src="/loja.js"></script>
+    <script src="/router.js"></script>
+
+</body>
+</html>
