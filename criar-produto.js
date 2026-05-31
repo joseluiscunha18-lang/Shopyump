@@ -1384,13 +1384,34 @@ async function guardarProduto() {
             if (src) {
                 // Se a imagem for Base64 (blob nativo gerado pelo File Viewer local)
                 if (src.startsWith('data:')) {
-                    const response = await fetch(src);
-                    const blob = await response.blob();
+                    const img = new Image();
+                    img.src = src;
+                    await new Promise(res => img.onload = res);
                     
-                    const fileName = `${lojaId}/${Date.now()}-${i}.png`;
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const max_size = 1000;
+                    
+                    if (width > height && width > max_size) {
+                        height *= max_size / width;
+                        width = max_size;
+                    } else if (height > max_size) {
+                        width *= max_size / height;
+                        height = max_size;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
+                    
+                    const fileName = `${lojaId}/${Date.now()}-${i}.jpg`;
                     const { data, error } = await window.supabaseClient.storage
                         .from('produtos')
-                        .upload(fileName, blob, { contentType: 'image/png' });
+                        .upload(fileName, blob, { contentType: 'image/jpeg' });
                     
                     if (error) {
                         console.error('Erro de upload da imagem:', error);

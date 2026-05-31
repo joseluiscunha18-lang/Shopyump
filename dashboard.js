@@ -347,20 +347,9 @@ function aplicarEstadoZero() {
     });
 }
 
-// INTERCEPTOR: Escolhe o caminho consoante os produtos
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        const produtosCriados = parseInt(localStorage.getItem('produtos_criados') || '0');
-        
-        // Se a conta for nova (0 produtos), o JavaScript esmaga os dados para zero ANTES de animar
-        if (produtosCriados === 0) {
-            aplicarEstadoZero();
-        } else {
-            // Se já tiver produtos, ele corre a tua função normal e anima os números!
-            initDashboard();
-        }
-        
-        // Load dynamically store name and actions
+        // Load dynamically store name and actions, and then fetch products
         carregarDadosLojaDashboard();
     }
 });
@@ -373,7 +362,7 @@ async function carregarDadosLojaDashboard() {
         if (userId) {
             const { data: loja } = await window.supabaseClient
                 .from('lojas')
-                .select('nome, vendedor_nome, slug')
+                .select('id, nome, vendedor_nome, slug')
                 .eq('perfil_id', userId)
                 .maybeSingle();
                 
@@ -386,7 +375,7 @@ async function carregarDadosLojaDashboard() {
                 
                 // Configurar botões de link
                 const btnVerLoja = document.getElementById('btn-ver-loja');
-                const urlLoja = `https://shopyump.vercel.app/loja.html?s=${loja.slug}`;
+                const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
                 
                 if (btnVerLoja) {
                     btnVerLoja.href = urlLoja;
@@ -407,14 +396,162 @@ async function carregarDadosLojaDashboard() {
                         });
                     };
                 }
+                
+                // Limpar fake stats default
+                limparDadosFalsosDashboard();
+                
+                // Carregar produtos da loja
+                await carregarProdutosDashboard(loja.id);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const pLojaNome = document.getElementById('dash-loja-nome');
                 if (h2Saudacao) h2Saudacao.innerText = 'Olá!';
                 if (pLojaNome) pLojaNome.innerText = 'Sem Loja';
+                limparDadosFalsosDashboard();
             }
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+function limparDadosFalsosDashboard() {
+    // 1. Zera os números principais
+    const p = document.getElementById('stat-pedidos');
+    const v = document.getElementById('stat-visitas');
+    const c = document.getElementById('stat-confirmados');
+    if (p) p.innerText = '0';
+    if (v) v.innerText = '0';
+    if (c) c.innerText = '0';
+
+    // 2. Caçar e Ocultar Badges
+    const spans = document.querySelectorAll('span');
+    spans.forEach(span => {
+        const texto = span.innerText.trim().toUpperCase();
+        if (texto.includes('+4 HOJE')) span.style.display = 'none';
+        if (texto.includes('2 PENDENTES') && span.classList.contains('bg-[#D4B5FD]/10')) {
+            span.innerText = '0 PENDENTES';
+            span.className = 'text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest';
+        }
+    });
+
+    // 3. Limpar a secção de pedidos pendentes
+    const containerPedidos = document.getElementById('container-pedidos');
+    if (containerPedidos) {
+        containerPedidos.innerHTML = `
+            <div class="col-span-full py-8 flex flex-col items-center justify-center text-center gap-3 opacity-80">
+                <div class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-300 mb-2 shadow-sm">
+                    <i class="fa-solid fa-receipt text-2xl"></i>
+                </div>
+                <h4 class="text-[14px] font-bold text-slate-900">Sem pedidos ainda</h4>
+                <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
+                    Os teus novos pedidos vão aparecer aqui.
+                </p>
+            </div>
+        `;
+    }
+
+    // 4. Achatar o gráfico SVG para zero
+    const areaPath = document.getElementById('areaPath');
+    const cordaPath = document.getElementById('cordaPath');
+    const pAtual = document.getElementById('p-atual');
+    const valorAtual = document.getElementById('valor-atual');
+
+    if (areaPath) areaPath.setAttribute('d', 'M0,150 L300,150 L300,150 L0,150 Z');
+    if (cordaPath) cordaPath.setAttribute('d', 'M0,148 L300,148');
+    if (pAtual) { pAtual.setAttribute('cx', '150'); pAtual.setAttribute('cy', '148'); }
+    if (valorAtual) {
+        valorAtual.innerHTML = '0 Visitas';
+        valorAtual.setAttribute('x', '150');
+        valorAtual.setAttribute('y', '135');
+        valorAtual.setAttribute('text-anchor', 'middle');
+    }
+
+    // 5. Origens do tráfego para zero
+    const origens = document.querySelectorAll('.flex.justify-between.items-center span.font-black');
+    origens.forEach(el => {
+        el.innerText = '0';
+        el.classList.add('opacity-30');
+    });
+}
+
+async function carregarProdutosDashboard(lojaId) {
+    // 6. Atualizar a listagem de produtos com dados reais
+    const titulos = document.querySelectorAll('h3');
+    let titleElement = null;
+    titulos.forEach(titulo => {
+        if (titulo.innerText.trim().toUpperCase() === 'OS MEUS PRODUTOS') {
+            titleElement = titulo;
+        }
+    });
+    
+    if (!titleElement) return;
+    
+    const badgeAtivos = titleElement.nextElementSibling;
+    const containerProduto = titleElement.parentElement.nextElementSibling;
+    
+    if (!containerProduto) return;
+    
+    try {
+        const { data: produtos, error } = await window.supabaseClient
+            .from('produtos')
+            .select('*')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
+        if (badgeAtivos && badgeAtivos.tagName.toLowerCase() === 'span') {
+            badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+        }
+        
+        if (!produtos || produtos.length === 0) {
+            containerProduto.className = "w-full mt-3";
+            containerProduto.innerHTML = `
+                <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
+                    <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-plus text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">Adicionar Primeiro Produto</p>
+                        <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
+                    </div>
+                </button>
+            `;
+        } else {
+            containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
+            let html = '';
+            
+            // Renderiza apenas os 3 primeiros produtos recentes no Dashboard por espaço
+            produtos.slice(0, 3).forEach(p => {
+                const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
+                html += `
+                    <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                                <img src="${fotoCapa}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
+                                <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
+                            </div>
+                        </div>
+                        <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
+                    Ver Todos os Produtos
+                </button>
+            `;
+            containerProduto.innerHTML = html;
+        }
+    } catch (e) {
+        console.error("Erro ao carregar produtos:", e);
     }
 }
