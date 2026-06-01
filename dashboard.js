@@ -161,7 +161,7 @@ document.body.insertAdjacentHTML('beforeend', `
     </template>
 `);
 
-// dashboard.js - Lógica exclusiva do Dashboard
+// dashboard.js - L?gica exclusiva do Dashboard (Limpa)
 
 function animarNumero(id, valorFinal) {
     const elemento = document.getElementById(id);
@@ -222,21 +222,14 @@ async function carregarDadosLojaDashboard() {
                 .eq('perfil_id', userId)
                 .maybeSingle();
                 
-            if (loja && headerTitulo) {
-                // SÓ AGORA ATUALIZAMOS O TÍTULO
-                headerTitulo.innerText = loja.nome;
-                headerTitulo.style.opacity
-                
             if (loja) {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const pLojaNome = document.getElementById('dash-loja-nome');
-                const headerTitulo = document.getElementById('header-titulo');
                 
-                if (h2Saudacao) h2Saudacao.innerText = 'Olá, ' + (loja.vendedor_nome || 'Lojista');
+                if (h2Saudacao) h2Saudacao.innerText = 'Ol?, ' + (loja.vendedor_nome || 'Lojista');
                 if (pLojaNome) pLojaNome.innerText = loja.nome;
-                if (headerTitulo) headerTitulo.innerText = loja.nome;
                 
-                // Configurar botões de link
+                // Configurar bot?es de link
                 const btnVerLoja = document.getElementById('btn-ver-loja');
                 const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
                 
@@ -244,7 +237,7 @@ async function carregarDadosLojaDashboard() {
                     btnVerLoja.href = urlLoja;
                 }
                 
-                // Configurar o botão de copiar
+                // Configurar o bot?o de copiar
                 const btnCopiar = document.getElementById('btn-copiar-loja');
                 if (btnCopiar) {
                     btnCopiar.onclick = () => {
@@ -265,10 +258,8 @@ async function carregarDadosLojaDashboard() {
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const pLojaNome = document.getElementById('dash-loja-nome');
-                const headerTitulo = document.getElementById('header-titulo');
-                if (h2Saudacao) h2Saudacao.innerText = 'Olá!';
+                if (h2Saudacao) h2Saudacao.innerText = 'Ol?!';
                 if (pLojaNome) pLojaNome.innerText = 'Sem Loja';
-                if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
         }
     } catch (e) {
@@ -295,7 +286,7 @@ async function carregarProdutosDashboard(lojaId) {
         if (badgeAtivos) {
             badgeAtivos.innerText = `${ativosCount} ATIVOS`;
         }
-    
+        
         if (produtos && produtos.length > 0) {
             containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
             let html = '';
