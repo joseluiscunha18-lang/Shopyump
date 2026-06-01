@@ -34,10 +34,9 @@ document.body.insertAdjacentHTML('beforeend', `
                                     <div class="w-1.5 h-1.5 rounded-full bg-[#9f6ef5] animate-pulse"></div>
                                     <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
                                 </div>
-                                <span class="text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg">+4 hoje</span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">18</h3>
+                                <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">0</h3>
                                 <span class="text-[12px] font-bold text-slate-600/80">no total</span>
                             </div>
                         </div>
@@ -49,7 +48,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">342</h4>
+                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
                                 <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas</p>
                             </div>
                         </div>
@@ -58,7 +57,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-confirmados" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">12</h4>
+                                <h4 id="stat-confirmados" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
                                 <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Confirmados</p>
                             </div>
                         </div>
@@ -76,61 +75,18 @@ document.body.insertAdjacentHTML('beforeend', `
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
                             <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
                         </div>
-                        <span class="text-[9px] font-black text-[#9f6ef5] bg-[#D4B5FD]/10 border border-[#D4B5FD]/20 px-2.5 py-1 rounded-md uppercase tracking-widest">2 Pendentes</span>
+                        <span class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
-                        <div class="bg-white dark:bg-navy-900 p-5 rounded-[24px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800" id="card-1">
-                            <div class="flex gap-3 items-start">
-                                <div class="w-12 h-12 rounded-[14px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-[8px] font-black text-slate-300 tracking-widest">IMG</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">Nike Jordan Retro</h4>
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        <div class="w-3.5 h-3.5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[7px] font-bold">A</div>
-                                        <p class="text-[10px] font-bold text-slate-500 truncate">Ana Marques</p>
-                                    </div>
-                                    <div class="flex items-center gap-2 mt-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> WPP</span>
-                                        <span>•</span>
-                                        <span class="text-slate-900 dark:text-white">2.500 MT</span>
-                                    </div>
-                                </div>
+                        <div class="col-span-full py-8 flex flex-col items-center justify-center text-center gap-3 opacity-80">
+                            <div class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-300 mb-2 shadow-sm">
+                                <i class="fa-solid fa-receipt text-2xl"></i>
                             </div>
-                            <div class="flex gap-2 mt-5">
-                                <button onclick="confirmarComAnimacao('card-1')" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform shadow-sm">Confirmar</button>
-                                <button onclick="confirmarComAnimacao('card-1')" class="flex-1 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform">Recusar</button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white dark:bg-navy-900 p-5 rounded-[24px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800" id="card-2">
-                            <div class="flex gap-3 items-start">
-                                <div class="w-12 h-12 rounded-[14px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-[8px] font-black text-slate-300 tracking-widest">IMG</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">T-shirt Oversized</h4>
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        <div class="w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[7px] font-bold">C</div>
-                                        <p class="text-[10px] font-bold text-slate-500 truncate">Carlos Silva</p>
-                                    </div>
-                                    <div class="flex items-center gap-2 mt-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-pink-500"></div> IG</span>
-                                        <span>•</span>
-                                        <span class="text-slate-900 dark:text-white">850 MT</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 mt-5">
-                                <button onclick="confirmarComAnimacao('card-2')" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform shadow-sm">Confirmar</button>
-                                <button onclick="confirmarComAnimacao('card-2')" class="flex-1 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform">Recusar</button>
-                            </div>
-                        </div>
-
-                        <div id="msg-vazio" class="hidden col-span-full py-12 flex-col items-center justify-center text-center gap-3">
-                            <svg class="w-12 h-12 text-slate-200 dark:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <p class="text-sm font-bold text-slate-400">Sem pedidos pendentes</p>
+                            <h4 class="text-[14px] font-bold text-slate-900">Sem pedidos ainda</h4>
+                            <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
+                                Os teus novos pedidos vão aparecer aqui.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -158,10 +114,10 @@ document.body.insertAdjacentHTML('beforeend', `
                                         <stop offset="100%" stop-color="#D4B5FD" stop-opacity="0"/>
                                     </linearGradient>
                                 </defs>
-                                <path id="areaPath" fill="url(#chartGradient)" d="M0,130 C30,130 50,100 80,100 C110,100 130,140 160,140 C190,140 210,90 240,90 C270,90 280,60 300,60 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,130 C30,130 50,100 80,100 C110,100 130,140 160,140 C190,140 210,90 240,90 C270,90 280,60 300,60" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <circle id="p-atual" cx="300" cy="60" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
-                                <text id="valor-atual" x="295" y="45" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="end" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">342 Visitas</text>
+                                <path id="areaPath" fill="url(#chartGradient)" d="M0,150 L300,150 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,148 L300,148" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <circle id="p-atual" cx="150" cy="148" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
+                                <text id="valor-atual" x="150" y="135" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="middle" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">0 Visitas</text>
                             </svg>
                         </div>
                     </div>
@@ -174,27 +130,26 @@ document.body.insertAdjacentHTML('beforeend', `
                     <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800">
                         <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tráfego</h3>
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white">112</span></div>
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white">46</span></div>
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-pink-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Instagram</span></div><span class="font-black text-slate-900 dark:text-white">18</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-pink-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Instagram</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
                         </div>
                     </section>
 
                     <section class="space-y-3">
                         <div class="flex justify-between items-center px-1">
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Os Meus Produtos</h3>
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">2 ativos</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">0 ativos</span>
                         </div>
-                        <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[8px] font-black text-slate-300 dark:text-slate-500">NIKE</div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Jordan 1 High</p>
-                                    <p class="text-[10px] text-slate-500 font-bold mt-0.5">2.500,00 MT</p>
+                        <div class="w-full mt-3">
+                            <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
+                                <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-plus text-xl"></i>
                                 </div>
-                            </div>
-                            <button class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-900">Adicionar Primeiro Produto</p>
+                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
+                                </div>
                             </button>
                         </div>
                     </section>
@@ -207,9 +162,9 @@ document.body.insertAdjacentHTML('beforeend', `
 // dashboard.js - Lógica exclusiva do Dashboard
 
 const dadosDashboard = {
-    hoje: { pedidos: "3", visitas: "42", confirmados: "2", sufixo: "(Hoje)" },
-    "7dias": { pedidos: "18", visitas: "342", confirmados: "12", sufixo: "(7 dias)" },
-    "30dias": { pedidos: "72", visitas: "1.240", confirmados: "48", sufixo: "(30 dias)" }
+    hoje: { pedidos: "0", visitas: "0", confirmados: "0", sufixo: "(Hoje)" },
+    "7dias": { pedidos: "0", visitas: "0", confirmados: "0", sufixo: "(7 dias)" },
+    "30dias": { pedidos: "0", visitas: "0", confirmados: "0", sufixo: "(30 dias)" }
 };
 
 function animarNumero(id, valorFinal) {
@@ -248,7 +203,6 @@ function confirmarComAnimacao(id) {
     }, 380);
 }
 
-// O CÉREBRO: Decide se mostra os dados ou se esvazia a tela
 function initDashboard() {
     const p = document.getElementById('stat-pedidos');
     const v = document.getElementById('stat-visitas');
@@ -259,7 +213,6 @@ function initDashboard() {
     if (c) animarNumero('stat-confirmados', c.innerText);
 }
 
-// A FUNÇÃO QUE LIMPA OS DADOS FALSOS
 function aplicarEstadoZero() {
     // 1. Zera os números principais logo de cara (sem animação)
     const p = document.getElementById('stat-pedidos');
@@ -349,7 +302,6 @@ function aplicarEstadoZero() {
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        // Load dynamically store name and actions, and then fetch products
         carregarDadosLojaDashboard();
     }
 });
@@ -375,7 +327,7 @@ async function carregarDadosLojaDashboard() {
                 
                 // Configurar botões de link
                 const btnVerLoja = document.getElementById('btn-ver-loja');
-                const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+                const urlLoja = \`https://\${loja.slug}.shopyump.vercel.app/\`;
                 
                 if (btnVerLoja) {
                     btnVerLoja.href = urlLoja;
@@ -438,7 +390,7 @@ function limparDadosFalsosDashboard() {
     // 3. Limpar a secção de pedidos pendentes
     const containerPedidos = document.getElementById('container-pedidos');
     if (containerPedidos) {
-        containerPedidos.innerHTML = `
+        containerPedidos.innerHTML = \`
             <div class="col-span-full py-8 flex flex-col items-center justify-center text-center gap-3 opacity-80">
                 <div class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-300 mb-2 shadow-sm">
                     <i class="fa-solid fa-receipt text-2xl"></i>
@@ -448,7 +400,7 @@ function limparDadosFalsosDashboard() {
                     Os teus novos pedidos vão aparecer aqui.
                 </p>
             </div>
-        `;
+        \`;
     }
 
     // 4. Achatar o gráfico SVG para zero
@@ -503,12 +455,12 @@ async function carregarProdutosDashboard(lojaId) {
         
         const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
         if (badgeAtivos && badgeAtivos.tagName.toLowerCase() === 'span') {
-            badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+            badgeAtivos.innerText = \`\${ativosCount} ATIVOS\`;
         }
         
         if (!produtos || produtos.length === 0) {
             containerProduto.className = "w-full mt-3";
-            containerProduto.innerHTML = `
+            containerProduto.innerHTML = \`
                 <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
                     <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-plus text-xl"></i>
@@ -518,7 +470,7 @@ async function carregarProdutosDashboard(lojaId) {
                         <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
                     </div>
                 </button>
-            `;
+            \`;
         } else {
             containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
             let html = '';
@@ -526,29 +478,29 @@ async function carregarProdutosDashboard(lojaId) {
             // Renderiza apenas os 3 primeiros produtos recentes no Dashboard por espaço
             produtos.slice(0, 3).forEach(p => {
                 const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
-                html += `
+                html += \`
                     <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
-                                <img src="${fotoCapa}" class="w-full h-full object-cover">
+                                <img src="\${fotoCapa}" class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
-                                <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">\${p.nome}</p>
+                                <p class="text-[10px] text-slate-500 font-bold mt-0.5">\${p.preco.toLocaleString('pt-MZ')} MT \${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
                             </div>
                         </div>
                         <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
                     </div>
-                `;
+                \`;
             });
             
-            html += `
+            html += \`
                 <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
                     Ver Todos os Produtos
                 </button>
-            `;
+            \`;
             containerProduto.innerHTML = html;
         }
     } catch (e) {
