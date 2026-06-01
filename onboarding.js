@@ -9,10 +9,10 @@
         return;
     }
     
-    // Verificar se já tem loja e redirigir para index.html se já tiver
+    // Verificar se já tem loja e redirigir para dashboard.html se já tiver
     const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', session.user.id).maybeSingle();
     if (loja) {
-        window.location.href = 'index.html';
+        window.location.href = 'dashboard.html';
     }
 })();
 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
             shopFeedback.classList.remove('hidden');
             setTimeout(() => shopFeedback.classList.add('opacity-100'), 10);
             
-            shopLinkPreview.innerHTML = `<span class="font-bold text-navy-900">${slug || 'loja'}</span><span class="text-slate-400">.shopyump.com</span>`;
+            shopLinkPreview.innerHTML = `<span class="text-slate-400">shopyump.vercel.app/loja/</span><span class="font-bold text-navy-900">${slug || 'loja'}</span>`;
 
             shopStatusBadge.innerHTML = '<span class="animate-pulse">A verificar...</span>';
             shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold tracking-wide';
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Armazena no sessionStorage local
-        sessionStorage.setItem('shopyump_store_url', `${slug}.shopyump.com`);
+        sessionStorage.setItem('shopyump_store_url', `shopyump.vercel.app/loja/${slug}`);
         sessionStorage.setItem('shopyump_seller_name', userName);
         sessionStorage.setItem('shopyump_whatsapp', fullWhatsapp);
 
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
             
-            window.location.href = 'index.html';
+            window.location.href = 'dashboard.html';
         });
     }
 
