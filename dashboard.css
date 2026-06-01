@@ -20,19 +20,48 @@ body {
     letter-spacing: -0.01em; 
 }
 
-.main-wrapper { max-width: 1200px; margin: 0 auto; padding: 24px; }
-.sf-card { background: #ffffff; border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-@media (min-width: 1024px) { .sf-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); } }
-.stats-container { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+/* ESTILOS DASHBOARD PRINCIPAL */
+/* CONTENTOR PRINCIPAL */
+.main-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
 
+/* CARDS COM EFEITOS PC */
+.sf-card { 
+    background: #ffffff; border: 1px solid var(--border-color); border-radius: 16px; 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 1024px) {
+    .sf-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+}
+
+/* GRELHA DE ESTATÍSTICAS (PC) */
+.stats-container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* AJUSTES GERAIS DARK MODE - PREMIUM NAVY */
 .dark body { background-color: #020617; color: #F1F5F9; }
-.dark header, .dark #menuZ, .dark nav { background: #020617 !important; border-color: #1E293B !important; }
-.dark .sf-card, .dark .menu-card, .dark .profile-card { background: #0F172A !important; border-color: #1E293B !important; }
+.dark header, .dark #menuZ, .dark nav { 
+    background: #020617 !important; 
+    border-color: #1E293B !important; 
+}
+.dark .sf-card, .dark .menu-card, .dark .profile-card { 
+    background: #0F172A !important; 
+    border-color: #1E293B !important; 
+}
 .dark h1, .dark h2, .dark h3, .dark h4 { color: #ffffff !important; }
 .dark p:not(.text-emerald-600) { color: #94a3b8 !important; }
 .dark .nav-item { border-bottom-color: #242b3d; color: #f1f5f9; }
 .dark .section-title { color: #4b5563; }
 
+/* GRÁFICO "GLOW" (Luz no Escuro) */
 .dark .corda { stroke: #ffffff !important; stroke-width: 3; filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); } 
 .dark #chartGradient stop[offset="0%"] { stop-color: #3b82f6; stop-opacity: 0.4; }
 .dark #chartGradient stop[offset="100%"] { stop-color: #3b82f6; stop-opacity: 0; }
@@ -40,124 +69,619 @@ body {
 .dark #p-atual { fill: #3b82f6 !important; stroke: #ffffff !important; stroke-width: 2.5; }
 .dark .grid-line { background-color: #242b3d !important; opacity: 0.5; }
 
+/* CORREÇÃO DOS BOTÕES DO GRÁFICO NO MODO DARK */
 .dark .bg-\\[\\#f1f1f2\\] { background-color: rgba(30, 41, 59, 0.5) !important; border: 1px solid rgba(51, 65, 85, 0.5) !important; }
 .dark .text-slate-400 { color: #64748b !important; } 
 .dark .bg-white.text-slate-900 { background-color: #ffffff !important; color: #0f172a !important; } 
 
+/* CORREÇÃO VISUAL TIKTOK E ÍCONES */
 .dark .bg-black { background-color: #f1f5f9 !important; } 
 .sf-button-primary { background: #303030; color: #ffffff; border-radius: 8px; transition: opacity 0.2s; }
 .sf-button-secondary { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; color: #303030; }
 .icon { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; }
+.modal-bg { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(2px); }
 
+/* GRÁFICO DE CORDA */
 .chart-container { position: relative; height: 180px; display: flex; margin-top: 10px; }
+.y-axis { width: 35px; display: flex; flex-direction: column; justify-content: space-between; height: 150px; font-size: 10px; color: #94a3b8; font-weight: 700; text-align: right; padding-right: 8px; border-right: 1px solid var(--border-color); }
 .chart-view { position: relative; flex: 1; height: 150px; }
 .grid-line { position: absolute; left: 0; right: 0; height: 1px; background-color: #f1f5f9; }
 .svg-chart { position: absolute; inset: 0; overflow: visible; width: 100%; }
 .corda { fill: none; stroke: #303030; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: all 0.4s ease-in-out; }
+.ponto { fill: white; stroke: #303030; stroke-width: 2; transition: all 0.4s ease-in-out; }
+.chart-filter { font-size: 9px; font-weight: 700; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); color: #616161; text-transform: uppercase; transition: all 0.2s; }
+.chart-filter.active { background: #303030; color: white; border-color: #303030; }
 
-#menuZ { position: fixed; top: 0; bottom: 0; left: 0; width: 280px; background-color: var(--bg-creme); z-index: 100; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-@media (max-width: 1023px) { #menuZ { transform: translateX(-100%); width: 85%; max-width: 340px; } #menuZ.open { transform: translateX(0); } }
-@media (min-width: 1024px) { #menuZ { transform: translateX(0); } body { padding-left: 280px; } #overlay { display: none !important; } header { left: 280px !important; width: calc(100% - 280px) !important; } }
-#overlay { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: 90; }
+/* SIDEBAR / MENU Z - EFEITO MOBILE FIRST */
+/* SIDEBAR ADAPTÁVEL */
+#menuZ {
+    position: fixed; top: 0; bottom: 0; left: 0;
+    width: 280px;
+    background-color: var(--bg-creme); /* Fundo Creme para manter o padrão UX */
+    z-index: 100;
+    display: flex; flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Comportamento Mobile */
+@media (max-width: 1023px) {
+    #menuZ { transform: translateX(-100%); width: 85%; max-width: 340px; }
+    #menuZ.open { transform: translateX(0); }
+}
+
+/* Comportamento PC (Sempre Visível) */
+@media (min-width: 1024px) {
+    #menuZ { transform: translateX(0); }
+    body { padding-left: 280px; } /* Empurra o site para o lado no PC */
+    #overlay { display: none !important; }
+    header { left: 280px !important; width: calc(100% - 280px) !important; }
+}
+
+#overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px);
+    z-index: 90;
+}
 #overlay.show { display: block; }
+
+/* ESTILOS INTERNOS DO MENU Z */
 .menu-card { background: white; border-radius: 24px; margin: 0 16px 20px 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
 .nav-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; color: #111827; font-weight: 600; font-size: 14px; border-bottom: 1px solid #f3f4f6; transition: background 0.2s; cursor: pointer; }
 .nav-item:last-child { border-bottom: none; }
 .nav-item:active { background: #f9fafb; }
-.section-title { font-size: 11px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 28px 10px 28px; }
+.section-title { 
+    font-size: 11px; font-weight: 800; color: #9ca3af; 
+    text-transform: uppercase; letter-spacing: 0.1em; 
+    padding: 0 28px 10px 28px; 
+}
 .dark .section-title { color: #64748b !important; }
 .profile-card { background: white; margin: 40px 16px 25px 16px; padding: 20px; border-radius: 28px; display: flex; align-items: center; gap: 16px; border: 1px solid rgba(0,0,0,0.02); }
-.icon-elite { width: 20px; height: 20px; color: #111827; stroke-width: 2.2; fill: none; stroke: currentColor; transition: color 0.3s ease; }
-.dark .icon-elite { color: #94a3b8 !important; }
+.icon-elite { 
+    width: 20px; height: 20px; color: #111827; 
+    stroke-width: 2.2; fill: none; stroke: currentColor; 
+    transition: color 0.3s ease;
+}
 
-.order-scroll-area { display: grid; gap: 16px; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .order-scroll-area { grid-template-columns: repeat(2, 1fr); overflow: visible; } }
-@media (min-width: 1280px) { .order-scroll-area { grid-template-columns: repeat(3, 1fr); } }
+.dark .icon-elite { color: #94a3b8 !important; }
+.nav-item:active .icon-elite { color: #10b981 !important; }
+
+/* OUTROS ESTILOS */
+.item-thumb { width: 44px; height: 44px; border-radius: 8px; background: #f8f8f8; object-fit: cover; }
+/* ENCOMENDAS RESPONSIVAS */
+.order-scroll-area { 
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr; /* Mobile */
+}
+
+/* Tablet e PC */
+@media (min-width: 768px) {
+    .order-scroll-area { grid-template-columns: repeat(2, 1fr); overflow: visible; }
+    .order-item-card { min-width: auto; }
+}
+
+@media (min-width: 1280px) {
+    .order-scroll-area { grid-template-columns: repeat(3, 1fr); }
+}
+.order-exit { transform: scale(0.9) translateY(-20px); opacity: 0; pointer-events: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .legal-footer { padding: 10px 24px; display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
 .legal-footer a { font-size: 11px; color: #9ca3af; font-weight: 600; text-decoration: none; }
 
+/* ANIMAÇÃO ACORDIÃO SEGURANÇA */
+.expandable { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.expandable.open { max-height: 1000px; }
+
+/* ESTILOS ESPECÍFICOS PARA O MODO NOVATO */
 .escondido { display: none !important; }
-@view-transition { navigation: auto; }
-* { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 300ms; animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); animation-fill-mode: both; }
-::view-transition-old(root) { animation-name: slide-to-left; }
-::view-transition-new(root) { animation-name: slide-from-right; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
-@keyframes slide-from-right { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes slide-to-left { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-30px); } }
+/* 1. ATIVAÇÃO DE TRANSIÇÕES NATIVAS (View Transitions API) */
+@view-transition {
+  navigation: auto;
+}
 
-html { scroll-behavior: smooth; }
-#menuZ.open ~ header { opacity: 0; pointer-events: none; visibility: hidden; transition: opacity 0.3s ease; }
-header { opacity: 1; transform: translateY(0); pointer-events: auto; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; }
-header > div { background: transparent !important; backdrop-filter: none !important; border: 1px solid transparent !important; padding: 6px 16px 6px 10px !important; border-radius: 20px !important; transition: all 0.3s ease; }
-header.scrolled > div { background: rgba(255, 255, 255, 0.45) !important; backdrop-filter: blur(12px) !important; border: 1px solid rgba(255, 255, 255, 0.4) !important; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important; }
-.dark header.scrolled > div { background: rgba(15, 23, 42, 0.6) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+/* 2. REMOÇÃO DO ATRASO DE TOQUE (Clique Instantâneo no Telemóvel) */
+* {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
 
-::-webkit-scrollbar { width: 0px; background: transparent; }
-.expand-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.is-open { max-height: 1000px !important; }
-.rotate-180 { transform: rotate(180deg); }
-.photo-slot { touch-action: none; user-select: none; -webkit-user-drag: none; cursor: grab; }
-.is-cover { border: 2px solid #0F172A !important; }
+/* 3. ANIMAÇÃO PREMIUM (Slide App Feel) */
 
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px) translateX(-50%); } 100% { opacity: 1; transform: scale(1) translateY(0) translateX(-50%); } }
-.animate-toast { animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-.animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+/* Configuração Geral */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+/* Antiga página sai para a esquerda */
+::view-transition-old(root) {
+  animation-name: slide-to-left;
+}
+
+/* Nova página entra pela direita (Efeito Stack) */
+::view-transition-new(root) {
+  animation-name: slide-from-right;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1); /* Sombra para profundidade */
+}
+
+@keyframes slide-from-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-to-left {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-30px); }
+}
+
+/* 4. SCROLL SUAVE */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Esconder o cabeçalho (hamburger e nome da loja) quando o menu estiver aberto */
+#menuZ.open ~ header {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+/* Header Inteligente: Visível no topo, mas transparente */
+header {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+/* A estrutura interna (o container do hamburger e nome) */
+header > div {
+    /* No topo: Sem fundo e sem bordas para ser "limpo" */
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1px solid transparent !important;
+    padding: 6px 16px 6px 10px !important;
+    border-radius: 20px !important;
+    transition: all 0.3s ease;
+}
+
+/* ESTADO ATIVO: Quando o utilizador desliza (Scroll) */
+header.scrolled > div {
+    /* Ativa a Cápsula de Vidro para proteger a leitura */
+    background: rgba(255, 255, 255, 0.45) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Ajuste para o Modo Escuro no Scroll */
+.dark header.scrolled > div {
+    background: rgba(15, 23, 42, 0.6) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO CRIAR-PRODUTO — CSS INCORPORADO NO SPA
+   ══════════════════════════════════════════════════════════════ */
+
+/* css/style.css */
+
+/* 1. Ajustes Globais */
+body { 
+    font-family: 'Inter', sans-serif; 
+    background-color: #F8FAFC; 
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* Esconder barra de scroll para um visual de App profissional */
+::-webkit-scrollbar { 
+    width: 0px; 
+    background: transparent; 
+}
+
+/* 2. Animação do Acordeão (Subcategorias) */
+.expand-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.is-open { 
+    max-height: 1000px !important; 
+}
+
+.rotate-180 { 
+    transform: rotate(180deg); 
+}
+
+/* 3. Estilo das Fotografias (Pronto para Motor Nativo) */
+.photo-slot { 
+    touch-action: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: grab;
+}
+
+/* Borda azul-marinho para a foto que for a Capa */
+.is-cover { 
+    border: 2px solid #0F172A !important; 
+}
+
+/* 4. Animações de Entrada (Toasts e Conteúdo) */
+@keyframes popIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(10px) translateX(-50%); }
+    100% { opacity: 1; transform: scale(1) translateY(0) translateX(-50%); }
+}
+
+.animate-toast { 
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; 
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in { 
+    animation: fadeIn 0.2s ease-out forwards; 
+}
+
+/* ========================================== */
+/* 5. SISTEMA DE VARIANTES (CORES, TAMANHOS, NÚMEROS) */
+/* ========================================== */
 
 .variant-section { display: none; }
-.btn-add-hidden { opacity: 0; transform: scale(0.5); pointer-events: none; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.btn-add-show { opacity: 1; transform: scale(1); pointer-events: auto; }
-@keyframes popInChip { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-.animate-pop-chip { animation: popInChip 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.sticky-input-container { position: sticky; right: -1px; z-index: 20; background: white; padding-left: 12px; box-shadow: -15px 0 15px -10px white; }
-.chip-selected { background-color: #0F172A !important; color: white !important; border-color: #0F172A !important; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1); }
 
-.toggle-checkbox { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s; will-change: transform; }
-.toggle-checkbox:checked { transform: translateX(24px); border-color: #0F172A; }
-.toggle-checkbox:checked + .toggle-label { background-color: #0F172A; }
-.toggle-label { transition: background-color 0.3s ease; }
-#check-promo:checked { transform: translateX(12px) !important; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+.chip-item { flex-shrink: 0; }
+
+.btn-add-hidden { 
+    opacity: 0; 
+    transform: scale(0.5); 
+    pointer-events: none; 
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.btn-add-show { 
+    opacity: 1; 
+    transform: scale(1); 
+    pointer-events: auto; 
+}
+
+@keyframes popInChip {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop-chip { 
+    animation: popInChip 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+/* Efeito Sticky: Trava o input na direita com um degradê elegante */
+.sticky-input-container {
+    position: sticky;
+    right: -1px;
+    z-index: 20;
+    background: white; 
+    padding-left: 12px;
+    box-shadow: -15px 0 15px -10px white; 
+}
+
+/* Chip Ativo (Navy Blue) */
+.chip-selected { 
+    background-color: #0F172A !important; 
+    color: white !important; 
+    border-color: #0F172A !important;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+/* ========================================== */
+/* 6. SWITCH TOGGLE (Animação Ligar/Desligar) */
+/* ========================================== */
+
+/* A bolinha do interruptor */
+.toggle-checkbox {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s;
+    will-change: transform;
+}
+
+/* Quando o botão é ativado (LIGADO) */
+.toggle-checkbox:checked {
+    transform: translateX(24px); /* Faz a bolinha deslizar suavemente */
+    border-color: #0F172A;
+}
+
+/* O fundo do interruptor quando está LIGADO */
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #0F172A; /* Tom escuro da plataforma */
+}
+
+/* Transição suave da cor de fundo */
+.toggle-label {
+    transition: background-color 0.3s ease;
+}
+
+/* Ajuste para o Mini Switch da Promoção */
+#check-promo:checked {
+    transform: translateX(12px) !important;
+}
+
+
+
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO EDITOR DE FOTOS — ANIMAÇÕES E DESIGN
+   ══════════════════════════════════════════════════════════════ */
+
+/* ============================================================
+   MÓDULO DE FOTOS & IA - DESIGN & ANIMAÇÕES
+   ============================================================ */
+
+/* Reset e Utilitários de Imagem */
 .blend-multiply { mix-blend-mode: multiply; }
+* { -webkit-tap-highlight-color: transparent; }
 
-@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.3); filter: blur(2px); } 50% { opacity: 1; transform: scale(1.1); filter: blur(0px); } }
+/* --- 1. ANIMAÇÕES PREMIUM DA IA --- */
+
+/* Brilho das Estrelas Magic IA */
+@keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.3); filter: blur(2px); }
+    50% { opacity: 1; transform: scale(1.1); filter: blur(0px); }
+}
 .animate-twinkle { animation: twinkle 1.8s infinite ease-in-out; }
-@keyframes scan-laser-rl { 0% { left: 100%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { left: 0%; opacity: 0; } }
+
+/* Movimento do Laser (Corte da Direita para a Esquerda) */
+@keyframes scan-laser-rl {
+    0% { left: 100%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 0%; opacity: 0; }
+}
 .animate-laser-rl { display: block !important; animation: scan-laser-rl 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-@keyframes wipe-image-rl { 0% { clip-path: inset(0 0% 0 0); } 100% { clip-path: inset(0 100% 0 0); } }
+
+/* Efeito Wipe (Revelação da imagem limpa atrás do laser) */
+@keyframes wipe-image-rl {
+    0% { clip-path: inset(0 0% 0 0); }
+    100% { clip-path: inset(0 100% 0 0); }
+}
 .animate-wipe-rl { animation: wipe-image-rl 2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
-.status-premium { color: #1e40af !important; font-weight: 900 !important; letter-spacing: 2px; text-transform: uppercase; animation: statusPulse 2s infinite ease-in-out; }
-@keyframes statusPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(0.98); } }
+/* Texto de Status Premium */
+.status-premium {
+    color: #1e40af !important; 
+    font-weight: 900 !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: statusPulse 2s infinite ease-in-out;
+}
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.98); }
+}
+
+/* --- 2. GAVETA DE CORES E SELEÇÃO --- */
 
 .sheet-up { transform: translateY(0) !important; }
 .brand-color { background-color: #0F172A; } 
-.color-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; padding: 4px; border-radius: 20px; }
-.color-card.active { transform: scale(1.08); background-color: #F8FAFF; box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.12); }
-.color-card .check-badge { display: none; position: absolute; top: -2px; right: -2px; width: 22px; height: 22px; background-color: #0F172A; color: white; border-radius: 50%; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); z-index: 10; }
+
+.color-card { 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    cursor: pointer; 
+    position: relative; 
+    padding: 4px; 
+    border-radius: 20px;
+}
+
+/* Estado Ativo: Quando a cor é selecionada */
+.color-card.active { 
+    transform: scale(1.08); 
+    background-color: #F8FAFF; 
+    box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.12);
+}
+
+/* O Badge de Check (V) que aparece na cor */
+.color-card .check-badge { 
+    display: none; 
+    position: absolute; 
+    top: -2px; 
+    right: -2px; 
+    width: 22px; 
+    height: 22px;
+    background-color: #0F172A; 
+    color: white; 
+    border-radius: 50%;
+    align-items: center; 
+    justify-content: center; 
+    font-size: 10px;
+    border: 2px solid white; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    z-index: 10;
+}
 .color-card.active .check-badge { display: flex; }
 
-.voando { position: fixed !important; z-index: 9999 !important; pointer-events: none !important; transform: scale(1.1) rotate(4deg) !important; box-shadow: 0 30px 60px rgba(0,0,0,0.3) !important; opacity: 0.95 !important; transition: none !important; cursor: grabbing !important; margin: 0 !important; }
-.fantasma { opacity: 0.3 !important; transform: scale(0.95) !important; border: 2px dashed #94A3B8 !important; background: #E2E8F0 !important; }
+/* --- 3. GESTÃO DA GRELHA DE FOTOS (IMNDEX) --- */
+
+/* ============================================================
+   VISUAL DO MOTOR DE ARRASTO NATIVO (CLONE & FANTASMA)
+   ============================================================ */
+
+/* 1. O Clone que está agarrado ao teu dedo */
+.voando {
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: none !important; /* Impede o clone de atrapalhar o radar de colisões */
+    transform: scale(1.1) rotate(4deg) !important;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3) !important;
+    opacity: 0.95 !important;
+    transition: none !important;
+    cursor: grabbing !important;
+    margin: 0 !important; /* Segurança contra bugs de desalinhamento */
+}
+
+/* 2. A foto original que fica no lugar à espera (O Fantasma) */
+.fantasma {
+    opacity: 0.3 !important; /* Mesma imagem, mas bem transparente */
+    transform: scale(0.95) !important;
+    border: 2px dashed #94A3B8 !important; /* Borda elegante a marcar o lugar */
+    background: #E2E8F0 !important;
+}
+
+/* Garantir que as modais de fotos ficam por cima de tudo */
 #editor-modal { z-index: 100; }
 #color-sheet { z-index: 110; }
 #photo-options-sheet { z-index: 120; }
-#editor-sheet, #color-sheet, #photo-options-sheet { will-change: transform; backface-visibility: hidden; -webkit-perspective: 1000; }
 
-#catalog-card { transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); background: #ffffff; border-radius: 44px; padding: 12px; border: 1px solid rgba(15, 23, 42, 0.04); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 20px 40px -12px rgba(15, 23, 42, 0.12); }
-#catalog-card.expanded { max-width: 318px !important; transform: translateY(-8px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 30px 60px -15px rgba(15, 23, 42, 0.2); }
-#catalog-card > div:first-child { border-radius: 32px !important; overflow: hidden; background: #F8FAFC; box-shadow: inset 0 2px 8px rgba(0,0,0,0.04); }
+/* Performance das animações */
+#editor-sheet, #color-sheet, #photo-options-sheet {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+}
+/* Faz o cartão crescer suavemente quando a IA termina */
+/* Container Principal Polido e Harmônico */
+#catalog-card {
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: #ffffff;
+    border-radius: 44px; /* Raio Externo Harmony */
+    padding: 12px;      /* Grossura da borda branca (Padding) */
+    border: 1px solid rgba(15, 23, 42, 0.04); /* Definição sutil */
+    
+    /* Sombra Premium em Camadas */
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.02),
+        0 20px 40px -12px rgba(15, 23, 42, 0.12);
+}
 
-.modal-container { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; pointer-events: none; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-.modal-container.active { opacity: 1; visibility: visible; pointer-events: auto; }
-.modal-backdrop { position: absolute; inset: 0; background-color: rgba(0, 0, 0, 0.65); z-index: 1; }
-.modal-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: white; z-index: 2; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
-.modal-container.active .modal-sheet { transform: translateY(0); }
-.modal-sheet.full { height: 100dvh; border-radius: 0; }
-.modal-sheet.drawer { border-top-left-radius: 32px; border-top-right-radius: 32px; max-height: 90vh; }
-.modal-handle { width: 48px; height: 6px; background-color: #E2E8F0; border-radius: 99px; margin: 16px auto 24px auto; flex-shrink: 0; }
+/* Estado Expandido com efeito de flutuação */
+#catalog-card.expanded {
+    max-width: 318px !important; 
+    transform: translateY(-8px); /* Ele se eleva ao crescer */
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.04),
+        0 30px 60px -15px rgba(15, 23, 42, 0.2);
+}
+/* Recinto Interno (A moldura da imagem) */
+#catalog-card > div:first-child {
+    border-radius: 32px !important; /* Raio Interno (44 - 12) */
+    overflow: hidden;
+    background: #F8FAFC;
+    /* Sombra interna sutil para dar profundidade à moldura */
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+}
 
-@keyframes popAnim { 0% { opacity: 0; transform: scale(0.95) translateY(-4px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* ══════════════════════════════════════════════════════════════
+   SISTEMA UNIVERSAL DE MODAIS — CSS
+   ══════════════════════════════════════════════════════════════ */
+
+/* =======================================================
+   SISTEMA UNIVERSAL DE MODAIS
+   ======================================================= */
+
+/* 1. O Recipiente Principal (Invisível por defeito) */
+.modal-container {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Quando o modal é ativado via JS */
+.modal-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* 2. O Fundo Escuro (Backdrop) */
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65); /* A cor escura que pediste */
+    z-index: 1;
+}
+
+/* 3. A Gaveta que sobe (Sheet) */
+.modal-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 2;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Faz a gaveta subir quando ativada */
+.modal-container.active .modal-sheet {
+    transform: translateY(0);
+}
+
+/* TIPO A: Modal de Ecrã Inteiro (Ex: Editor de Fotos) */
+.modal-sheet.full {
+    height: 100dvh;
+    border-radius: 0;
+}
+
+/* TIPO B: Modal tipo Gaveta (Ex: Cores, Categorias) */
+.modal-sheet.drawer {
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    max-height: 90vh; /* Não deixa passar por cima da barra de notificações */
+}
+
+/* 4. A Barrinha cinzenta de puxar no topo */
+.modal-handle {
+    width: 48px;
+    height: 6px;
+    background-color: #E2E8F0;
+    border-radius: 99px;
+    margin: 16px auto 24px auto;
+    flex-shrink: 0;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   TOGGLE SWITCHES (para os campos de criação de produto)
+   ══════════════════════════════════════════════════════════════ */
+.toggle-checkbox:checked {
+    right: 0;
+    left: auto;
+    transform: translateX(100%);
+    border-color: #0F172A;
+}
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #0F172A;
+}
+/* Tamanho pequeno (check-promo) */
+#check-promo:checked {
+    transform: translateX(12px);
+    border-color: #0F172A;
+}
+
+/* Animate-pop para area-quantidade */
+@keyframes popAnim {
+    0% { opacity: 0; transform: scale(0.95) translateY(-4px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
 .animate-pop { animation: popAnim 0.25s ease-out forwards; }

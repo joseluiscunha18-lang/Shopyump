@@ -16,6 +16,7 @@
                 }
             }
         }
+        // Aplicar tema antes do render
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -26,6 +27,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/dashboard.css">
     <style>
+        /* Transição de entrada de página */
         #spa-view {
             transition: opacity 0.22s ease, transform 0.22s ease;
         }
@@ -41,18 +43,21 @@
 </head>
 <body class="pb-24 transition-colors duration-500 bg-[#F9F7F5] dark:bg-[#020617] text-navy-900 dark:text-slate-100">
 
+    <!-- ── Toast Global ──────────────────────────────────────────────── -->
     <div id="toast-sucesso" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[200] bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-300 pointer-events-none">
         <svg class="w-5 h-5 text-emerald-400 dark:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
         <span id="toast-msg" class="text-[11px] font-black uppercase tracking-widest">Atualizado</span>
     </div>
 
+    <!-- ── Overlay Sidebar ───────────────────────────────────────────── -->
     <div id="overlay" onclick="toggleSidebar()"></div>
 
+    <!-- ── Sidebar / Menu Z ──────────────────────────────────────────── -->
     <aside id="menuZ">
         <div class="profile-card dark:bg-navy-800 dark:border-navy-900/50">
             <div class="w-14 h-14 rounded-2xl bg-[#0f172a] dark:bg-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-lg">M</div>
             <div>
-                <h3 class="font-bold text-gray-900 dark:text-white text-base leading-tight">MarkDesign</h3>
+                <h3 class="font-bold text-gray-900 dark:text-white text-base leading-tight">Shopyump</h3>
                 <p class="text-[10px] font-bold text-gray-400 dark:text-emerald-500/80 mt-0.5 uppercase tracking-wider">Conta Ativa</p>
             </div>
         </div>
@@ -155,26 +160,30 @@
         </div>
     </aside>
 
+    <!-- ── Header ────────────────────────────────────────────────────── -->
     <header id="main-header" class="fixed top-0 left-0 right-0 h-20 px-6 flex justify-between items-center z-[100]">
         <div class="flex items-center gap-3">
             <button onclick="toggleSidebar()" class="p-1 -ml-1 text-slate-800 dark:text-white active:scale-90 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h8"></path></svg>
             </button>
             <div class="flex flex-col ml-1">
-                <span id="header-titulo" class="text-[13px] font-black uppercase tracking-[0.15em] text-slate-900 dark:text-white leading-none">MarkDesign</span>
+                <span id="header-titulo" class="text-[13px] font-black uppercase tracking-[0.15em] text-slate-900 dark:text-white leading-none">Shopyump</span>
                 <div class="flex items-center gap-1.5 mt-1">
                     <div class="w-1 h-1 rounded-full bg-emerald-500"></div>
                     <span id="header-subtitulo" class="text-[8px] font-black text-slate-500 uppercase tracking-[0.1em]">Painel de Gestão</span>
                 </div>
             </div>
         </div>
+        <!-- Botão Voltar (visível só em sub-páginas) -->
         <button id="btn-voltar" onclick="navegarAnimado('dashboard')" class="hidden p-2 -mr-1 text-slate-800 dark:text-white active:scale-90 transition-transform">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
         </button>
     </header>
 
+    <!-- ── SPA View (conteúdo das páginas) ──────────────────────────── -->
     <div id="spa-view"></div>
 
+    <!-- ── Bottom Nav ────────────────────────────────────────────────── -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#161b2c] border-t border-slate-100 dark:border-slate-800 px-2 py-3 flex justify-around items-center z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.05)] transition-colors duration-300">
         <button onclick="navegarAnimado('dashboard')" id="nav-inicio" class="flex flex-col items-center gap-1 w-16 text-emerald-600 dark:text-emerald-500">
             <svg class="icon" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
@@ -201,19 +210,23 @@
         </button>
     </nav>
 
+    <!-- Supabase e App Lógica -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const supabaseUrl = 'https://bpufeystnepnmvnprnaz.supabase.co';
         const supabaseKey = 'sb_publishable_jXe-pPbg78tfbssQwEZDjw_KICuIs6X';
         window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
+    </script>
+    <script>
+        // Verificação de autenticação no dashboard
         (async function checkAuth() {
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = '/auth.html';
             }
         })();
     </script>
+
     <script src="/global.js"></script>
     <script src="/dashboard.js"></script>
     <script src="/perfil.js"></script>
@@ -223,5 +236,6 @@
     <script src="/vendas.js"></script>
     <script src="/loja.js"></script>
     <script src="/router.js"></script>
+
 </body>
 </html>
