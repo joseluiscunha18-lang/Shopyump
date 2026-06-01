@@ -198,8 +198,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const whatsappCode = document.getElementById('selectedCode').innerText;
         const whatsappNumber = document.getElementById('whatsapp').value;
         
-        const slug = shopName.toLowerCase().trim().replace(/\\s+/g, '-').replace(/[^\\w-]+/g, '');
-        const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\\s/g, '');
+        // Corrigimos o Regex para usar apenas uma barra e adicionamos caracteres aleatórios para evitar o erro "duplicate key"
+const nomeLimpo = shopName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+const numeroAleatorio = Math.floor(1000 + Math.random() * 9000);
+const slug = `${nomeLimpo}-${numeroAleatorio}`; // Resultado: "boutique-4821"
+
+const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\s/g, '');
 
         const experience = document.querySelector('input[name="experience"]:checked')?.value || 'new';
         const businessModel = document.querySelector('input[name="businessModel"]:checked')?.value || 'stock';
