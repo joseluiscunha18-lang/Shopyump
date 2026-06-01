@@ -686,8 +686,4 @@ body {
 }
 .animate-pop { animation: popAnim 0.25s ease-out forwards; }
 
-#header-titulo {
-    transition: opacity 0.4s ease-in-out;
-    opacity: 0; /* Começa invisível */
-}
 
