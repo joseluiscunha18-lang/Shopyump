@@ -685,3 +685,9 @@ body {
     100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 .animate-pop { animation: popAnim 0.25s ease-out forwards; }
+
+#header-titulo {
+    transition: opacity 0.4s ease-in-out;
+    opacity: 0; /* Começa invisível */
+}
+
