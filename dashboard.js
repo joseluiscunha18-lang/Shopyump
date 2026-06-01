@@ -211,8 +211,6 @@ document.addEventListener('spa:page-loaded', (e) => {
 });
 
 async function carregarDadosLojaDashboard() {
-    const headerTitulo = document.getElementById('header-titulo');
-    
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
