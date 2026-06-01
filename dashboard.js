@@ -161,7 +161,7 @@ document.body.insertAdjacentHTML('beforeend', `
     </template>
 `);
 
-// dashboard.js - L?gica exclusiva do Dashboard (Limpa)
+// dashboard.js - Lógica exclusiva do Dashboard
 
 function animarNumero(id, valorFinal) {
     const elemento = document.getElementById(id);
@@ -225,11 +225,13 @@ async function carregarDadosLojaDashboard() {
             if (loja) {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const pLojaNome = document.getElementById('dash-loja-nome');
+                const headerTitulo = document.getElementById('header-titulo');
                 
-                if (h2Saudacao) h2Saudacao.innerText = 'Ol?, ' + (loja.vendedor_nome || 'Lojista');
+                if (h2Saudacao) h2Saudacao.innerText = 'Olá, ' + (loja.vendedor_nome || 'Lojista');
                 if (pLojaNome) pLojaNome.innerText = loja.nome;
+                if (headerTitulo) headerTitulo.innerText = loja.nome;
                 
-                // Configurar bot?es de link
+                // Configurar botões de link
                 const btnVerLoja = document.getElementById('btn-ver-loja');
                 const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
                 
@@ -237,7 +239,7 @@ async function carregarDadosLojaDashboard() {
                     btnVerLoja.href = urlLoja;
                 }
                 
-                // Configurar o bot?o de copiar
+                // Configurar o botão de copiar
                 const btnCopiar = document.getElementById('btn-copiar-loja');
                 if (btnCopiar) {
                     btnCopiar.onclick = () => {
@@ -258,8 +260,10 @@ async function carregarDadosLojaDashboard() {
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const pLojaNome = document.getElementById('dash-loja-nome');
-                if (h2Saudacao) h2Saudacao.innerText = 'Ol?!';
+                const headerTitulo = document.getElementById('header-titulo');
+                if (h2Saudacao) h2Saudacao.innerText = 'Olá!';
                 if (pLojaNome) pLojaNome.innerText = 'Sem Loja';
+                if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
         }
     } catch (e) {
