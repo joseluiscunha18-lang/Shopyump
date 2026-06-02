@@ -2,49 +2,20 @@
 
 function renderRegister() {
     return `
-    <div class="h-full flex flex-col lg:flex-row animate-pageEnter">
+    <div class="min-h-full flex flex-col items-center justify-center p-6 sm:p-12 bg-[#F9F7F5] overflow-y-auto animate-pageEnter w-full">
         
-        <div class="hidden lg:flex lg:w-1/2 bg-navy-900 p-12 flex-col justify-between text-white relative overflow-hidden">
-            <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"></div>
-            <div class="relative z-10">
-                <h1 class="text-2xl font-extrabold tracking-tight">Shopyump</h1>
-                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-1">SaaS Engine</p>
-            </div>
-            <div class="relative z-10 max-w-md">
-                <h2 class="text-3xl font-bold leading-tight mb-4 tracking-tight">Começa a vender em menos de 3 minutos.</h2>
-                <div class="space-y-4 mt-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Catálogo digital ilimitado</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Integração WhatsApp Business</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Estúdio de IA para fotografias</span>
-                    </div>
-                </div>
-            </div>
-            <div class="text-xs text-slate-500 relative z-10">
-                &copy; 2026 Shopyump. Todos os direitos reservados.
-            </div>
-        </div>
-        
-                <div class="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-20 lg:p-24 bg-[#F9F7F5] overflow-y-auto">
+        <div class="w-full max-w-[400px] mx-auto">
             
-            <div class="lg:hidden text-center mb-8">
+            <div class="text-center mb-8">
                 <h1 class="text-3xl font-black text-navy-900 tracking-tighter">Shopyump</h1>
             </div>
 
-            <div class="w-full max-w-[400px] mx-auto bg-white lg:bg-transparent p-8 sm:p-10 lg:p-0 rounded-[32px] shadow-premium lg:shadow-none">
+            <div class="bg-white p-8 sm:p-10 rounded-[32px] shadow-premium w-full">
                 
-                <div class="mb-8 text-center lg:text-left">
+                <div class="mb-8 text-center">
                     <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-2">Cria a tua conta</h2>
                     <p class="text-sm text-slate-500 font-medium">Começa gratuitamente. Simples e rápido.</p>
                 </div>
-
 
                 <div class="space-y-5">
                     <button type="button" class="w-full bg-white border border-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-sm">
@@ -54,7 +25,7 @@ function renderRegister() {
 
                     <div class="flex items-center gap-4 py-2">
                         <div class="h-px bg-slate-200 flex-1"></div>
-                        <span class="text-[10px] font-bold text-slate-400 tracking-widest">Ou</span>
+                        <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Ou</span>
                         <div class="h-px bg-slate-200 flex-1"></div>
                     </div>
 
@@ -85,12 +56,12 @@ function renderRegister() {
                             Criar conta
                         </button>
 
-                        <p class="text-center lg:text-left text-[11px] text-slate-500 leading-relaxed px-2 lg:px-0">
+                        <p class="text-center text-[11px] text-slate-500 leading-relaxed px-2">
                             Ao continuares, aceitas os <a href="#" class="text-navy-900 font-bold underline hover:text-navy-700 transition-colors">Termos de Serviço</a> e a <a href="#" class="text-navy-900 font-bold underline hover:text-navy-700 transition-colors">Privacidade</a>.
                         </p>
                     </form>
 
-                    <div class="mt-8 text-center lg:text-left pt-6 border-t border-slate-100">
+                    <div class="mt-8 text-center pt-6 border-t border-slate-100">
                         <p class="text-sm text-slate-500 font-medium">
                             Já tens uma conta? 
                             <a href="#login" class="text-navy-900 font-black hover:underline underline-offset-4">Iniciar Sessão</a>

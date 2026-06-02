@@ -2,37 +2,20 @@
 
 function renderLogin() {
     return `
-    <div class="h-full flex flex-col lg:flex-row animate-pageEnter">
+    <div class="min-h-full flex flex-col items-center justify-center p-6 sm:p-12 bg-[#F9F7F5] overflow-y-auto animate-pageEnter w-full">
         
-        <div class="hidden lg:flex lg:w-1/2 bg-navy-900 p-12 flex-col justify-between text-white relative overflow-hidden">
-            <div class="absolute bottom-0 right-0 translate-y-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px]"></div>
-            <div class="relative z-10">
-                <h1 class="text-2xl font-extrabold tracking-tight">Shopyump</h1>
-                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-1">SaaS Engine</p>
-            </div>
-            <div class="relative z-10 max-w-md">
-                <h2 class="text-3xl font-bold leading-tight mb-4 tracking-tight">Gere a tua loja com a velocidade de uma app nativa.</h2>
-                <p class="text-sm text-slate-400 leading-relaxed">Painel de controlo unificado com inteligência artificial para processamento de produtos, remoção de fundos e sincronização direta com o WhatsApp.</p>
-            </div>
-            <div class="text-xs text-slate-500 relative z-10">
-                &copy; 2026 Shopyump. Todos os direitos reservados.
-            </div>
-        </div>
-        
-                        
-                       <div class="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-20 lg:p-24 bg-[#F9F7F5] overflow-y-auto">
+        <div class="w-full max-w-[400px] mx-auto">
             
-            <div class="lg:hidden text-center mb-8">
+            <div class="text-center mb-8">
                 <h1 class="text-3xl font-black text-navy-900 tracking-tighter">Shopyump</h1>
             </div>
 
-            <div class="w-full max-w-[400px] mx-auto bg-white lg:bg-transparent p-8 sm:p-10 lg:p-0 rounded-[32px] shadow-premium lg:shadow-none">
+            <div class="bg-white p-8 sm:p-10 rounded-[32px] shadow-premium w-full">
                 
-                <div class="mb-8 text-center lg:text-left">
+                <div class="mb-8 text-center">
                     <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-2">Iniciar sessão</h2>
                     <p class="text-sm text-slate-500 font-medium">Insere as tuas credenciais para aceder ao painel.</p>
                 </div>
-
 
                 <div class="space-y-5">
                     <button type="button" class="w-full bg-white border border-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-sm">
@@ -79,7 +62,7 @@ function renderLogin() {
                         </button>
                     </form>
 
-                    <div class="mt-8 text-center lg:text-left border-t border-slate-100 pt-6">
+                    <div class="mt-8 text-center border-t border-slate-100 pt-6">
                         <p class="text-sm text-slate-500 font-semibold">
                             Novo na plataforma? 
                             <a href="#register" class="text-navy-900 font-black hover:underline underline-offset-4">Criar conta grátis</a>
