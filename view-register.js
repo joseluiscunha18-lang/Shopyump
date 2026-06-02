@@ -2,50 +2,22 @@
 
 function renderRegister() {
     return `
-    <div class="h-full flex flex-col lg:flex-row animate-pageEnter">
+    <div class="min-h-full flex flex-col items-center justify-center p-5 sm:p-8 bg-[#F9F7F5] animate-pageEnter relative overflow-hidden">
         
-        <div class="hidden lg:flex lg:w-1/2 bg-navy-900 p-12 flex-col justify-between text-white relative overflow-hidden">
-            <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px]"></div>
-            <div class="relative z-10">
-                <h1 class="text-2xl font-extrabold tracking-tight">Shopyump</h1>
-                <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-1">SaaS Engine</p>
-            </div>
-            <div class="relative z-10 max-w-md">
-                <h2 class="text-3xl font-bold leading-tight mb-4 tracking-tight">Começa a vender em menos de 3 minutos.</h2>
-                <div class="space-y-4 mt-8">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Catálogo digital ilimitado</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Integração WhatsApp Business</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><i class="fas fa-check text-xs"></i></div>
-                        <span class="text-sm font-medium text-slate-300">Estúdio de IA para fotografias</span>
-                    </div>
-                </div>
-            </div>
-            <div class="text-xs text-slate-500 relative z-10">
-                &copy; 2026 Shopyump. Todos os direitos reservados.
-            </div>
-        </div>
+        <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
         
-                <div class="flex-1 flex flex-col justify-center p-6 sm:p-12 md:p-20 lg:p-24 bg-[#F9F7F5] overflow-y-auto">
+        <div class="w-full max-w-[420px] relative z-10 w-full">
             
-            <div class="lg:hidden text-center mb-8">
-                <h1 class="text-3xl font-black text-navy-900 tracking-tighter">Shopyump</h1>
+            <div class="text-center mb-8">
+                <div class="w-14 h-14 bg-navy-900 rounded-[18px] shadow-lg flex items-center justify-center mx-auto mb-5">
+                    <span class="text-white font-black text-2xl tracking-tighter">S</span>
+                </div>
+                <h1 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-2">Cria a tua conta</h1>
+                <p class="text-sm text-slate-500 font-medium">Começa a vender em menos de 3 minutos.</p>
             </div>
 
-            <div class="w-full max-w-[400px] mx-auto bg-white lg:bg-transparent p-8 sm:p-10 lg:p-0 rounded-[32px] shadow-premium lg:shadow-none">
-                
-                <div class="mb-8 text-center lg:text-left">
-                    <h2 class="text-2xl font-extrabold text-navy-900 tracking-tight mb-2">Cria a tua conta</h2>
-                    <p class="text-sm text-slate-500 font-medium">Começa gratuitamente. Simples e rápido.</p>
-                </div>
-
-
+            <div class="bg-white p-7 sm:p-10 rounded-[32px] shadow-premium border border-slate-100">
                 <div class="space-y-5">
                     <button type="button" class="w-full bg-white border border-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-[0.98] flex items-center justify-center gap-3 shadow-sm">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
@@ -54,7 +26,7 @@ function renderRegister() {
 
                     <div class="flex items-center gap-4 py-2">
                         <div class="h-px bg-slate-200 flex-1"></div>
-                        <span class="text-[10px] font-bold text-slate-400 tracking-widest">Ou</span>
+                        <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Ou</span>
                         <div class="h-px bg-slate-200 flex-1"></div>
                     </div>
 
@@ -81,27 +53,29 @@ function renderRegister() {
                         </div>
 
                         <button type="submit" id="btnRegister" disabled
-                            class="w-full bg-navy-900 text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-navy-800 transition-all active:scale-[0.97] mt-4 mb-4 opacity-50 cursor-not-allowed uppercase tracking-wider text-sm">
+                            class="w-full bg-navy-900 text-white font-bold py-4 rounded-2xl shadow-xl hover:bg-navy-800 transition-all active:scale-[0.97] mt-6 mb-2 opacity-50 cursor-not-allowed uppercase tracking-wider text-sm">
                             Criar conta
                         </button>
 
-                        <p class="text-center lg:text-left text-[11px] text-slate-500 leading-relaxed px-2 lg:px-0">
-                            Ao continuares, aceitas os <a href="#" class="text-navy-900 font-bold underline hover:text-navy-700 transition-colors">Termos de Serviço</a> e a <a href="#" class="text-navy-900 font-bold underline hover:text-navy-700 transition-colors">Privacidade</a>.
+                        <p class="text-center text-[11px] text-slate-400 leading-relaxed px-2">
+                            Ao continuares, aceitas os <a href="#" class="text-navy-900 font-bold hover:underline transition-colors">Termos</a> e a <a href="#" class="text-navy-900 font-bold hover:underline transition-colors">Privacidade</a>.
                         </p>
                     </form>
-
-                    <div class="mt-8 text-center lg:text-left pt-6 border-t border-slate-100">
-                        <p class="text-sm text-slate-500 font-medium">
-                            Já tens uma conta? 
-                            <a href="#login" class="text-navy-900 font-black hover:underline underline-offset-4">Iniciar Sessão</a>
-                        </p>
-                    </div>
                 </div>
             </div>
+            
+            <div class="mt-8 text-center">
+                <p class="text-[13px] text-slate-500 font-semibold">
+                    Já tens uma conta? 
+                    <a href="#login" class="text-navy-900 font-black hover:underline underline-offset-4">Iniciar Sessão</a>
+                </p>
+            </div>
+
         </div>
     </div>
     `;
 }
+
 
 function iniciarLogicaRegister() {
     const registerForm = document.getElementById('registerForm');
