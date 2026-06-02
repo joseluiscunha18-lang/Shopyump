@@ -2,7 +2,9 @@
 <html lang="pt-PT" class="h-full bg-[#F9F7F5]">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>Autenticação | Shopyump</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -30,9 +32,10 @@
         window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
     </script>
 </head>
-<body class="h-full">
 
-    <main id="auth-root" class="h-full"></main>
+<body class="h-full w-full overflow-x-hidden relative">
+
+    <main id="auth-root" class="h-full w-full overflow-x-hidden relative"></main>
 
     <script src="/view-login.js"></script>
     <script src="/view-register.js"></script>
