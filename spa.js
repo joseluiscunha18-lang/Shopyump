@@ -595,11 +595,11 @@ async function checkoutProgresso() {
         return mostrarErroPremium("Dados Incompletos", "Por favor, preenche o teu nome e telefone para finalizarmos o pedido.");
     }
 
+    // 1. PROTEÇÃO CONTRA O ERRO (Impede o crash do 'null reading id')
     if (!lojaAtual || !lojaAtual.id) {
-        return mostrarErroPremium("Erro de Conexão", "Não foi possível identificar a loja atual.");
+        return mostrarErroPremium("Erro de Sessão", "A loja não carregou corretamente. Atualiza a página e tenta novamente.");
     }
 
-    // Efeito de carregamento no botão
     const btn = document.getElementById('btn-checkout');
     let textoOriginalBtn = btn ? btn.innerHTML : '';
     if (btn) {
@@ -630,7 +630,7 @@ async function checkoutProgresso() {
         });
     }
 
-    // Prepara os dados para enviar à base de dados
+    // 2. CRIAR O PEDIDO (Agora 100% seguro de que lojaAtual não é nulo)
     const novoPedido = {
         loja_id: lojaAtual.id,
         cliente_nome: nome,
@@ -642,17 +642,14 @@ async function checkoutProgresso() {
     };
 
     try {
-        // Envia para a tabela pedidos no Supabase
+        // 3. ENVIAR PARA O SUPABASE
         const { error } = await window.supabaseClient.from('pedidos').insert([novoPedido]);
-        
         if (error) throw error;
 
-        // Se gravou com sucesso, formata o resto da mensagem e envia para WhatsApp
         msg += `\n*👤 Cliente:*\nNome: ${nome}\nTelemóvel: ${tel}\n`;
         if(end) msg += `Endereço: ${end}\n`;
         msg += `\n*💰 TOTAL: ${total.toLocaleString('pt-MZ')} MT*\n\n_O meu pedido já foi registado na vossa plataforma._`;
 
-        // Limpar o carrinho e estado de compra direta
         if (produtoCompraDireta) {
             produtoCompraDireta = null;
         } else {
@@ -660,21 +657,19 @@ async function checkoutProgresso() {
             localStorage.removeItem('shopyump_spa');
         }
 
-        // Abre WhatsApp e redireciona para a home
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
 
     } catch (e) {
-        console.error("Erro ao guardar o pedido:", e);
-        mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido no sistema. Tenta novamente.");
-        
-        // Remove estado de carregamento se falhar
+        console.error("Erro ao guardar o pedido no Supabase:", e);
+        mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido no sistema.");
         if (btn) {
             btn.innerHTML = textoOriginalBtn;
             btn.classList.remove('pointer-events-none', 'opacity-80');
         }
     }
 }
+
 
 let produtoCompraDireta = null; 
 
