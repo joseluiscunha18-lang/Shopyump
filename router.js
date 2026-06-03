@@ -13,7 +13,10 @@ const SPA = (() => {
         'seguranca':     { tpl: 'tpl-seguranca',     titulo: 'Segurança',  sub: 'Configurações',    voltar: true,  nav: false },
         'criar-produto': { tpl: 'tpl-criar-produto', titulo: 'Novo Produto', sub: 'Adicionar',      voltar: true,  nav: false },
         'produtos':      { tpl: 'tpl-produtos',      titulo: 'Produtos',   sub: 'Gestão',           voltar: false, nav: true  },
-        'vendas':        { tpl: 'tpl-vendas',        titulo: 'Vendas',     sub: 'Histórico',        voltar: false, nav: true  },
+        
+        // Alterado o título e subtítulo de Vendas para Pedidos / Encomendas
+        'vendas':        { tpl: 'tpl-vendas',        titulo: 'Pedidos',    sub: 'Encomendas',       voltar: false, nav: true  },
+        
         'editar-loja':   { tpl: 'tpl-editar-loja',  titulo: 'Editar Loja', sub: 'Configurações',   voltar: true,  nav: false },
     };
 
