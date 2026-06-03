@@ -592,45 +592,38 @@ async function checkoutProgresso() {
     if (!nome || !tel) {
         if (!nome) destacarErro('cli-nome');
         if (!tel) destacarErro('cli-tel');
-        return mostrarErroPremium("Dados Incompletos", "Por favor, preenche o teu nome e telefone para finalizarmos o pedido.");
+        return mostrarErroPremium("Dados Incompletos", "Por favor, preenche o teu nome e telefone.");
     }
 
-    // 1. PROTEÇÃO CONTRA O ERRO (Impede o crash do 'null reading id')
+    // --- NOVA VERIFICAÇÃO DE SEGURANÇA ---
     if (!lojaAtual || !lojaAtual.id) {
-        return mostrarErroPremium("Erro de Sessão", "A loja não carregou corretamente. Atualiza a página e tenta novamente.");
+        // Tenta recuperar o slug da URL e buscar os dados da loja novamente
+        const pathSegments = window.location.pathname.split('/');
+        const slugIndex = pathSegments.indexOf('loja');
+        const slug = slugIndex !== -1 ? pathSegments[slugIndex + 1] : null;
+        
+        if (slug) {
+            const { data: loja } = await window.supabaseClient.from('lojas').select('*').eq('slug', slug).single();
+            if (loja) { lojaAtual = loja; }
+        }
     }
+
+    // Se ainda assim for nulo, paramos aqui
+    if (!lojaAtual || !lojaAtual.id) {
+        return mostrarErroPremium("Erro de Sessão", "A loja não carregou. Atualiza a página e tenta novamente.");
+    }
+    // ------------------------------------
 
     const btn = document.getElementById('btn-checkout');
-    let textoOriginalBtn = btn ? btn.innerHTML : '';
     if (btn) {
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-[18px]"></i> A processar...';
         btn.classList.add('pointer-events-none', 'opacity-80');
     }
 
-    localStorage.setItem('shopyump_cli_nome', nome);
-    localStorage.setItem('shopyump_cli_tel', tel);
-    localStorage.setItem('shopyump_cli_end', end);
+    // Restante da lógica...
+    let itensPedido = produtoCompraDireta ? [produtoCompraDireta] : [...carrinho];
+    let total = itensPedido.reduce((acc, i) => acc + (i.preco * i.quantidade), 0);
 
-    let itensPedido = [];
-    let total = 0;
-    let msg = `Olá *${lojaAtual.nome}*, acabei de fazer uma encomenda! 🛍️\n\n`;
-
-    if (produtoCompraDireta) {
-        itensPedido = [produtoCompraDireta];
-        msg += `*Produto:*\n- ${produtoCompraDireta.quantidade}x ${produtoCompraDireta.nome}\n`;
-        if (produtoCompraDireta.corSelecionada) msg += `Cor: ${produtoCompraDireta.corSelecionada}\n`;
-        if (produtoCompraDireta.tamanhoSelecionado) msg += `Tam: ${produtoCompraDireta.tamanhoSelecionado}\n`;
-        total = produtoCompraDireta.preco * produtoCompraDireta.quantidade;
-    } else {
-        itensPedido = [...carrinho];
-        msg += `*🛒 Produtos:*\n`;
-        carrinho.forEach(i => {
-            msg += `- ${i.quantidade}x ${i.nome} ${i.corSelecionada ? '('+i.corSelecionada+')' : ''} ${i.tamanhoSelecionado ? '['+i.tamanhoSelecionado+']' : ''}\n`;
-            total += i.preco * i.quantidade;
-        });
-    }
-
-    // 2. CRIAR O PEDIDO (Agora 100% seguro de que lojaAtual não é nulo)
     const novoPedido = {
         loja_id: lojaAtual.id,
         cliente_nome: nome,
@@ -642,31 +635,20 @@ async function checkoutProgresso() {
     };
 
     try {
-        // 3. ENVIAR PARA O SUPABASE
         const { error } = await window.supabaseClient.from('pedidos').insert([novoPedido]);
         if (error) throw error;
 
-        msg += `\n*👤 Cliente:*\nNome: ${nome}\nTelemóvel: ${tel}\n`;
-        if(end) msg += `Endereço: ${end}\n`;
-        msg += `\n*💰 TOTAL: ${total.toLocaleString('pt-MZ')} MT*\n\n_O meu pedido já foi registado na vossa plataforma._`;
+        // Limpeza e Redirecionamento
+        if (produtoCompraDireta) produtoCompraDireta = null;
+        else { carrinho = []; localStorage.removeItem('shopyump_spa'); }
 
-        if (produtoCompraDireta) {
-            produtoCompraDireta = null;
-        } else {
-            carrinho = [];
-            localStorage.removeItem('shopyump_spa');
-        }
-
+        let msg = `Olá *${lojaAtual.nome}*, fiz uma encomenda! Total: ${total} MT.`;
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
 
     } catch (e) {
-        console.error("Erro ao guardar o pedido no Supabase:", e);
-        mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido no sistema.");
-        if (btn) {
-            btn.innerHTML = textoOriginalBtn;
-            btn.classList.remove('pointer-events-none', 'opacity-80');
-        }
+        console.error("Erro fatal:", e);
+        mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido.");
     }
 }
 
