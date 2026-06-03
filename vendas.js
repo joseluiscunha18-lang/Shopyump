@@ -25,7 +25,6 @@ document.body.insertAdjacentHTML('beforeend', `
             </div>
         </div>
 
-        <!-- Modal Detalhes do Pedido -->
         <div id="modal-pedido" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
             <div id="modal-pedido-content" class="bg-white dark:bg-navy-900 w-full rounded-t-3xl pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[85vh] flex flex-col gap-4 relative">
                 <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto absolute top-2 left-1/2 -translate-x-1/2"></div>
@@ -38,15 +37,13 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
                 
                 <div id="modal-pedido-corpo" class="overflow-y-auto no-scrollbar pb-6 space-y-4">
-                    <!-- Preenchido via JS -->
-                </div>
+                    </div>
             </div>
         </div>
     </template>
 `);
 
 // Lógica de Vendas/Pedidos
-
 let todosOsPedidos = [];
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -130,28 +127,28 @@ function renderizarListaPedidos(filtro) {
         else { badgeColor = 'bg-slate-100 text-slate-600'; statusLabel = st; }
         
         let descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome : 'Itens';
-        if(p.itens && p.itens.length > 1) descItens += \` (+\${p.itens.length - 1})\`;
+        if(p.itens && p.itens.length > 1) descItens += ` (+${p.itens.length - 1})`;
 
         const data = new Date(p.created_at).toLocaleDateString('pt-MZ');
 
-        html += \`
-            <div onclick="abrirDetalhesPedido('\${p.id}')" class="flex flex-col gap-2 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-800 last:border-0 relative">
+        html += `
+            <div onclick="abrirDetalhesPedido('${p.id}')" class="flex flex-col gap-2 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors border-b border-slate-100 dark:border-slate-800 last:border-0 relative">
                 <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-[13px] font-bold text-slate-900 dark:text-white line-clamp-1">\${p.cliente_nome}</p>
-                        <p class="text-[11px] text-slate-500 font-medium">\${descItens}</p>
+                        <p class="text-[13px] font-bold text-slate-900 dark:text-white line-clamp-1">${p.cliente_nome}</p>
+                        <p class="text-[11px] text-slate-500 font-medium">${descItens}</p>
                     </div>
-                    <span class="text-sm font-black text-emerald-600 text-right">\${p.total.toLocaleString('pt-MZ')} <span class="text-[9px]">MT</span></span>
+                    <span class="text-sm font-black text-emerald-600 text-right">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px]">MT</span></span>
                 </div>
                 <div class="flex justify-between items-center mt-1">
-                    <span class="text-[9px] font-bold \${badgeColor} px-2 py-0.5 rounded-full uppercase">\${statusLabel}</span>
-                    <span class="text-[9px] text-slate-400 font-bold">\${data}</span>
+                    <span class="text-[9px] font-bold ${badgeColor} px-2 py-0.5 rounded-full uppercase">${statusLabel}</span>
+                    <span class="text-[9px] text-slate-400 font-bold">${data}</span>
                 </div>
                 <div class="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 hover:opacity-100 text-slate-300 pointer-events-none transition-opacity">
                     <i class="fas fa-chevron-right text-xs"></i>
                 </div>
             </div>
-        \`;
+        `;
     });
 
     lista.innerHTML = html;
@@ -169,60 +166,60 @@ function abrirDetalhesPedido(id) {
            let obs = [];
            if(i.corSelecionada) obs.push(i.corSelecionada);
            if(i.tamanhoSelecionado) obs.push(i.tamanhoSelecionado);
-           itensHtml += \`
+           itensHtml += `
               <div class="flex justify-between items-center border-b border-slate-50 dark:border-slate-800 py-2 last:border-0">
                   <div class="flex gap-3 items-center w-full">
-                     <span class="text-xs font-black bg-slate-100 w-6 h-6 flex items-center justify-center rounded-lg">\${i.quantidade}x</span>
+                     <span class="text-xs font-black bg-slate-100 w-6 h-6 flex items-center justify-center rounded-lg">${i.quantidade}x</span>
                      <div class="flex-1">
-                        <p class="text-[12px] font-semibold text-slate-800 dark:text-white leading-tight">\${i.nome}</p>
-                        \${obs.length > 0 ? \`<p class="text-[10px] text-slate-400 mt-0.5">\${obs.join(' • ')}</p>\` : ''}
+                        <p class="text-[12px] font-semibold text-slate-800 dark:text-white leading-tight">${i.nome}</p>
+                        ${obs.length > 0 ? `<p class="text-[10px] text-slate-400 mt-0.5">${obs.join(' • ')}</p>` : ''}
                      </div>
-                     <span class="text-[12px] font-bold text-slate-900 dark:text-slate-300">\${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT</span>
+                     <span class="text-[12px] font-bold text-slate-900 dark:text-slate-300">${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT</span>
                   </div>
               </div>
-           \`;
+           `;
         });
     }
 
     const data = new Date(p.created_at).toLocaleString('pt-MZ');
-    const msgWpp = encodeURIComponent(\`Olá \${p.cliente_nome}, sobre a sua encomenda...\`);
+    const msgWpp = encodeURIComponent(`Olá ${p.cliente_nome}, sobre a sua encomenda...`);
 
     const corpo = document.getElementById('modal-pedido-corpo');
-    corpo.innerHTML = \`
+    corpo.innerHTML = `
         <div class="flex justify-between items-start bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl">
             <div>
                 <p class="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-1">Cliente</p>
-                <p class="text-sm font-bold text-slate-900 dark:text-white">\${p.cliente_nome}</p>
-                <p class="text-[12px] font-medium text-slate-600 mt-0.5">\${p.cliente_telefone}</p>
-                \${p.cliente_endereco ? \`<p class="text-[11px] text-slate-500 mt-2 line-clamp-2"><i class="fas fa-map-marker-alt"></i> \${p.cliente_endereco}</p>\` : ''}
+                <p class="text-sm font-bold text-slate-900 dark:text-white">${p.cliente_nome}</p>
+                <p class="text-[12px] font-medium text-slate-600 mt-0.5">${p.cliente_telefone}</p>
+                ${p.cliente_endereco ? `<p class="text-[11px] text-slate-500 mt-2 line-clamp-2"><i class="fas fa-map-marker-alt"></i> ${p.cliente_endereco}</p>` : ''}
             </div>
-            <a href="https://wa.me/\${p.cliente_telefone}?text=\${msgWpp}" target="_blank" class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+            <a href="https://wa.me/${p.cliente_telefone}?text=${msgWpp}" target="_blank" class="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform">
                 <i class="fab fa-whatsapp text-lg"></i>
             </a>
         </div>
 
         <div>
-            <p class="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2">Produtos (\${p.itens ? p.itens.length : 0})</p>
+            <p class="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2">Produtos (${p.itens ? p.itens.length : 0})</p>
             <div class="bg-white dark:bg-navy-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-2">
-                \${itensHtml}
+                ${itensHtml}
             </div>
         </div>
 
         <div class="flex justify-between items-center bg-[#0F172A] text-white p-4 rounded-2xl">
             <span class="text-xs font-bold uppercase tracking-wider">Total</span>
-            <span class="text-lg font-black tracking-tight">\${p.total.toLocaleString('pt-MZ')} MT</span>
+            <span class="text-lg font-black tracking-tight">${p.total.toLocaleString('pt-MZ')} MT</span>
         </div>
 
         <div>
             <p class="text-[10px] uppercase font-black tracking-widest text-slate-400 mb-2 mt-2">Alterar Status</p>
             <div class="grid grid-cols-3 gap-2">
-                <button onclick="alterarStatusPedido('\${p.id}', 'pendente')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors \${st === 'pendente' ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Pendente</button>
-                <button onclick="alterarStatusPedido('\${p.id}', 'confirmado')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors \${st === 'confirmado' ? 'bg-emerald-100 text-emerald-600 ring-1 ring-emerald-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Confirmado</button>
-                <button onclick="alterarStatusPedido('\${p.id}', 'cancelado')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors \${st === 'cancelado' ? 'bg-red-100 text-red-600 ring-1 ring-red-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Cancelado</button>
+                <button onclick="alterarStatusPedido('${p.id}', 'pendente')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${st === 'pendente' ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Pendente</button>
+                <button onclick="alterarStatusPedido('${p.id}', 'confirmado')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${st === 'confirmado' ? 'bg-emerald-100 text-emerald-600 ring-1 ring-emerald-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Confirmado</button>
+                <button onclick="alterarStatusPedido('${p.id}', 'cancelado')" class="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${st === 'cancelado' ? 'bg-red-100 text-red-600 ring-1 ring-red-500' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}">Cancelado</button>
             </div>
         </div>
-        <p class="text-center text-[9px] text-slate-400 mt-2 font-semibold">Realizado em \${data}</p>
-    \`;
+        <p class="text-center text-[9px] text-slate-400 mt-2 font-semibold">Realizado em ${data}</p>
+    `;
 
     const modal = document.getElementById('modal-pedido');
     const content = document.getElementById('modal-pedido-content');
@@ -249,7 +246,6 @@ async function alterarStatusPedido(id, novoStatus) {
             carregarHistoricoPedidos().then(() => {
                 if (btnTudo) filtrarPedidos(btnTudo.dataset.filter);
             });
-            // Update the Dashboard stats in background if defined
             if (typeof carregarDadosLojaDashboard === 'function') {
                 carregarDadosLojaDashboard();
             }
@@ -258,5 +254,4 @@ async function alterarStatusPedido(id, novoStatus) {
         console.error(e);
         alert('Erro ao atualizar status');
     }
-            }
-            
+}
