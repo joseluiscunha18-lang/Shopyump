@@ -584,7 +584,7 @@ function validarFormulario() {
     }
 }
 
-function checkoutProgresso() {
+async function checkoutProgresso() {
     const nome = document.getElementById('cli-nome').value.trim();
     const tel = document.getElementById('cli-tel').value.trim();
     const end = document.getElementById('cli-end').value.trim();
@@ -595,35 +595,85 @@ function checkoutProgresso() {
         return mostrarErroPremium("Dados Incompletos", "Por favor, preenche o teu nome e telefone para finalizarmos o pedido.");
     }
 
+    if (!lojaAtual || !lojaAtual.id) {
+        return mostrarErroPremium("Erro de Conexão", "Não foi possível identificar a loja atual.");
+    }
+
+    // Efeito de carregamento no botão
+    const btn = document.getElementById('btn-checkout');
+    let textoOriginalBtn = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-[18px]"></i> A processar...';
+        btn.classList.add('pointer-events-none', 'opacity-80');
+    }
+
     localStorage.setItem('shopyump_cli_nome', nome);
     localStorage.setItem('shopyump_cli_tel', tel);
     localStorage.setItem('shopyump_cli_end', end);
 
-    let msg = `Olá, quero fazer um pedido! 🛍️\n\n`;
+    let itensPedido = [];
     let total = 0;
+    let msg = `Olá *${lojaAtual.nome}*, acabei de fazer uma encomenda! 🛍️\n\n`;
 
     if (produtoCompraDireta) {
+        itensPedido = [produtoCompraDireta];
         msg += `*Produto:*\n- ${produtoCompraDireta.quantidade}x ${produtoCompraDireta.nome}\n`;
         if (produtoCompraDireta.corSelecionada) msg += `Cor: ${produtoCompraDireta.corSelecionada}\n`;
         if (produtoCompraDireta.tamanhoSelecionado) msg += `Tam: ${produtoCompraDireta.tamanhoSelecionado}\n`;
         total = produtoCompraDireta.preco * produtoCompraDireta.quantidade;
-        produtoCompraDireta = null;
     } else {
+        itensPedido = [...carrinho];
         msg += `*🛒 Produtos:*\n`;
         carrinho.forEach(i => {
-            msg += `- ${i.quantidade}x ${i.nome} ${i.corSelecionada ? '('+i.corSelecionada+')' : ''}\n`;
+            msg += `- ${i.quantidade}x ${i.nome} ${i.corSelecionada ? '('+i.corSelecionada+')' : ''} ${i.tamanhoSelecionado ? '['+i.tamanhoSelecionado+']' : ''}\n`;
             total += i.preco * i.quantidade;
         });
-        carrinho = [];
-        localStorage.removeItem('shopyump_spa');
     }
 
-    msg += `\n*👤 Cliente:*\nNome: ${nome}\nTelemóvel: ${tel}\n`;
-    if(end) msg += `Endereço: ${end}\n`;
-    msg += `\n*💰 TOTAL: ${total.toLocaleString('pt-MZ')} MT*`;
+    // Prepara os dados para enviar à base de dados
+    const novoPedido = {
+        loja_id: lojaAtual.id,
+        cliente_nome: nome,
+        cliente_telefone: tel,
+        cliente_endereco: end,
+        itens: itensPedido,
+        total: total,
+        status: 'pendente'
+    };
 
-    window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
-    navegarPara('home');
+    try {
+        // Envia para a tabela pedidos no Supabase
+        const { error } = await window.supabaseClient.from('pedidos').insert([novoPedido]);
+        
+        if (error) throw error;
+
+        // Se gravou com sucesso, formata o resto da mensagem e envia para WhatsApp
+        msg += `\n*👤 Cliente:*\nNome: ${nome}\nTelemóvel: ${tel}\n`;
+        if(end) msg += `Endereço: ${end}\n`;
+        msg += `\n*💰 TOTAL: ${total.toLocaleString('pt-MZ')} MT*\n\n_O meu pedido já foi registado na vossa plataforma._`;
+
+        // Limpar o carrinho e estado de compra direta
+        if (produtoCompraDireta) {
+            produtoCompraDireta = null;
+        } else {
+            carrinho = [];
+            localStorage.removeItem('shopyump_spa');
+        }
+
+        // Abre WhatsApp e redireciona para a home
+        window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
+        navegarPara('home');
+
+    } catch (e) {
+        console.error("Erro ao guardar o pedido:", e);
+        mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido no sistema. Tenta novamente.");
+        
+        // Remove estado de carregamento se falhar
+        if (btn) {
+            btn.innerHTML = textoOriginalBtn;
+            btn.classList.remove('pointer-events-none', 'opacity-80');
+        }
+    }
 }
 
 let produtoCompraDireta = null; 
