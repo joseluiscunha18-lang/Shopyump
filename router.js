@@ -8,7 +8,7 @@ const SPA = (() => {
     const bottomNav = document.getElementById('bottom-nav');
 
     const paginas = {
-        'dashboard':     { tpl: 'tpl-dashboard',     titulo: nmm'', sub: '', voltar: false, nav: true  },
+        'dashboard':     { tpl: 'tpl-dashboard',     titulo: '', sub: '', voltar: false, nav: true  },
         'perfil':        { tpl: 'tpl-perfil',        titulo: 'Perfil',     sub: 'Dados da Conta',   voltar: true,  nav: false },
         'seguranca':     { tpl: 'tpl-seguranca',     titulo: 'Segurança',  sub: 'Configurações',    voltar: true,  nav: false },
         'criar-produto': { tpl: 'tpl-criar-produto', titulo: 'Novo Produto', sub: 'Adicionar',      voltar: true,  nav: false },
