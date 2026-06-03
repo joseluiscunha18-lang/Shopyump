@@ -8,12 +8,12 @@ document.body.insertAdjacentHTML('beforeend', `
                         <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none flex items-center h-9">
                             <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md"></div>
                         </h2>
-                        <div class="inline-flex items-center gap-2 mt-2 px-3 py-1.5 bg-emerald-50/80 rounded-full border border-emerald-100/50 shadow-sm backdrop-blur-sm">
-                            <span class="relative flex h-2 w-2">
+                        <div class="flex items-center gap-1.5 mt-1.5 ml-1 opacity-80">
+                            <span class="relative flex h-1.5 w-1.5">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
                             </span>
-                            <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Loja Online</span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">Loja Online</span>
                         </div>
                     </div>
                     <div class="flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm mt-1 p-1 gap-1">
