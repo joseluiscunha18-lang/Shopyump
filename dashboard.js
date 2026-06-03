@@ -5,7 +5,7 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none h-9 flex items-center">
+                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none flex items-center h-9">
                             <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md"></div>
                         </h2>
                         <div class="inline-flex items-center gap-2 mt-2 px-3 py-1.5 bg-emerald-50/80 rounded-full border border-emerald-100/50 shadow-sm backdrop-blur-sm">
@@ -79,7 +79,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="flex justify-between items-end px-1">
                         <div>
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
-                            <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
+                            <p class="text-xs font-bold text-slate-900 dark:text-white">A??es Pendentes</p>
                         </div>
                         <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
                     </div>
@@ -91,7 +91,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             </div>
                             <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Sem pedidos pendentes</h4>
                             <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
-                                Quando os teus clientes comprarem, os pedidos aparecerão aqui.
+                                Quando os teus clientes comprarem, os pedidos aparecer?o aqui.
                             </p>
                         </div>
                     </div>
@@ -100,8 +100,8 @@ document.body.insertAdjacentHTML('beforeend', `
                 <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden">
                     <div class="flex items-center justify-between mb-8">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tráfego da Loja</h3>
-                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
+                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas ?nicas</p>
                         </div>
                         <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -128,13 +128,13 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                     </div>
                     <div class="flex justify-between mt-4 px-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
+                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>S?b</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
                     </div>
                 </section>
 
                 <div class="grid grid-cols-1 gap-6">
                     <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800">
-                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tráfego</h3>
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tr?fego</h3>
                         <div class="space-y-4">
                             <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
                             <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
@@ -155,7 +155,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
-                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
+                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
                                 </div>
                             </button>
                         </div>
@@ -205,7 +205,8 @@ function confirmarComAnimacao(id) {
 }
 
 function initDashboard() {
-    // A interface arranca a zeros no HTML
+    // A interface arranca a zeros no HTML, logo esta fun??o fica reservada 
+    // para quando integrares a l?gica de buscar dados estat?sticos reais do backend
 }
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -228,15 +229,15 @@ async function carregarDadosLojaDashboard() {
                 
             if (loja) {
                 const h2Saudacao = document.getElementById('dash-saudacao');
-                const headerTitulo = document.getElementById('header-titulo'); // Elemento que está fora no router.html
+                const headerTitulo = document.getElementById('header-titulo');
                 
-                // Formatação humana e sem "Oi?..."
+                // Formatação humana com emoji e sem repetir a loja
                 if (h2Saudacao) {
                     const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
                     h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
                 }
                 
-                // Manda apenas para o topo (cabeçalho)
+                // Manda o nome da loja apenas para o topo (cabeçalho)
                 if (headerTitulo) headerTitulo.innerText = loja.nome || '';
                 
                 // Configurar botões de link
@@ -285,4 +286,52 @@ async function carregarProdutosDashboard(lojaId) {
     if (!containerProduto) return;
     
     try {
-        const 
+        const { data: produtos, error } = await window.supabaseClient
+            .from('produtos')
+            .select('*')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
+        if (badgeAtivos) {
+            badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+        }
+        
+        if (produtos && produtos.length > 0) {
+            containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
+            let html = '';
+            
+            // Renderiza apenas os 3 primeiros produtos recentes no Dashboard
+            produtos.slice(0, 3).forEach(p => {
+                const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
+                html += `
+                    <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                                <img src="${fotoCapa}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
+                                <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
+                            </div>
+                        </div>
+                        <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
+                    Ver Todos os Produtos
+                </button>
+            `;
+            containerProduto.innerHTML = html;
+        }
+    } catch (e) {
+        console.error("Erro ao carregar produtos:", e);
+    }
+}
