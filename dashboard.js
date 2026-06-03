@@ -79,7 +79,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="flex justify-between items-end px-1">
                         <div>
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
-                            <p class="text-xs font-bold text-slate-900 dark:text-white">A??es Pendentes</p>
+                            <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
                         </div>
                         <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
                     </div>
@@ -91,7 +91,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             </div>
                             <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Sem pedidos pendentes</h4>
                             <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
-                                Quando os teus clientes comprarem, os pedidos aparecer?o aqui.
+                                Quando os teus clientes comprarem, os pedidos aparecerão aqui.
                             </p>
                         </div>
                     </div>
@@ -101,7 +101,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="flex items-center justify-between mb-8">
                         <div>
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
-                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas ?nicas</p>
+                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
                         </div>
                         <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
