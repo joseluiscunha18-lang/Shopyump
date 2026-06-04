@@ -465,9 +465,11 @@ async function confirmarPedidoAction(pedidoId, btnElement) {
             if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Pedido Confirmado!');
             animarRemocaoPedidoEAtualizar(card);
             
-            // CORREÇÃO: Informar ao cache que a lista mudou 
-            // e precisa ser carregada novamente ao abrir a página de Vendas/Pedidos
-            if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'confirmado';
+            }
         }
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-check text-[10px]"></i> Confirmar';
@@ -483,9 +485,11 @@ async function recusarPedidoAction(pedidoId, btnElement) {
         if (!error) {
             animarRemocaoPedidoEAtualizar(card);
             
-            // CORREÇÃO: Informar ao cache que a lista mudou 
-            // e precisa ser carregada novamente ao abrir a página de Vendas/Pedidos
-            if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'cancelado';
+            }
         }
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-times text-[12px]"></i>';

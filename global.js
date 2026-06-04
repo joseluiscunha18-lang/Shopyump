@@ -93,16 +93,30 @@ document.addEventListener('click', (e) => {
 if (window.supabaseClient) {
     window.supabaseClient.channel('pedidos-em-tempo-real')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
-         // Ouve novos registos de pedidos
-         if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
-         if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
          
-         // Se você estiver justamente na página de vendas, recarrega de fundo
+         // 1. Em vez de apagar o cache (pedidosCarregados = false), atualizamos o array em memória!
+         if (typeof todosOsPedidos !== 'undefined') {
+             if (payload.eventType === 'INSERT') {
+                 todosOsPedidos.unshift(payload.new); 
+             } else if (payload.eventType === 'UPDATE') {
+                 const i = todosOsPedidos.findIndex(p => p.id === payload.new.id);
+                 if (i !== -1) todosOsPedidos[i] = payload.new;
+             }
+         }
+
          const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
-         if (rotaAtual === 'vendas' && typeof carregarHistoricoPedidos === 'function') {
-             carregarHistoricoPedidos();
-         } else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
+         
+         // 2. Se a pessoa estiver AGORA na página pedidos, só re-renderiza o ecrã sem loading!
+         if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
+             const btnTudo = document.querySelector('.filtro-btn.active');
+             renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+         } 
+         else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
              window.forcarAtualizacaoDashboard();
+         } 
+         else {
+             // Forçamos o dashboard a desatualizar APENAS se o usuário não estiver lá no momento
+             if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
          }
       })
       .subscribe();
