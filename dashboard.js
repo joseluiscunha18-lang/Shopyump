@@ -347,12 +347,13 @@ async function carregarPedidosPendentesDashboard(lojaId) {
     const container = document.getElementById('container-pedidos');
     const badgeAtivos = document.getElementById('badge-acoes-pendentes');
     const msgVazia = document.getElementById('msg-vazio');
-    
-    // Atualizar as estáticas gerais
     const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
     const statPedidos = document.getElementById('stat-pedidos');
     
     if (!container) return;
+    
+    // Guardar o lojaId globalmente para atualizar silenciosamente depois
+    window.lojaIdAtivaDashboard = lojaId;
     
     try {
         const { data: pedidos, error } = await window.supabaseClient
@@ -363,26 +364,24 @@ async function carregarPedidosPendentesDashboard(lojaId) {
             
         if (error) throw error;
         
-        // Separa apenas os pedidos "pendentes"
         const pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : [];
         
-        // Atualizar os números visuais
         if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
         if (statPedidos) statPedidos.innerText = pedidos ? pedidos.length : '0';
-        if (badgePedidosHoje && pedidos.length > 0) {
-            badgePedidosHoje.innerText = 'ATUALIZADO';
+        if (badgePedidosHoje && pendentes.length > 0) {
+            badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
             badgePedidosHoje.classList.remove('hidden');
+        } else if (badgePedidosHoje) {
+            badgePedidosHoje.classList.add('hidden');
         }
         
         if (pendentes.length > 0) {
-            // Guarda a mensagem vazia caso precisemos dela, depois limparmos o container.
             const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
             container.innerHTML = '';
             
             let html = '';
-            
-            // Renderiza apenas os últimos 5 para não sobrecarregar a página principal
-            pendentes.slice(0, 5).forEach(p => {
+            // Renderiza apenas os ÚLTIMOS 3 PENDENTES
+            pendentes.slice(0, 3).forEach(p => {
                 const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
                 const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
                 
@@ -419,13 +418,10 @@ async function carregarPedidosPendentesDashboard(lojaId) {
             });
             
             container.innerHTML = html;
-            
-            // Volta a colocar a mensagem vazia (mas escondida) para ser usada caso todos sejam confirmados
             if (cloneMsgVazio) {
                 cloneMsgVazio.style.display = 'none';
                 container.appendChild(cloneMsgVazio);
             }
-
         } else {
             container.innerHTML = '';
             if (msgVazia) {
@@ -440,22 +436,13 @@ async function carregarPedidosPendentesDashboard(lojaId) {
 
 async function confirmarPedidoAction(pedidoId, btnElement) {
     const card = document.getElementById(`card-pendente-${pedidoId}`);
-    if (btnElement) {
-        btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-    }
+    if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
     
     try {
-        const { error } = await window.supabaseClient
-            .from('pedidos')
-            .update({ status: 'confirmado' })
-            .eq('id', pedidoId);
-            
+        const { error } = await window.supabaseClient.from('pedidos').update({ status: 'confirmado' }).eq('id', pedidoId);
         if (!error) {
             if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Pedido Confirmado!');
-            animarRemocaoPedido(card);
-            
-            // Atualizar os contadores discretamente
-            setTimeout(() => { if (typeof carregarDadosLojaDashboard === 'function') carregarDadosLojaDashboard(); }, 500);
+            animarRemocaoPedidoEAtualizar(card);
         }
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-check text-[10px]"></i> Confirmar';
@@ -464,31 +451,38 @@ async function confirmarPedidoAction(pedidoId, btnElement) {
 
 async function recusarPedidoAction(pedidoId, btnElement) {
     const card = document.getElementById(`card-pendente-${pedidoId}`);
-    if (btnElement) {
-        btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-    }
+    if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
     
     try {
-        const { error } = await window.supabaseClient
-            .from('pedidos')
-            .update({ status: 'cancelado' })
-            .eq('id', pedidoId);
-            
-        if (!error) {
-            animarRemocaoPedido(card);
-            // Atualizar os contadores discretamente
-            setTimeout(() => { if (typeof carregarDadosLojaDashboard === 'function') carregarDadosLojaDashboard(); }, 500);
-        }
+        const { error } = await window.supabaseClient.from('pedidos').update({ status: 'cancelado' }).eq('id', pedidoId);
+        if (!error) animarRemocaoPedidoEAtualizar(card);
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-times text-[12px]"></i>';
     }
 }
 
-function animarRemocaoPedido(card) {
+function animarRemocaoPedidoEAtualizar(card) {
+    // 1. Reduzir instantaneamente os contadores visuais sem esperar pelo servidor
+    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
+    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
+    
+    if (badgeAtivos) {
+        let numero = parseInt(badgeAtivos.innerText) || 0;
+        if (numero > 0) badgeAtivos.innerText = `${numero - 1} Pendentes`;
+    }
+    
+    if (badgePedidosHoje) {
+        let numeroHoje = parseInt(badgePedidosHoje.innerText) || 0;
+        if (numeroHoje > 0) badgePedidosHoje.innerText = `${numeroHoje - 1} PENDENTE(S)`;
+        if (numeroHoje - 1 === 0) badgePedidosHoje.classList.add('hidden');
+    }
+
+    // 2. Animar e remover o cartão
     if (!card) return;
     card.style.transition = 'all 0.35s ease';
     card.style.transform = 'scale(0.95)';
     card.style.opacity = '0';
+    
     setTimeout(() => {
         card.style.height = '0px';
         card.style.margin = '0px';
@@ -497,16 +491,12 @@ function animarRemocaoPedido(card) {
         
         setTimeout(() => {
             card.remove();
-            // Mostrar a mensagem de vazio se acabaram os pedidos
-            const container = document.getElementById('container-pedidos');
-            const msgVazia = document.getElementById('msg-vazio');
             
-            // Só conta os divs de pedidos, ignora a div escondida "msg-vazio"
-            const cardsRestantes = container.querySelectorAll('[id^="card-pendente-"]');
-            
-            if (cardsRestantes.length === 0 && msgVazia) {
-                msgVazia.style.display = 'flex';
+            // 3. Puxar um novo pedido caso exista (Silenciosamente)
+            if (window.lojaIdAtivaDashboard) {
+                carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard);
             }
         }, 300);
-    }, 200);
+    }, 150);
 }
+
