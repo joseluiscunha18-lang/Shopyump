@@ -215,17 +215,31 @@ document.addEventListener('spa:page-loaded', (e) => {
     }
 });
 
-async function carregarDadosLojaDashboard() {
+// Variável global introduzida para guardar os dados a serem reusados ao alternar as abas
+window.AppCache = {
+    loja: null,
+    produtos: null,
+    pedidos: null
+};
+
+async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
         
         if (userId) {
-            const { data: loja } = await window.supabaseClient
-                .from('lojas')
-                .select('id, nome, vendedor_nome, slug')
-                .eq('perfil_id', userId)
-                .maybeSingle();
+            let loja = window.AppCache.loja;
+            
+            // Só vai ao banco de dados se não tivermos a loja salva OU se forçarmos atualização
+            if (!loja || forcarAtualizacao) {
+                const { data } = await window.supabaseClient
+                    .from('lojas')
+                    .select('id, nome, vendedor_nome, slug')
+                    .eq('perfil_id', userId)
+                    .maybeSingle();
+                loja = data;
+                window.AppCache.loja = loja;
+            }
                 
             if (loja) {
                 const h2Saudacao = document.getElementById('dash-saudacao');
@@ -289,11 +303,21 @@ async function carregarProdutosDashboard(lojaId) {
     if (!containerProduto) return;
     
     try {
-        const { data: produtos, error } = await window.supabaseClient
-            .from('produtos')
-            .select('*')
-            .eq('loja_id', lojaId)
-            .order('created_at', { ascending: false });
+        let produtos = window.AppCache.produtos;
+        let error = null;
+        const recarregar = arguments.length > 1 ? arguments[1] : false;
+
+        // Reaproveita os produtos caso já existam em cache
+        if (!produtos || recarregar) {
+            const result = await window.supabaseClient
+                .from('produtos')
+                .select('*')
+                .eq('loja_id', lojaId)
+                .order('created_at', { ascending: false });
+            produtos = result.data;
+            error = result.error;
+            window.AppCache.produtos = produtos;
+        }
             
         if (error) throw error;
         
@@ -356,11 +380,21 @@ async function carregarPedidosPendentesDashboard(lojaId) {
     window.lojaIdAtivaDashboard = lojaId;
     
     try {
-        const { data: pedidos, error } = await window.supabaseClient
-            .from('pedidos')
-            .select('*')
-            .eq('loja_id', lojaId)
-            .order('created_at', { ascending: false });
+        let pedidos = window.AppCache.pedidos;
+        let error = null;
+        const recarregar = arguments.length > 1 ? arguments[1] : false;
+
+        // Reaproveita os pedidos da memória Cache
+        if (!pedidos || recarregar) {
+            const result = await window.supabaseClient
+                .from('pedidos')
+                .select('*')
+                .eq('loja_id', lojaId)
+                .order('created_at', { ascending: false });
+            pedidos = result.data;
+            error = result.error;
+            window.AppCache.pedidos = pedidos;
+        }
             
         if (error) throw error;
         
