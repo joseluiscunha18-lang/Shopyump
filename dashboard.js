@@ -169,23 +169,18 @@ document.body.insertAdjacentHTML('beforeend', `
 // dashboard.js - Lógica exclusiva do Dashboard
 
 function animarNumero(id, valorFinal) {
+    // Agora apenas insere o número no ecrã de forma instantânea, sem animação
     const elemento = document.getElementById(id);
     if (!elemento) return;
+    
+    // Mostra o valor exato no momento em que carrega
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
-    if (isNaN(valorAlvo)) { elemento.textContent = valorFinal; return; }
-    let valorInicial = 0;
-    const duracao = 900;
-    const incremento = valorAlvo / (duracao / 16);
-    const atualizar = () => {
-        valorInicial += incremento;
-        if (valorInicial < valorAlvo) {
-            elemento.textContent = Math.floor(valorInicial);
-            requestAnimationFrame(atualizar);
-        } else {
-            elemento.textContent = valorAlvo;
-        }
-    };
-    atualizar();
+    
+    if (isNaN(valorAlvo)) { 
+        elemento.textContent = valorFinal; 
+    } else {
+        elemento.textContent = valorAlvo;
+    }
 }
 
 function confirmarComAnimacao(id) {
