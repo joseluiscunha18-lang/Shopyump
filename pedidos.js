@@ -11,13 +11,16 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
 
                 <div class="sf-card p-6">
-     if (forcarAtualizacao) {
-        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i> Atualizando...</div>';
-    }               <div class="flex justify-between items-center mb-5">
+                    <div class="flex justify-between items-center mb-5">
                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Histórico de Pedidos</h3>
-                       <button onclick="carregarHistoricoPedidos(true)" class="text-slate-400 hover:text-slate-600 active:scale-90 transition-transform"><i class="fas fa-sync-alt"></i></button>
+                       <button onclick="carregarHistoricoPedidos()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-sync-alt"></i></button>
                     </div>
-                    <div class="space-y-3" id="lista-pedidos-historico"></div>
+                    <div class="space-y-3" id="lista-pedidos-historico">
+                        <div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center">
+                             <i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>
+                             Carregando pedidos...
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,51 +52,33 @@ document.addEventListener('spa:page-loaded', (e) => {
     }
 });
 
-async function carregarHistoricoPedidos(forcarAtualizacao = false) {
+async function carregarHistoricoPedidos() {
     const lista = document.getElementById('lista-pedidos-historico');
     if (!lista) return;
-
-    // LER DA CACHE PRIMEIRO (Evita que o template de Skeleton pisque no telemóvel)
-    if (!forcarAtualizacao && window.AppCache && window.AppCache.pedidos) {
-        todosOsPedidos = window.AppCache.pedidos;
-        const btnAtivo = document.querySelector('.filtro-btn.active');
-        filtrarPedidos(btnAtivo ? btnAtivo.dataset.filter : 'tudo');
-        return; // Impede que o código perca tempo
-    }
-
-    if (!window.AppCache || !window.AppCache.pedidos || forcarAtualizacao) {
-        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i> Atualizando...</div>';
-    }
 
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
+        
         if (!userId) return;
 
-        let lojaId = window.lojaIdAtivaDashboard;
-        if (!lojaId) {
-            const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
-            if (!loja) {
-                lista.innerHTML = '<p class="text-center text-slate-400 py-4">Loja não encontrada.</p>';
-                return;
-            }
-            lojaId = loja.id;
+        const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
+        
+        if (!loja) {
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Loja não encontrada.</p>';
+            return;
         }
 
         const { data: pedidos, error } = await window.supabaseClient
             .from('pedidos')
             .select('*')
-            .eq('loja_id', lojaId)
+            .eq('loja_id', loja.id)
             .order('created_at', { ascending: false });
 
         if (error) throw error;
 
-        if (!window.AppCache) window.AppCache = {};
-        window.AppCache.pedidos = pedidos || [];
-        todosOsPedidos = window.AppCache.pedidos;
-        
-        const btnAtivo = document.querySelector('.filtro-btn.active');
-        filtrarPedidos(btnAtivo ? btnAtivo.dataset.filter : 'tudo');
+        todosOsPedidos = pedidos || [];
+        filtrarPedidos('tudo');
 
     } catch (e) {
         console.error("Erro ao carregar pedidos:", e);
@@ -257,22 +242,12 @@ async function alterarStatusPedido(id, novoStatus) {
             .eq('id', id);
         if (!error) {
             fecharModalPedido();
-            
-            // Modificamos apenas a memória local tornando super rápido o fluxo
-            if (window.AppCache && window.AppCache.pedidos) {
-                const index = window.AppCache.pedidos.findIndex(p => p.id === id);
-                if (index !== -1) window.AppCache.pedidos[index].status = novoStatus;
-            }
-            if (todosOsPedidos) {
-                const pIndex = todosOsPedidos.findIndex(p => p.id === id);
-                if (pIndex !== -1) todosOsPedidos[pIndex].status = novoStatus;
-            }
-
             const btnTudo = document.querySelector('.filtro-btn.active');
-            filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
-            
-            if (typeof carregarPedidosPendentesDashboard === 'function' && window.lojaIdAtivaDashboard) {
-                carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard, false);
+            carregarHistoricoPedidos().then(() => {
+                if (btnTudo) filtrarPedidos(btnTudo.dataset.filter);
+            });
+            if (typeof carregarDadosLojaDashboard === 'function') {
+                carregarDadosLojaDashboard();
             }
         }
     } catch(e) {

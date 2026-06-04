@@ -85,7 +85,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
-                        <div id="msg-vazio" class="col-span-full py-12 flex-col items-center justify-center text-center gap-3" style="display: none;">
+                        <div id="msg-vazio" class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3">
                             <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-sm">
                                 <i class="fa-solid fa-receipt text-2xl"></i>
                             </div>
@@ -148,7 +148,17 @@ document.body.insertAdjacentHTML('beforeend', `
                             <span id="badge-produtos-ativos" class="text-[9px] font-black text-slate-500 uppercase tracking-widest">0 ativos</span>
                         </div>
                         
-                        <div id="container-produtos" class="w-full mt-3"></div>
+                        <div id="container-produtos" class="w-full mt-3">
+                            <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 dark:bg-slate-800 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-all active:scale-[0.98] group">
+                                <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-plus text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
+                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
+                                </div>
+                            </button>
+                        </div>
                     </section>
                 </div>
             </div>
@@ -205,44 +215,60 @@ document.addEventListener('spa:page-loaded', (e) => {
     }
 });
 
-// Variável global introduzida para guardar os dados a serem reusados ao alternar as abas
-window.AppCache = {
-    loja: null,
-    produtos: null,
-    pedidos: null
-};
-
-async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
-    // 1. FAST-PATH: Se tiver cache, reconstrói a tela IMEDIATAMENTE sem atrasos nem loadings!
-    if (!forcarAtualizacao && window.AppCache && window.AppCache.loja) {
-        aplicarLojaNaTela(window.AppCache.loja);
-        carregarProdutosDashboard(window.AppCache.loja.id, false);
-        carregarPedidosPendentesDashboard(window.AppCache.loja.id, false);
-        return; // Pára aqui, zero acesso ao servidor
-    }
-
+async function carregarDadosLojaDashboard() {
     try {
-        // 2. Só puxa a sessão se a cache não existir
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
         
         if (userId) {
-            let loja = window.AppCache.loja;
-            
-            if (!loja || forcarAtualizacao) {
-                const { data } = await window.supabaseClient
-                    .from('lojas')
-                    .select('id, nome, vendedor_nome, slug')
-                    .eq('perfil_id', userId)
-                    .maybeSingle();
-                loja = data;
-                window.AppCache.loja = loja; // Guarda no Cache global
-            }
+            const { data: loja } = await window.supabaseClient
+                .from('lojas')
+                .select('id, nome, vendedor_nome, slug')
+                .eq('perfil_id', userId)
+                .maybeSingle();
                 
             if (loja) {
-                aplicarLojaNaTela(loja);
-                await carregarProdutosDashboard(loja.id, forcarAtualizacao);
-                await carregarPedidosPendentesDashboard(loja.id, forcarAtualizacao);
+                const h2Saudacao = document.getElementById('dash-saudacao');
+                const headerTitulo = document.getElementById('header-titulo');
+                
+                // Formatação humana com emoji e sem repetir a loja
+                if (h2Saudacao) {
+                    const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
+                    h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+                }
+                
+                // Manda o nome da loja apenas para o topo (cabeçalho)
+                if (headerTitulo) headerTitulo.innerText = loja.nome || '';
+                
+                // Configurar botões de link
+                const btnVerLoja = document.getElementById('btn-ver-loja');
+                const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+                
+                if (btnVerLoja) {
+                    btnVerLoja.href = urlLoja;
+                }
+                
+                // Configurar o botão de copiar
+                const btnCopiar = document.getElementById('btn-copiar-loja');
+                if (btnCopiar) {
+                    btnCopiar.onclick = () => {
+                        navigator.clipboard.writeText(urlLoja).then(() => {
+                            const icone = document.getElementById('icone-copiar');
+                            if (icone) {
+                                icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
+                                setTimeout(() => {
+                                    icone.className = 'fa-regular fa-copy text-[14px]';
+                                }, 2000);
+                            }
+                        });
+                    };
+                }
+                
+                // Carregar produtos reais da loja
+                await carregarProdutosDashboard(loja.id);
+
+                // Carregar as encomendas pendentes para o ecrã inicial
+                await carregarPedidosPendentesDashboard(loja.id);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -256,35 +282,6 @@ async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
     }
 }
 
-// Função auxiliar para injetar a loja limpa no HTML rapidamente
-function aplicarLojaNaTela(loja) {
-    const h2Saudacao = document.getElementById('dash-saudacao');
-    const headerTitulo = document.getElementById('header-titulo');
-    
-    if (h2Saudacao) {
-        const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
-        h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
-    }
-    if (headerTitulo) headerTitulo.innerText = loja.nome || '';
-    
-    const btnVerLoja = document.getElementById('btn-ver-loja');
-    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
-    if (btnVerLoja) btnVerLoja.href = urlLoja;
-    
-    const btnCopiar = document.getElementById('btn-copiar-loja');
-    if (btnCopiar) {
-        btnCopiar.onclick = () => {
-            navigator.clipboard.writeText(urlLoja).then(() => {
-                const icone = document.getElementById('icone-copiar');
-                if (icone) {
-                    icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
-                    setTimeout(() => { icone.className = 'fa-regular fa-copy text-[14px]'; }, 2000);
-                }
-            });
-        };
-    }
-}
-
 async function carregarProdutosDashboard(lojaId) {
     const containerProduto = document.getElementById('container-produtos');
     const badgeAtivos = document.getElementById('badge-produtos-ativos');
@@ -292,21 +289,11 @@ async function carregarProdutosDashboard(lojaId) {
     if (!containerProduto) return;
     
     try {
-        let produtos = window.AppCache.produtos;
-        let error = null;
-        const recarregar = arguments.length > 1 ? arguments[1] : false;
-
-        // Reaproveita os produtos caso já existam em cache
-        if (!produtos || recarregar) {
-            const result = await window.supabaseClient
-                .from('produtos')
-                .select('*')
-                .eq('loja_id', lojaId)
-                .order('created_at', { ascending: false });
-            produtos = result.data;
-            error = result.error;
-            window.AppCache.produtos = produtos;
-        }
+        const { data: produtos, error } = await window.supabaseClient
+            .from('produtos')
+            .select('*')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
             
         if (error) throw error;
         
@@ -369,21 +356,11 @@ async function carregarPedidosPendentesDashboard(lojaId) {
     window.lojaIdAtivaDashboard = lojaId;
     
     try {
-        let pedidos = window.AppCache.pedidos;
-        let error = null;
-        const recarregar = arguments.length > 1 ? arguments[1] : false;
-
-        // Reaproveita os pedidos da memória Cache
-        if (!pedidos || recarregar) {
-            const result = await window.supabaseClient
-                .from('pedidos')
-                .select('*')
-                .eq('loja_id', lojaId)
-                .order('created_at', { ascending: false });
-            pedidos = result.data;
-            error = result.error;
-            window.AppCache.pedidos = pedidos;
-        }
+        const { data: pedidos, error } = await window.supabaseClient
+            .from('pedidos')
+            .select('*')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
             
         if (error) throw error;
         
