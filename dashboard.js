@@ -168,14 +168,15 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // dashboard.js - Lógica exclusiva do Dashboard
 
+// ==========================================
+// LÓGICA DO DASHBOARD (CORRIGIDA)
+// ==========================================
+
 function animarNumero(id, valorFinal) {
-    // Agora apenas insere o número no ecrã de forma instantânea, sem animação
     const elemento = document.getElementById(id);
     if (!elemento) return;
     
-    // Mostra o valor exato no momento em que carrega
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
-    
     if (isNaN(valorAlvo)) { 
         elemento.textContent = valorFinal; 
     } else {
@@ -199,26 +200,31 @@ function confirmarComAnimacao(id) {
     }, 380);
 }
 
-function initDashboard() {
-    // A interface arranca a zeros no HTML, logo esta fun??o fica reservada 
-    // para quando integrares a l?gica de buscar dados estat?sticos reais do backend
-}
-
-// Variável na memória para saber se o dashboard já carregou
+// 1. Variáveis na memória para guardar os dados (CACHE)
 let dashboardCarregado = false;
+let memDashboard = {
+    loja: null,
+    produtos: null,
+    pendentes: null
+};
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        // Só carrega do banco de dados se for a primeira vez
+        // Se ainda não carregou do banco, buscamos a primeira vez
         if (!dashboardCarregado) {
             carregarDadosLojaDashboard().then(() => {
-                dashboardCarregado = true; // Salva que já foi carregado
+                dashboardCarregado = true;
             });
+        } else {
+            // SOLUÇÃO: Se já tínhamos o cache guardado, redesenhamos tudo instantaneamente!
+            renderizarSaudacaoMemoria();
+            if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
+            if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
         }
     }
 });
 
-// Permitir que outras partes do código forces a atualização
+// Permitir atualizações forçadas (ex: quando ouve um novo pedido via Socket)
 window.forcarAtualizacaoDashboard = () => {
     dashboardCarregado = false;
     carregarDadosLojaDashboard().then(() => {
@@ -226,6 +232,9 @@ window.forcarAtualizacaoDashboard = () => {
     });
 };
 
+// ----------------------------------------------------
+// DADOS DA LOJA E SAUDAÇÃO
+// ----------------------------------------------------
 async function carregarDadosLojaDashboard() {
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
@@ -239,51 +248,14 @@ async function carregarDadosLojaDashboard() {
                 .maybeSingle();
                 
             if (loja) {
-                const h2Saudacao = document.getElementById('dash-saudacao');
-                const headerTitulo = document.getElementById('header-titulo');
+                memDashboard.loja = loja; // Guarda na memória
+                renderizarSaudacaoMemoria(); // Aplica no visual
                 
-                // Formatação humana com emoji e sem repetir a loja
-                if (h2Saudacao) {
-                    const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
-                    h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
-                }
-                
-                // Manda o nome da loja apenas para o topo (cabeçalho)
-                if (headerTitulo) headerTitulo.innerText = loja.nome || '';
-                
-                // Configurar botões de link
-                const btnVerLoja = document.getElementById('btn-ver-loja');
-                const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
-                
-                if (btnVerLoja) {
-                    btnVerLoja.href = urlLoja;
-                }
-                
-                // Configurar o botão de copiar
-                const btnCopiar = document.getElementById('btn-copiar-loja');
-                if (btnCopiar) {
-                    btnCopiar.onclick = () => {
-                        navigator.clipboard.writeText(urlLoja).then(() => {
-                            const icone = document.getElementById('icone-copiar');
-                            if (icone) {
-                                icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
-                                setTimeout(() => {
-                                    icone.className = 'fa-regular fa-copy text-[14px]';
-                                }, 2000);
-                            }
-                        });
-                    };
-                }
-                
-                // Carregar produtos reais da loja
                 await carregarProdutosDashboard(loja.id);
-
-                // Carregar as encomendas pendentes para o ecrã inicial
                 await carregarPedidosPendentesDashboard(loja.id);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
-                
                 if (h2Saudacao) h2Saudacao.innerHTML = 'Olá! <span class="text-3xl">👋</span>';
                 if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
@@ -293,12 +265,41 @@ async function carregarDadosLojaDashboard() {
     }
 }
 
+function renderizarSaudacaoMemoria() {
+    if (!memDashboard.loja) return;
+    const loja = memDashboard.loja;
+    
+    const h2Saudacao = document.getElementById('dash-saudacao');
+    const headerTitulo = document.getElementById('header-titulo');
+    
+    if (h2Saudacao) {
+        const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
+        h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+    }
+    if (headerTitulo) headerTitulo.innerText = loja.nome || '';
+    
+    const btnVerLoja = document.getElementById('btn-ver-loja');
+    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+    if (btnVerLoja) btnVerLoja.href = urlLoja;
+    
+    const btnCopiar = document.getElementById('btn-copiar-loja');
+    if (btnCopiar) {
+        btnCopiar.onclick = () => {
+            navigator.clipboard.writeText(urlLoja).then(() => {
+                const icone = document.getElementById('icone-copiar');
+                if (icone) {
+                    icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
+                    setTimeout(() => icone.className = 'fa-regular fa-copy text-[14px]', 2000);
+                }
+            });
+        };
+    }
+}
+
+// ----------------------------------------------------
+// PRODUTOS
+// ----------------------------------------------------
 async function carregarProdutosDashboard(lojaId) {
-    const containerProduto = document.getElementById('container-produtos');
-    const badgeAtivos = document.getElementById('badge-produtos-ativos');
-    
-    if (!containerProduto) return;
-    
     try {
         const { data: produtos, error } = await window.supabaseClient
             .from('produtos')
@@ -308,145 +309,152 @@ async function carregarProdutosDashboard(lojaId) {
             
         if (error) throw error;
         
-        const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
-        if (badgeAtivos) {
-            badgeAtivos.innerText = `${ativosCount} ATIVOS`;
-        }
-        
-        if (produtos && produtos.length > 0) {
-            containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
-            let html = '';
-            
-            // Renderiza apenas os 3 primeiros produtos recentes no Dashboard
-            produtos.slice(0, 3).forEach(p => {
-                const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
-                html += `
-                    <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
-                                <img src="${fotoCapa}" class="w-full h-full object-cover">
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
-                                <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
-                            </div>
-                        </div>
-                        <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
-                    </div>
-                `;
-            });
-            
-            html += `
-                <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
-                    Ver Todos os Produtos
-                </button>
-            `;
-            containerProduto.innerHTML = html;
-        }
+        memDashboard.produtos = produtos || []; // Guarda na memória
+        renderizarProdutosDashboard(memDashboard.produtos); // Aplica no visual
     } catch (e) {
         console.error("Erro ao carregar produtos:", e);
     }
 }
 
-// ==========================================
-// PENDENTES DASHBOARD: VALIDAR ENCOMENDAS
-// ==========================================
+function renderizarProdutosDashboard(produtos) {
+    const containerProduto = document.getElementById('container-produtos');
+    const badgeAtivos = document.getElementById('badge-produtos-ativos');
+    if (!containerProduto) return;
 
+    const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
+    if (badgeAtivos) badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+    
+    if (produtos && produtos.length > 0) {
+        containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
+        let html = '';
+        
+        produtos.slice(0, 3).forEach(p => {
+            const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
+            html += `
+                <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                            <img src="${fotoCapa}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
+                            <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
+                        </div>
+                    </div>
+                    <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            `;
+        });
+        
+        html += `
+            <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
+                Ver Todos os Produtos
+            </button>
+        `;
+        containerProduto.innerHTML = html;
+    }
+}
+
+// ----------------------------------------------------
+// PEDIDOS PENDENTES
+// ----------------------------------------------------
 async function carregarPedidosPendentesDashboard(lojaId) {
-    const container = document.getElementById('container-pedidos');
-    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
-    const msgVazia = document.getElementById('msg-vazio');
-    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
-    const statPedidos = document.getElementById('stat-pedidos'); // O número gigante!
-    
-    if (!container) return;
-    
-    // Guardar o lojaId globalmente para atualizar silenciosamente depois
-    window.lojaIdAtivaDashboard = lojaId;
+    if (lojaId) window.lojaIdAtivaDashboard = lojaId;
     
     try {
         const { data: pedidos, error } = await window.supabaseClient
             .from('pedidos')
             .select('*')
-            .eq('loja_id', lojaId)
+            .eq('loja_id', lojaId || window.lojaIdAtivaDashboard)
             .order('created_at', { ascending: false });
             
         if (error) throw error;
         
-        const pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : [];
-        
-        // 1. Atualizar Número Gigante para PENDENTES
-        if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
-        if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
-        
-        if (badgePedidosHoje && pendentes.length > 0) {
-            badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
-            badgePedidosHoje.classList.remove('hidden');
-        } else if (badgePedidosHoje) {
-            badgePedidosHoje.classList.add('hidden');
-        }
-        
-        if (pendentes.length > 0) {
-            const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
-            container.innerHTML = '';
-            
-            let html = '';
-            // Renderiza apenas os ÚLTIMOS 3 PENDENTES
-            pendentes.slice(0, 3).forEach(p => {
-                const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
-                const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
-                
-                html += `
-                    <div id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 overflow-hidden mb-3 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 transform origin-top">
-                        <div class="px-5 py-4 border-b border-slate-50 dark:border-navy-800/50 flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                    <i class="fas fa-box-open text-sm"></i>
-                                </div>
-                                <div class="max-w-[130px]">
-                                    <h4 class="text-[13px] font-bold text-slate-900 dark:text-white leading-tight truncate">${p.cliente_nome}</h4>
-                                    <p class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">${descItens}</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>
-                                <p class="text-[9px] font-bold text-slate-400 mt-0.5">${dataFormatada}</p>
-                            </div>
-                        </div>
-                        <div class="px-3 py-3 bg-slate-50/50 dark:bg-slate-800/30 flex gap-2">
-                            <button onclick="confirmarPedidoAction('${p.id}', this)" class="flex-1 bg-[#0F172A] text-white h-11 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
-                                <i class="fas fa-check text-[10px]"></i> Confirmar
-                            </button>
-                            <button onclick="recusarPedidoAction('${p.id}', this)" class="w-11 h-11 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-400 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
-                                <i class="fas fa-times text-[12px]"></i>
-                            </button>
-                            <a href="https://wa.me/${p.cliente_telefone}" target="_blank" class="w-11 h-11 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
-                                <i class="fab fa-whatsapp text-[14px]"></i>
-                            </a>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-            if (cloneMsgVazio) {
-                cloneMsgVazio.style.display = 'none';
-                container.appendChild(cloneMsgVazio);
-            }
-        } else {
-            container.innerHTML = '';
-            if (msgVazia) {
-                container.appendChild(msgVazia);
-                msgVazia.style.display = 'flex';
-            }
-        }
+        memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; // Guarda na memória
+        renderizarPendentesDashboard(memDashboard.pendentes); // Aplica no visual
     } catch (e) {
         console.error("Erro ao carregar pedidos pendentes:", e);
     }
 }
 
+function renderizarPendentesDashboard(pendentes) {
+    const container = document.getElementById('container-pedidos');
+    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
+    const msgVazia = document.getElementById('msg-vazio');
+    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
+    const statPedidos = document.getElementById('stat-pedidos'); 
+    
+    if (!container) return;
+    
+    if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
+    if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
+    
+    if (badgePedidosHoje && pendentes.length > 0) {
+        badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
+        badgePedidosHoje.classList.remove('hidden');
+    } else if (badgePedidosHoje) {
+        badgePedidosHoje.classList.add('hidden');
+    }
+    
+    if (pendentes.length > 0) {
+        const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
+        container.innerHTML = '';
+        
+        let html = '';
+        pendentes.slice(0, 3).forEach(p => {
+            const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
+            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
+            
+            html += `
+                <div id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 overflow-hidden mb-3 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 transform origin-top">
+                    <div class="px-5 py-4 border-b border-slate-50 dark:border-navy-800/50 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <i class="fas fa-box-open text-sm"></i>
+                            </div>
+                            <div class="max-w-[130px]">
+                                <h4 class="text-[13px] font-bold text-slate-900 dark:text-white leading-tight truncate">${p.cliente_nome}</h4>
+                                <p class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">${descItens}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-0.5">${dataFormatada}</p>
+                        </div>
+                    </div>
+                    <div class="px-3 py-3 bg-slate-50/50 dark:bg-slate-800/30 flex gap-2">
+                        <button onclick="confirmarPedidoAction('${p.id}', this)" class="flex-1 bg-[#0F172A] text-white h-11 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+                            <i class="fas fa-check text-[10px]"></i> Confirmar
+                        </button>
+                        <button onclick="recusarPedidoAction('${p.id}', this)" class="w-11 h-11 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-400 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fas fa-times text-[12px]"></i>
+                        </button>
+                        <a href="https://wa.me/${p.cliente_telefone}" target="_blank" class="w-11 h-11 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fab fa-whatsapp text-[14px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        if (cloneMsgVazio) {
+            cloneMsgVazio.style.display = 'none';
+            container.appendChild(cloneMsgVazio);
+        }
+    } else {
+        container.innerHTML = '';
+        if (msgVazia) {
+            container.appendChild(msgVazia);
+            msgVazia.style.display = 'flex';
+        }
+    }
+}
+
+// Em animarRemocaoPedidoEAtualizar(card), continue a usar:
+// if (window.lojaIdAtivaDashboard) { carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard); }
 async function confirmarPedidoAction(pedidoId, btnElement) {
     const card = document.getElementById(`card-pendente-${pedidoId}`);
     if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
@@ -496,7 +504,6 @@ function animarRemocaoPedidoEAtualizar(card) {
         if (numeroHoje - 1 === 0) badgePedidosHoje.classList.add('hidden');
     }
 
-    // 2. Animar e remover o cartão
     if (!card) return;
     card.style.transition = 'all 0.35s ease';
     card.style.transform = 'scale(0.95)';
@@ -511,11 +518,10 @@ function animarRemocaoPedidoEAtualizar(card) {
         setTimeout(() => {
             card.remove();
             
-            // 3. Puxar um novo pedido caso exista (Silenciosamente) para repor a lista
+            // Re-busca do banco para atualizar o cache "memDashboard" também
             if (window.lojaIdAtivaDashboard) {
                 carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard);
             }
         }, 300);
     }, 150);
 }
-
