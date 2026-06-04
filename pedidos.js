@@ -11,16 +11,13 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
 
                 <div class="sf-card p-6">
-                    <div class="flex justify-between items-center mb-5">
+     if (forcarAtualizacao) {
+        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i> Atualizando...</div>';
+    }               <div class="flex justify-between items-center mb-5">
                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Histórico de Pedidos</h3>
                        <button onclick="carregarHistoricoPedidos(true)" class="text-slate-400 hover:text-slate-600 active:scale-90 transition-transform"><i class="fas fa-sync-alt"></i></button>
                     </div>
-                    <div class="space-y-3" }id="lista-pedidos-historico">
-                        <div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center">
-                             <i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>
-                             Carregando pedidos...
-                        </div>
-                    </div>
+                    <div class="space-y-3" id="lista-pedidos-historico"></div>
                 </div>
             </div>
         </div>
@@ -64,7 +61,7 @@ async function carregarHistoricoPedidos(forcarAtualizacao = false) {
         return; // Impede que o código perca tempo
     }
 
-    if (forcarAtualizacao) {
+    if (!window.AppCache || !window.AppCache.pedidos || forcarAtualizacao) {
         lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i> Atualizando...</div>';
     }
 

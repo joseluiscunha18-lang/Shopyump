@@ -85,7 +85,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
-                        <div id="msg-vazio" class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3">
+                        <div id="msg-vazio" class="col-span-full py-12 flex-col items-center justify-center text-center gap-3" style="display: none;">
                             <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-sm">
                                 <i class="fa-solid fa-receipt text-2xl"></i>
                             </div>
@@ -148,17 +148,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             <span id="badge-produtos-ativos" class="text-[9px] font-black text-slate-500 uppercase tracking-widest">0 ativos</span>
                         </div>
                         
-                        <div id="container-produtos" class="w-full mt-3">
-                            <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 dark:bg-slate-800 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-all active:scale-[0.98] group">
-                                <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-plus text-xl"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
-                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
-                                </div>
-                            </button>
-                        </div>
+                        <div id="container-produtos" class="w-full mt-3"></div>
                     </section>
                 </div>
             </div>
