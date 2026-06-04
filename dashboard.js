@@ -37,13 +37,13 @@ document.body.insertAdjacentHTML('beforeend', `
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1.5">
                                     <div class="w-1.5 h-1.5 rounded-full bg-[#9f6ef5] animate-pulse"></div>
-                                    <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
+                                    <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Total de Pedidos</p>
                                 </div>
-                                <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg"></span>
+                                <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg uppercase">0 Pendentes</span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">0</h3>
-                                <span class="text-[12px] font-bold text-slate-600/80">no total</span>
+                                <span class="text-[12px] font-bold text-slate-600/80">no sistema</span>
                             </div>
                         </div>
                     </div>
@@ -75,24 +75,18 @@ document.body.insertAdjacentHTML('beforeend', `
         <main class="w-full bg-[#F9F7F5] dark:bg-[#020617] rounded-t-[40px] -mt-10 relative z-20 px-6 pt-10 pb-32 min-h-[50vh] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col items-center">
             <div class="w-full max-w-md space-y-8">
 
-                <section class="space-y-4 pt-2" id="area-validacao">
+                <section class="space-y-4 pt-2">
                     <div class="flex justify-between items-end px-1">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
-                            <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Últimas Entradas</h3>
+                            <p class="text-xs font-bold text-slate-900 dark:text-white">Pedidos Recentes</p>
                         </div>
-                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
+                        <button onclick="navegarAnimado('vendas')" class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 hover:text-emerald-700 bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 rounded-md uppercase tracking-widest transition-colors active:scale-95">Ver Todos</button>
                     </div>
 
-                    <div class="order-scroll-area" id="container-pedidos">
-                        <div id="msg-vazio" class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3">
-                            <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-sm">
-                                <i class="fa-solid fa-receipt text-2xl"></i>
-                            </div>
-                            <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Sem pedidos pendentes</h4>
-                            <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
-                                Quando os teus clientes comprarem, os pedidos aparecerão aqui.
-                            </p>
+                    <div id="dash-pedidos-recentes" class="flex flex-col gap-3 mt-3">
+                        <div class="bg-white dark:bg-navy-900 p-8 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex justify-center items-center">
+                            <i class="fas fa-circle-notch fa-spin text-2xl text-slate-300"></i>
                         </div>
                     </div>
                 </section>
@@ -100,7 +94,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden">
                     <div class="flex items-center justify-between mb-8">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tráfego da Loja</h3>
                             <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
                         </div>
                         <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
@@ -128,13 +122,13 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                     </div>
                     <div class="flex justify-between mt-4 px-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>S?b</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
+                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
                     </div>
                 </section>
 
                 <div class="grid grid-cols-1 gap-6">
                     <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800">
-                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tr?fego</h3>
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tráfego</h3>
                         <div class="space-y-4">
                             <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
                             <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
@@ -155,7 +149,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
-                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
+                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
                                 </div>
                             </button>
                         </div>
@@ -166,7 +160,9 @@ document.body.insertAdjacentHTML('beforeend', `
     </template>
 `);
 
-// dashboard.js - Lógica exclusiva do Dashboard
+// ==========================================
+// LÓGICA DO DASHBOARD
+// ==========================================
 
 function animarNumero(id, valorFinal) {
     const elemento = document.getElementById(id);
@@ -186,27 +182,6 @@ function animarNumero(id, valorFinal) {
         }
     };
     atualizar();
-}
-
-function confirmarComAnimacao(id) {
-    const card = document.getElementById(id);
-    if (!card) return;
-    card.style.transition = 'all 0.35s ease';
-    card.style.transform = 'scale(0.9) translateY(-20px)';
-    card.style.opacity = '0';
-    setTimeout(() => {
-        card.remove();
-        const container = document.getElementById('container-pedidos');
-        const msgVazia = document.getElementById('msg-vazio');
-        if (container && container.children.length === 0 && msgVazia) {
-            msgVazia.style.display = 'flex';
-        }
-    }, 380);
-}
-
-function initDashboard() {
-    // A interface arranca a zeros no HTML, logo esta fun??o fica reservada 
-    // para quando integrares a l?gica de buscar dados estat?sticos reais do backend
 }
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -231,24 +206,17 @@ async function carregarDadosLojaDashboard() {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
                 
-                // Formatação humana com emoji e sem repetir a loja
                 if (h2Saudacao) {
                     const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
                     h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
                 }
                 
-                // Manda o nome da loja apenas para o topo (cabeçalho)
                 if (headerTitulo) headerTitulo.innerText = loja.nome || '';
                 
-                // Configurar botões de link
                 const btnVerLoja = document.getElementById('btn-ver-loja');
                 const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+                if (btnVerLoja) btnVerLoja.href = urlLoja;
                 
-                if (btnVerLoja) {
-                    btnVerLoja.href = urlLoja;
-                }
-                
-                // Configurar o botão de copiar
                 const btnCopiar = document.getElementById('btn-copiar-loja');
                 if (btnCopiar) {
                     btnCopiar.onclick = () => {
@@ -256,26 +224,109 @@ async function carregarDadosLojaDashboard() {
                             const icone = document.getElementById('icone-copiar');
                             if (icone) {
                                 icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
-                                setTimeout(() => {
-                                    icone.className = 'fa-regular fa-copy text-[14px]';
-                                }, 2000);
+                                setTimeout(() => icone.className = 'fa-regular fa-copy text-[14px]', 2000);
                             }
                         });
                     };
                 }
                 
-                // Carregar produtos reais da loja
-                await carregarProdutosDashboard(loja.id);
+                // Dispara os carregamentos em paralelo
+                carregarPedidosDashboard(loja.id);
+                carregarProdutosDashboard(loja.id);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
-                
                 if (h2Saudacao) h2Saudacao.innerHTML = 'Olá! <span class="text-3xl">👋</span>';
                 if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+async function carregarPedidosDashboard(lojaId) {
+    const container = document.getElementById('dash-pedidos-recentes');
+    
+    try {
+        const { data: pedidos, error } = await window.supabaseClient
+            .from('pedidos')
+            .select('cliente_nome, total, status, created_at, itens')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Atualizar os Cartões Gigantes no Topo
+        if (pedidos) {
+            const pendentes = pedidos.filter(p => (p.status || '').toLowerCase() === 'pendente').length;
+            const confirmados = pedidos.filter(p => (p.status || '').toLowerCase() === 'confirmado').length;
+            const total = pedidos.length;
+
+            animarNumero('stat-pedidos', total);
+            animarNumero('stat-confirmados', confirmados);
+
+            const badgePendentes = document.getElementById('badge-pedidos-hoje');
+            if (badgePendentes && pendentes > 0) {
+                badgePendentes.innerText = `${pendentes} PENDENTE(S)`;
+                badgePendentes.classList.remove('hidden');
+            } else if (badgePendentes) {
+                badgePendentes.classList.add('hidden');
+            }
+        }
+if (!container) return;
+
+        // Renderizar a lista de Pedidos Recentes
+        if (!pedidos || pedidos.length === 0) {
+            container.innerHTML = `
+                <div class="bg-white dark:bg-navy-900 p-8 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex flex-col items-center justify-center text-center">
+                    <div class="w-14 h-14 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-300 mb-3">
+                        <i class="fas fa-box-open text-2xl"></i>
+                    </div>
+                    <p class="text-[14px] font-bold text-slate-900 dark:text-white">Sem encomendas novas.</p>
+                    <p class="text-[12px] font-medium text-slate-500 mt-1">Os teus próximos pedidos aparecerão aqui.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        pedidos.slice(0, 3).forEach(p => {
+            const st = (p.status || 'pendente').toLowerCase();
+            let badgeColor = st === 'pendente' ? 'bg-orange-100 text-orange-600' : 
+                             st === 'confirmado' ? 'bg-emerald-100 text-emerald-600' : 
+                             'bg-red-100 text-red-600';
+            
+            const numItens = p.itens ? p.itens.length : 0;
+            const desc = numItens === 1 ? '1 artigo' : `${numItens} artigos`;
+
+            html += `
+                <div onclick="navegarAnimado('vendas')" class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-transform">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 flex-shrink-0">
+                            <i class="fas fa-shopping-bag text-[16px]"></i>
+                        </div>
+                        <div>
+                            <p class="text-[13px] font-bold text-slate-900 dark:text-white line-clamp-1">${p.cliente_nome}</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[10px] font-semibold text-slate-500">${desc}</span>
+                                <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                <span class="text-[9px] font-black ${badgeColor} px-1.5 py-0.5 rounded-md uppercase tracking-widest">${st}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right pl-2">
+                        <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] font-bold text-slate-400">MT</span></p>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+    } catch (e) {
+        console.error("Erro ao carregar pedidos para dashboard:", e);
+        if (container) container.innerHTML = '<p class="text-center text-[11px] text-red-400 font-bold py-4">Falha ao carregar pedidos.</p>';
     }
 }
 
@@ -303,13 +354,12 @@ async function carregarProdutosDashboard(lojaId) {
             containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
             let html = '';
             
-            // Renderiza apenas os 3 primeiros produtos recentes no Dashboard
             produtos.slice(0, 3).forEach(p => {
                 const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
                 html += `
                     <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
                         <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                            <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden flex-shrink-0">
                                 <img src="${fotoCapa}" class="w-full h-full object-cover">
                             </div>
                             <div>
