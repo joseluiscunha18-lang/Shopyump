@@ -88,3 +88,22 @@ document.addEventListener('click', (e) => {
         overlay.classList.remove('show');
     }
 });
+
+// Ouve as atualizações do banco de dados no Supabase e atualiza silenciosamente
+if (window.supabaseClient) {
+    window.supabaseClient.channel('pedidos-em-tempo-real')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+         // Ouve novos registos de pedidos
+         if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
+         if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
+         
+         // Se você estiver justamente na página de vendas, recarrega de fundo
+         const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
+         if (rotaAtual === 'vendas' && typeof carregarHistoricoPedidos === 'function') {
+             carregarHistoricoPedidos();
+         } else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
+             window.forcarAtualizacaoDashboard();
+         }
+      })
+      .subscribe();
+}

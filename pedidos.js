@@ -45,10 +45,17 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // Lógica de Vendas/Pedidos
 let todosOsPedidos = [];
+let pedidosCarregados = false; // Variável para controlar o cache
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'vendas') {
-        carregarHistoricoPedidos();
+        if (!pedidosCarregados) {
+            carregarHistoricoPedidos();
+        } else {
+            // Se já temos na memória, mostramos imediatamente sem tela de 'carregando...'
+            const btnTudo = document.querySelector('.filtro-btn.active');
+            filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+        }
     }
 });
 
@@ -78,6 +85,7 @@ async function carregarHistoricoPedidos() {
         if (error) throw error;
 
         todosOsPedidos = pedidos || [];
+        pedidosCarregados = true; // Marca que os pedidos já estão guardados na memória
         filtrarPedidos('tudo');
 
     } catch (e) {

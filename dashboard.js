@@ -204,11 +204,27 @@ function initDashboard() {
     // para quando integrares a l?gica de buscar dados estat?sticos reais do backend
 }
 
+// Variável na memória para saber se o dashboard já carregou
+let dashboardCarregado = false;
+
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        carregarDadosLojaDashboard();
+        // Só carrega do banco de dados se for a primeira vez
+        if (!dashboardCarregado) {
+            carregarDadosLojaDashboard().then(() => {
+                dashboardCarregado = true; // Salva que já foi carregado
+            });
+        }
     }
 });
+
+// Permitir que outras partes do código forces a atualização
+window.forcarAtualizacaoDashboard = () => {
+    dashboardCarregado = false;
+    carregarDadosLojaDashboard().then(() => {
+        dashboardCarregado = true;
+    });
+};
 
 async function carregarDadosLojaDashboard() {
     try {
