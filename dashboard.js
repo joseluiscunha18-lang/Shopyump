@@ -348,7 +348,7 @@ async function carregarPedidosPendentesDashboard(lojaId) {
     const badgeAtivos = document.getElementById('badge-acoes-pendentes');
     const msgVazia = document.getElementById('msg-vazio');
     const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
-    const statPedidos = document.getElementById('stat-pedidos');
+    const statPedidos = document.getElementById('stat-pedidos'); // O número gigante!
     
     if (!container) return;
     
@@ -366,8 +366,10 @@ async function carregarPedidosPendentesDashboard(lojaId) {
         
         const pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : [];
         
+        // 1. Atualizar Número Gigante para PENDENTES
+        if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
         if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
-        if (statPedidos) statPedidos.innerText = pedidos ? pedidos.length : '0';
+        
         if (badgePedidosHoje && pendentes.length > 0) {
             badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
             badgePedidosHoje.classList.remove('hidden');
@@ -462,10 +464,16 @@ async function recusarPedidoAction(pedidoId, btnElement) {
 }
 
 function animarRemocaoPedidoEAtualizar(card) {
-    // 1. Reduzir instantaneamente os contadores visuais sem esperar pelo servidor
+    // 1. Reduzir instantaneamente TODOS os contadores (Incluindo o Gigante)
+    const statPedidos = document.getElementById('stat-pedidos');
     const badgeAtivos = document.getElementById('badge-acoes-pendentes');
     const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
     
+    if (statPedidos) {
+        let numeroGigante = parseInt(statPedidos.innerText) || 0;
+        if (numeroGigante > 0) statPedidos.innerText = (numeroGigante - 1).toString();
+    }
+
     if (badgeAtivos) {
         let numero = parseInt(badgeAtivos.innerText) || 0;
         if (numero > 0) badgeAtivos.innerText = `${numero - 1} Pendentes`;
@@ -492,7 +500,7 @@ function animarRemocaoPedidoEAtualizar(card) {
         setTimeout(() => {
             card.remove();
             
-            // 3. Puxar um novo pedido caso exista (Silenciosamente)
+            // 3. Puxar um novo pedido caso exista (Silenciosamente) para repor a lista
             if (window.lojaIdAtivaDashboard) {
                 carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard);
             }
