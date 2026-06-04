@@ -223,14 +223,22 @@ window.AppCache = {
 };
 
 async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
+    // 1. FAST-PATH: Se tiver cache, reconstrói a tela IMEDIATAMENTE sem atrasos nem loadings!
+    if (!forcarAtualizacao && window.AppCache && window.AppCache.loja) {
+        aplicarLojaNaTela(window.AppCache.loja);
+        carregarProdutosDashboard(window.AppCache.loja.id, false);
+        carregarPedidosPendentesDashboard(window.AppCache.loja.id, false);
+        return; // Pára aqui, zero acesso ao servidor
+    }
+
     try {
+        // 2. Só puxa a sessão se a cache não existir
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
         
         if (userId) {
             let loja = window.AppCache.loja;
             
-            // Só vai ao banco de dados se não tivermos a loja salva OU se forçarmos atualização
             if (!loja || forcarAtualizacao) {
                 const { data } = await window.supabaseClient
                     .from('lojas')
@@ -238,51 +246,13 @@ async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
                     .eq('perfil_id', userId)
                     .maybeSingle();
                 loja = data;
-                window.AppCache.loja = loja;
+                window.AppCache.loja = loja; // Guarda no Cache global
             }
                 
             if (loja) {
-                const h2Saudacao = document.getElementById('dash-saudacao');
-                const headerTitulo = document.getElementById('header-titulo');
-                
-                // Formatação humana com emoji e sem repetir a loja
-                if (h2Saudacao) {
-                    const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
-                    h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
-                }
-                
-                // Manda o nome da loja apenas para o topo (cabeçalho)
-                if (headerTitulo) headerTitulo.innerText = loja.nome || '';
-                
-                // Configurar botões de link
-                const btnVerLoja = document.getElementById('btn-ver-loja');
-                const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
-                
-                if (btnVerLoja) {
-                    btnVerLoja.href = urlLoja;
-                }
-                
-                // Configurar o botão de copiar
-                const btnCopiar = document.getElementById('btn-copiar-loja');
-                if (btnCopiar) {
-                    btnCopiar.onclick = () => {
-                        navigator.clipboard.writeText(urlLoja).then(() => {
-                            const icone = document.getElementById('icone-copiar');
-                            if (icone) {
-                                icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
-                                setTimeout(() => {
-                                    icone.className = 'fa-regular fa-copy text-[14px]';
-                                }, 2000);
-                            }
-                        });
-                    };
-                }
-                
-                // Carregar produtos reais da loja
-                await carregarProdutosDashboard(loja.id);
-
-                // Carregar as encomendas pendentes para o ecrã inicial
-                await carregarPedidosPendentesDashboard(loja.id);
+                aplicarLojaNaTela(loja);
+                await carregarProdutosDashboard(loja.id, forcarAtualizacao);
+                await carregarPedidosPendentesDashboard(loja.id, forcarAtualizacao);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -293,6 +263,35 @@ async function carregarDadosLojaDashboard(forcarAtualizacao = false) {
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+// Função auxiliar para injetar a loja limpa no HTML rapidamente
+function aplicarLojaNaTela(loja) {
+    const h2Saudacao = document.getElementById('dash-saudacao');
+    const headerTitulo = document.getElementById('header-titulo');
+    
+    if (h2Saudacao) {
+        const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
+        h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+    }
+    if (headerTitulo) headerTitulo.innerText = loja.nome || '';
+    
+    const btnVerLoja = document.getElementById('btn-ver-loja');
+    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+    if (btnVerLoja) btnVerLoja.href = urlLoja;
+    
+    const btnCopiar = document.getElementById('btn-copiar-loja');
+    if (btnCopiar) {
+        btnCopiar.onclick = () => {
+            navigator.clipboard.writeText(urlLoja).then(() => {
+                const icone = document.getElementById('icone-copiar');
+                if (icone) {
+                    icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
+                    setTimeout(() => { icone.className = 'fa-regular fa-copy text-[14px]'; }, 2000);
+                }
+            });
+        };
     }
 }
 
