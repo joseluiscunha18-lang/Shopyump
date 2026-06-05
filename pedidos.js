@@ -173,7 +173,6 @@ async function carregarHistoricoPedidos() {
         lista.innerHTML = '<p class="text-center text-amber-500 py-4">Os dados carregaram bem, mas ocorreu um erro a desenhá-los na tela. (Ver Console)</p>';
     }
 }
-
 // pedidos-fix.js - Ficheiro com as funções de renderização em falta para a página de vendas
 
 // 1. Função para Filtrar Pedidos (chamada pelos botões no topo da página de vendas)
@@ -200,7 +199,8 @@ window.renderizarListaPedidos = function(filtro) {
     if (!lista) return;
 
     // Filtrar a lista global que vem do Supabase (guardada em todosOsPedidos)
-    let pedidosFiltrados = window.todosOsPedidos || [];
+    const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
+    let pedidosFiltrados = [...basePedidos];
     if (filtro && filtro !== 'tudo') {
         pedidosFiltrados = pedidosFiltrados.filter(p => p.status === filtro);
     }
@@ -295,7 +295,8 @@ window.renderizarListaPedidos = function(filtro) {
 
 // 3. Funções do Modal de Pedido (mostrar pormenores ao clicar no bilhete)
 window.abrirModalPedido = function(id) {
-    const pedido = window.todosOsPedidos.find(p => p.id === id);
+    const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
+    const pedido = basePedidos.find(p => p.id === id);
     if (!pedido) return;
 
     const modal = document.getElementById('modal-pedido');
