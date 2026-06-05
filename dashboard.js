@@ -496,22 +496,22 @@ async function recusarPedidoAction(pedidoId, btnElement) {
     }
 }
 
+// ────── CÓDIGO A SUBSTITUIR EM: dashboard.js ──────
+
 function animarRemocaoPedidoEAtualizar(card) {
-    // 1. Reduzir instantaneamente TODOS os contadores (Incluindo o Gigante)
     const statPedidos = document.getElementById('stat-pedidos');
     const badgeAtivos = document.getElementById('badge-acoes-pendentes');
     const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
     
+    // Altera os números da página imediatamente
     if (statPedidos) {
         let numeroGigante = parseInt(statPedidos.innerText) || 0;
         if (numeroGigante > 0) statPedidos.innerText = (numeroGigante - 1).toString();
     }
-
     if (badgeAtivos) {
         let numero = parseInt(badgeAtivos.innerText) || 0;
         if (numero > 0) badgeAtivos.innerText = `${numero - 1} Pendentes`;
     }
-    
     if (badgePedidosHoje) {
         let numeroHoje = parseInt(badgePedidosHoje.innerText) || 0;
         if (numeroHoje > 0) badgePedidosHoje.innerText = `${numeroHoje - 1} PENDENTE(S)`;
@@ -523,6 +523,7 @@ function animarRemocaoPedidoEAtualizar(card) {
     card.style.transform = 'scale(0.95)';
     card.style.opacity = '0';
     
+    // Exclui o visual maravilhosamente sem travar ou sobrecarregar a BD
     setTimeout(() => {
         card.style.height = '0px';
         card.style.margin = '0px';
@@ -531,11 +532,7 @@ function animarRemocaoPedidoEAtualizar(card) {
         
         setTimeout(() => {
             card.remove();
-            
-            // Re-busca do banco para atualizar o cache "memDashboard" também
-            if (window.lojaIdAtivaDashboard) {
-                carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard);
-            }
+            // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
         }, 300);
     }, 150);
 }

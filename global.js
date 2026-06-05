@@ -89,66 +89,68 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Substitua o código de escuta global por este:
+// ────── CÓDIGO A SUBSTITUIR EM: global.js ──────
 
-// Função robusta para iniciar a conexão em Tempo Real
+// Função robusta e invencível de Tempo Real
 function iniciarTempoRealPedidos() {
     if (!window.supabaseClient) return;
 
-    // Se já existe um canal aberto, evitamos duplicar
+    // PREVENÇÃO VITAL: Bloqueia a abertura se já existir (O canal FICA VIVO PARA SEMPRE).
     if (window.canalPedidosTempoReal) {
-        window.supabaseClient.removeChannel(window.canalPedidosTempoReal);
+        return; 
     }
 
-    // Cria e subscreve no canal
+    // Cria e subscreve no canal UMA ÚNICA VEZ
     window.canalPedidosTempoReal = window.supabaseClient.channel('pedidos-em-tempo-real')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
-         console.log('📦 Novo sinal em tempo real (Pedidos):', payload);
+         console.log('📦 ENCOMENDA MÁGICA RECEBIDA (Realtime):', payload);
          
-         // 1. Atualizar Memória dos Pedidos (Página Vendas)
+         // 1. Atualizar Memória dos Pedidos (Aba Vendas) MAGICAMENTE!
          if (typeof todosOsPedidos !== 'undefined') {
              if (payload.eventType === 'INSERT') {
-                 todosOsPedidos.unshift(payload.new); 
+                 // Adiciona sem clonar repetidas
+                 const exists = todosOsPedidos.find(p => p.id === payload.new.id);
+                 if (!exists) todosOsPedidos.unshift(payload.new); 
              } else if (payload.eventType === 'UPDATE') {
                  const i = todosOsPedidos.findIndex(p => p.id === payload.new.id);
                  if (i !== -1) todosOsPedidos[i] = payload.new;
              }
          }
 
+         // 2. Atualizar Memória do Dashboard Principal (Home) MAGICAMENTE!
+         if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
+             if (payload.eventType === 'INSERT' && payload.new.status === 'pendente') {
+                  const exists = memDashboard.pendentes.find(p => p.id === payload.new.id);
+                  if (!exists) memDashboard.pendentes.unshift(payload.new);
+             } else if (payload.eventType === 'UPDATE') {
+                  if (payload.new.status !== 'pendente') {
+                       memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== payload.new.id);
+                  }
+             }
+         }
+
          const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
          
-         // 2. Com base na rota atual, decide o que atualizar na interface
+         // 3. RENDERIZA OS ECRÃS EM TEMPO REAL SEM NUNCA PRECISAR CARREGAR SÍMBOLOS
          if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
-             // Se estivermos na aba Vendas, atualizamos apenas as listas instantaneamente
              const btnTudo = document.querySelector('.filtro-btn.active');
              renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
          } 
-         else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
-             // Se estivermos no Dashboard, forçamos o refresh do dashboard
-             window.forcarAtualizacaoDashboard();
+         else if (rotaAtual === 'dashboard' && typeof renderizarPendentesDashboard === 'function' && typeof memDashboard !== 'undefined') {
+             // Força o desenho puramente visual para atualizar o ecrã instantâneo da Home.
+             renderizarPendentesDashboard(memDashboard.pendentes);
          } 
          else {
-             // Se o utilizador estiver noutra página qualquer (ex: Produtos), 
-             // limpamos os caches para re-carregar do zero da próxima vez que ele for ao Dashboard ou Pedidos
+             // Limpa variáveis se o utilizador está despido numa outra aba, assim vai recarregar do banco fresco
              if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
              if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
          }
       })
-      .subscribe((status) => {
-          console.log("📡 Status do Supabase Realtime:", status);
-      });
+      .subscribe();
 }
 
-// ----------------------------------------------------------------------
-// EXTREMAMENTE IMPORTANTE: Aciona o Tempo Real de forma Segura
-// ----------------------------------------------------------------------
-
-// 1. Iniciar quando uma página é carregada via SPA (garante que inicializa na navegação)
-document.addEventListener('spa:page-loaded', () => {
-    iniciarTempoRealPedidos();
-});
-
-// 2. Executa apenas se o window já carregou e o utilizador existir na sessão atual 
+// 4. Inicia APENAS UMA VEZ DE FORMA SILENCIOSA. 
+// A tua UI vai sempre funcionar nas sombras quando houver encomendas
 setTimeout(() => {
     iniciarTempoRealPedidos();
-}, 2000); // 2 segundos após a inicialização dá tempo do Supabase carregar a Sessão do Utilizador
+}, 2000);
