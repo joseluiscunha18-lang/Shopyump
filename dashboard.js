@@ -357,8 +357,9 @@ function renderizarProdutosDashboard(produtos) {
     }
 }
 
-// ────── CÓDIGO A SUBSTITUIR EM: dashboard.js ──────
-
+// ----------------------------------------------------
+// PEDIDOS PENDENTES
+// ----------------------------------------------------
 async function carregarPedidosPendentesDashboard(lojaId) {
     if (lojaId) window.lojaIdAtivaDashboard = lojaId;
     
@@ -371,41 +372,105 @@ async function carregarPedidosPendentesDashboard(lojaId) {
             
         if (error) throw error;
         
-        // CONECTAR: Preencher todos os pedidos para que a aba Vendas os encontre prontos sem processar de novo!
-        if (typeof window !== 'undefined') {
-            window.todosOsPedidos = pedidos || [];
-            window.pedidosCarregados = true;
-        }
-
-        if (typeof memDashboard !== 'undefined') {
-            memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; 
-            renderizarPendentesDashboard(memDashboard.pendentes); 
-        }
+        memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; // Guarda na memória
+        renderizarPendentesDashboard(memDashboard.pendentes); // Aplica no visual
     } catch (e) {
         console.error("Erro ao carregar pedidos pendentes:", e);
     }
 }
 
+function renderizarPendentesDashboard(pendentes) {
+    const container = document.getElementById('container-pedidos');
+    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
+    const msgVazia = document.getElementById('msg-vazio');
+    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
+    const statPedidos = document.getElementById('stat-pedidos'); 
+    
+    if (!container) return;
+    
+    if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
+    if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
+    
+    if (badgePedidosHoje && pendentes.length > 0) {
+        badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
+        badgePedidosHoje.classList.remove('hidden');
+    } else if (badgePedidosHoje) {
+        badgePedidosHoje.classList.add('hidden');
+    }
+    
+    if (pendentes.length > 0) {
+        const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
+        container.innerHTML = '';
+        
+        let html = '';
+        pendentes.slice(0, 3).forEach(p => {
+            const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
+            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
+            
+            html += `
+                <div id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 overflow-hidden mb-3 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 transform origin-top">
+                    <div class="px-5 py-4 border-b border-slate-50 dark:border-navy-800/50 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <i class="fas fa-box-open text-sm"></i>
+                            </div>
+                            <div class="max-w-[130px]">
+                                <h4 class="text-[13px] font-bold text-slate-900 dark:text-white leading-tight truncate">${p.cliente_nome}</h4>
+                                <p class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">${descItens}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-0.5">${dataFormatada}</p>
+                        </div>
+                    </div>
+                    <div class="px-3 py-3 bg-slate-50/50 dark:bg-slate-800/30 flex gap-2">
+                        <button onclick="confirmarPedidoAction('${p.id}', this)" class="flex-1 bg-[#0F172A] text-white h-11 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+                            <i class="fas fa-check text-[10px]"></i> Confirmar
+                        </button>
+                        <button onclick="recusarPedidoAction('${p.id}', this)" class="w-11 h-11 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-400 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fas fa-times text-[12px]"></i>
+                        </button>
+                        <a href="https://wa.me/${p.cliente_telefone}" target="_blank" class="w-11 h-11 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fab fa-whatsapp text-[14px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        if (cloneMsgVazio) {
+            cloneMsgVazio.style.display = 'none';
+            container.appendChild(cloneMsgVazio);
+        }
+    } else {
+        container.innerHTML = '';
+        if (msgVazia) {
+            container.appendChild(msgVazia);
+            msgVazia.style.display = 'flex';
+        }
+    }
+}
+
+// Em animarRemocaoPedidoEAtualizar(card), continue a usar:
+// if (window.lojaIdAtivaDashboard) { carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard); }
 async function confirmarPedidoAction(pedidoId, btnElement) {
     const card = document.getElementById(`card-pendente-${pedidoId}`);
     if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
     
     try {
-        // Mágica 1: Atualiza a memória Global instantaneamente
-        if (typeof window.todosOsPedidos !== 'undefined') {
-            const index = window.todosOsPedidos.findIndex(p => p.id === pedidoId);
-            if (index !== -1) window.todosOsPedidos[index].status = 'confirmado';
-        }
-        if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
-             memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== pedidoId);
-        }
-
-        animarRemocaoPedidoEAtualizar(card);
-        
-        // Atualiza base de dados
         const { error } = await window.supabaseClient.from('pedidos').update({ status: 'confirmado' }).eq('id', pedidoId);
-        if (error) throw error;
-        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Pedido Confirmado!');
+        if (!error) {
+            if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Pedido Confirmado!');
+            animarRemocaoPedidoEAtualizar(card);
+            
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'confirmado';
+            }
+        }
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-check text-[10px]"></i> Confirmar';
     }
@@ -416,30 +481,29 @@ async function recusarPedidoAction(pedidoId, btnElement) {
     if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
     
     try {
-        // Mágica 1: Atualiza a memória Global instantaneamente
-        if (typeof window.todosOsPedidos !== 'undefined') {
-            const index = window.todosOsPedidos.findIndex(p => p.id === pedidoId);
-            if (index !== -1) window.todosOsPedidos[index].status = 'cancelado';
-        }
-        if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
-             memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== pedidoId);
-        }
-
-        animarRemocaoPedidoEAtualizar(card);
-        
-        // Atualiza base de dados
         const { error } = await window.supabaseClient.from('pedidos').update({ status: 'cancelado' }).eq('id', pedidoId);
-        if (error) throw error;
+        if (!error) {
+            animarRemocaoPedidoEAtualizar(card);
+            
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'cancelado';
+            }
+        }
     } catch (e) {
         if (btnElement) btnElement.innerHTML = '<i class="fas fa-times text-[12px]"></i>';
     }
 }
+
+// ────── CÓDIGO A SUBSTITUIR EM: dashboard.js ──────
 
 function animarRemocaoPedidoEAtualizar(card) {
     const statPedidos = document.getElementById('stat-pedidos');
     const badgeAtivos = document.getElementById('badge-acoes-pendentes');
     const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
     
+    // Altera os números da página imediatamente
     if (statPedidos) {
         let numeroGigante = parseInt(statPedidos.innerText) || 0;
         if (numeroGigante > 0) statPedidos.innerText = (numeroGigante - 1).toString();
@@ -459,11 +523,16 @@ function animarRemocaoPedidoEAtualizar(card) {
     card.style.transform = 'scale(0.95)';
     card.style.opacity = '0';
     
+    // Exclui o visual maravilhosamente sem travar ou sobrecarregar a BD
     setTimeout(() => {
         card.style.height = '0px';
         card.style.margin = '0px';
         card.style.border = 'none';
         card.style.padding = '0px';
-        setTimeout(() => { card.remove(); }, 300);
+        
+        setTimeout(() => {
+            card.remove();
+            // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
+        }, 300);
     }, 150);
 }

@@ -10,7 +10,7 @@ function toggleDarkMode() {
         localStorage.setItem('theme', 'dark');
     }
 }
-function iniciarTempoRealPedidos() {
+
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 function toggleSidebar() {
     const menu = document.getElementById('menuZ');
@@ -91,61 +91,66 @@ document.addEventListener('click', (e) => {
 
 // ────── CÓDIGO A SUBSTITUIR EM: global.js ──────
 
+// Função robusta e invencível de Tempo Real
 function iniciarTempoRealPedidos() {
     if (!window.supabaseClient) return;
 
+    // PREVENÇÃO VITAL: Bloqueia a abertura se já existir (O canal FICA VIVO PARA SEMPRE).
     if (window.canalPedidosTempoReal) {
         return; 
     }
 
+    // Cria e subscreve no canal UMA ÚNICA VEZ
     window.canalPedidosTempoReal = window.supabaseClient.channel('pedidos-em-tempo-real')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
-         console.log('📦 ENCOMENDA/ALTERAÇÃO RECEBIDA (Realtime):', payload);
+         console.log('📦 ENCOMENDA MÁGICA RECEBIDA (Realtime):', payload);
          
-         // 1. Atualizar Memória Plena (Aba Vendas) MAGICAMENTE!
-         if (typeof window.todosOsPedidos === 'undefined') window.todosOsPedidos = [];
-         
-         if (payload.eventType === 'INSERT') {
-             const exists = window.todosOsPedidos.find(p => p.id === payload.new.id);
-             if (!exists) window.todosOsPedidos.unshift(payload.new); 
-         } else if (payload.eventType === 'UPDATE') {
-             const i = window.todosOsPedidos.findIndex(p => p.id === payload.new.id);
-             if (i !== -1) window.todosOsPedidos[i] = payload.new;
+         // 1. Atualizar Memória dos Pedidos (Aba Vendas) MAGICAMENTE!
+         if (typeof todosOsPedidos !== 'undefined') {
+             if (payload.eventType === 'INSERT') {
+                 // Adiciona sem clonar repetidas
+                 const exists = todosOsPedidos.find(p => p.id === payload.new.id);
+                 if (!exists) todosOsPedidos.unshift(payload.new); 
+             } else if (payload.eventType === 'UPDATE') {
+                 const i = todosOsPedidos.findIndex(p => p.id === payload.new.id);
+                 if (i !== -1) todosOsPedidos[i] = payload.new;
+             }
          }
 
-         // 2. Atualizar Memória do Dashboard Principal MAGICAMENTE!
-         if (typeof memDashboard !== 'undefined') {
-             if (!memDashboard.pendentes) memDashboard.pendentes = [];
-             
+         // 2. Atualizar Memória do Dashboard Principal (Home) MAGICAMENTE!
+         if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
              if (payload.eventType === 'INSERT' && payload.new.status === 'pendente') {
                   const exists = memDashboard.pendentes.find(p => p.id === payload.new.id);
                   if (!exists) memDashboard.pendentes.unshift(payload.new);
              } else if (payload.eventType === 'UPDATE') {
                   if (payload.new.status !== 'pendente') {
-                       // Seca instantâneamente dos pendentes caso confirmado
                        memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== payload.new.id);
-                  } else {
-                       // Recoloca nos pendentes caso alguém reverta
-                       const exists = memDashboard.pendentes.find(p => p.id === payload.new.id);
-                       if (!exists) memDashboard.pendentes.unshift(payload.new);
                   }
              }
          }
 
          const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
          
-         // 3. RENDERIZA OS ECRÃS VISUALMENTE IMEDIATOS EM CADA PÁGINA
+         // 3. RENDERIZA OS ECRÃS EM TEMPO REAL SEM NUNCA PRECISAR CARREGAR SÍMBOLOS
          if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
              const btnTudo = document.querySelector('.filtro-btn.active');
              renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
          } 
          else if (rotaAtual === 'dashboard' && typeof renderizarPendentesDashboard === 'function' && typeof memDashboard !== 'undefined') {
+             // Força o desenho puramente visual para atualizar o ecrã instantâneo da Home.
              renderizarPendentesDashboard(memDashboard.pendentes);
          } 
+         else {
+             // Limpa variáveis se o utilizador está despido numa outra aba, assim vai recarregar do banco fresco
+             if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
+             if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
+         }
       })
       .subscribe();
 }
 
+// 4. Inicia APENAS UMA VEZ DE FORMA SILENCIOSA. 
+// A tua UI vai sempre funcionar nas sombras quando houver encomendas
 setTimeout(() => {
     iniciarTempoRealPedidos();
 }, 2000);
