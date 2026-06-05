@@ -91,33 +91,48 @@ document.addEventListener('click', (e) => {
 
 // Ouve as atualizações do banco de dados no Supabase e atualiza silenciosamente
 if (window.supabaseClient) {
+    // 1. Tenta remover conexões antigas para não duplicar avisos
+    window.supabaseClient.removeAllChannels();
+
     window.supabaseClient.channel('pedidos-em-tempo-real')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
          
-         // 1. Em vez de apagar o cache (pedidosCarregados = false), atualizamos o array em memória!
+         // 2. Atualiza a lista da página "Vendas/Pedidos" na Memória
          if (typeof todosOsPedidos !== 'undefined') {
              if (payload.eventType === 'INSERT') {
-                 todosOsPedidos.unshift(payload.new); 
+                 // Só mete no fim se não existir ainda (evita duplicação)
+                 if (!todosOsPedidos.some(p => p.id === payload.new.id)) {
+                     todosOsPedidos.unshift(payload.new); 
+                 }
              } else if (payload.eventType === 'UPDATE') {
                  const i = todosOsPedidos.findIndex(p => p.id === payload.new.id);
                  if (i !== -1) todosOsPedidos[i] = payload.new;
+             } else if (payload.eventType === 'DELETE') {
+                 todosOsPedidos = todosOsPedidos.filter(p => p.id !== payload.old.id);
              }
          }
 
-         const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
+         // 3. LÓGICA INFALÍVEL: Verifica que ecrã está visível AGORA pelos elementos HTML
+         const taNaVendas = document.getElementById('lista-pedidos-historico') !== null;
+         const taNoDashboard = document.getElementById('stat-pedidos') !== null;
          
-         // 2. Se a pessoa estiver AGORA na página pedidos, só re-renderiza o ecrã sem loading!
-         if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
+         // Se estiver ativamente na página de Pedidos:
+         if (taNaVendas && typeof renderizarListaPedidos === 'function') {
              const btnTudo = document.querySelector('.filtro-btn.active');
              renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
          } 
-         else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
+         
+         // Se estiver ativamente no Dashboard Inicial (Home):
+         if (taNoDashboard && typeof window.forcarAtualizacaoDashboard === 'function') {
+             // Força a recarregar e pintar o número novo em tempo real
              window.forcarAtualizacaoDashboard();
-         } 
-         else {
-             // Forçamos o dashboard a desatualizar APENAS se o usuário não estiver lá no momento
+         } else {
+             // Pede para forçar atualização recarregando do zero caso o utilizador entre no painel depois
              if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
          }
       })
-      .subscribe();
+      .subscribe((status) => {
+          // Isso ajuda a descobrir se ele conectou mesmo (veja no console do navegador)
+          console.log("Status Realtime dos Pedidos:", status);
+      });
 }
