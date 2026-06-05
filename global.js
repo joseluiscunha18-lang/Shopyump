@@ -89,50 +89,66 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Ouve as atualizações do banco de dados no Supabase e atualiza silenciosamente
-if (window.supabaseClient) {
-    // 1. Tenta remover conexões antigas para não duplicar avisos
-    window.supabaseClient.removeAllChannels();
+// Substitua o código de escuta global por este:
 
-    window.supabaseClient.channel('pedidos-em-tempo-real')
+// Função robusta para iniciar a conexão em Tempo Real
+function iniciarTempoRealPedidos() {
+    if (!window.supabaseClient) return;
+
+    // Se já existe um canal aberto, evitamos duplicar
+    if (window.canalPedidosTempoReal) {
+        window.supabaseClient.removeChannel(window.canalPedidosTempoReal);
+    }
+
+    // Cria e subscreve no canal
+    window.canalPedidosTempoReal = window.supabaseClient.channel('pedidos-em-tempo-real')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+         console.log('📦 Novo sinal em tempo real (Pedidos):', payload);
          
-         // 2. Atualiza a lista da página "Vendas/Pedidos" na Memória
+         // 1. Atualizar Memória dos Pedidos (Página Vendas)
          if (typeof todosOsPedidos !== 'undefined') {
              if (payload.eventType === 'INSERT') {
-                 // Só mete no fim se não existir ainda (evita duplicação)
-                 if (!todosOsPedidos.some(p => p.id === payload.new.id)) {
-                     todosOsPedidos.unshift(payload.new); 
-                 }
+                 todosOsPedidos.unshift(payload.new); 
              } else if (payload.eventType === 'UPDATE') {
                  const i = todosOsPedidos.findIndex(p => p.id === payload.new.id);
                  if (i !== -1) todosOsPedidos[i] = payload.new;
-             } else if (payload.eventType === 'DELETE') {
-                 todosOsPedidos = todosOsPedidos.filter(p => p.id !== payload.old.id);
              }
          }
 
-         // 3. LÓGICA INFALÍVEL: Verifica que ecrã está visível AGORA pelos elementos HTML
-         const taNaVendas = document.getElementById('lista-pedidos-historico') !== null;
-         const taNoDashboard = document.getElementById('stat-pedidos') !== null;
+         const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
          
-         // Se estiver ativamente na página de Pedidos:
-         if (taNaVendas && typeof renderizarListaPedidos === 'function') {
+         // 2. Com base na rota atual, decide o que atualizar na interface
+         if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
+             // Se estivermos na aba Vendas, atualizamos apenas as listas instantaneamente
              const btnTudo = document.querySelector('.filtro-btn.active');
              renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
          } 
-         
-         // Se estiver ativamente no Dashboard Inicial (Home):
-         if (taNoDashboard && typeof window.forcarAtualizacaoDashboard === 'function') {
-             // Força a recarregar e pintar o número novo em tempo real
+         else if (rotaAtual === 'dashboard' && typeof window.forcarAtualizacaoDashboard === 'function') {
+             // Se estivermos no Dashboard, forçamos o refresh do dashboard
              window.forcarAtualizacaoDashboard();
-         } else {
-             // Pede para forçar atualização recarregando do zero caso o utilizador entre no painel depois
+         } 
+         else {
+             // Se o utilizador estiver noutra página qualquer (ex: Produtos), 
+             // limpamos os caches para re-carregar do zero da próxima vez que ele for ao Dashboard ou Pedidos
              if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
+             if (typeof pedidosCarregados !== 'undefined') pedidosCarregados = false;
          }
       })
       .subscribe((status) => {
-          // Isso ajuda a descobrir se ele conectou mesmo (veja no console do navegador)
-          console.log("Status Realtime dos Pedidos:", status);
+          console.log("📡 Status do Supabase Realtime:", status);
       });
 }
+
+// ----------------------------------------------------------------------
+// EXTREMAMENTE IMPORTANTE: Aciona o Tempo Real de forma Segura
+// ----------------------------------------------------------------------
+
+// 1. Iniciar quando uma página é carregada via SPA (garante que inicializa na navegação)
+document.addEventListener('spa:page-loaded', () => {
+    iniciarTempoRealPedidos();
+});
+
+// 2. Executa apenas se o window já carregou e o utilizador existir na sessão atual 
+setTimeout(() => {
+    iniciarTempoRealPedidos();
+}, 2000); // 2 segundos após a inicialização dá tempo do Supabase carregar a Sessão do Utilizador
