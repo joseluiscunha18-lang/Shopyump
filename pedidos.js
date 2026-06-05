@@ -99,31 +99,44 @@ async function alterarStatusPedido(id, novoStatus) {
 }
 
 // 2. Torna o Histórico mais rápido a carregar!
+// ────── CÓDIGO A SUBSTITUIR EM: pedidos.js ──────
+
 async function carregarHistoricoPedidos() {
     const lista = document.getElementById('lista-pedidos-historico');
     if (!lista) return;
 
-    // Só exibe spinner de processamento se a lista realmente estiver vazia
-    if (todosOsPedidos.length === 0) {
-        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>Carregando pedidos...</div>';
-    }
-
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
-        if (!userId) return;
+        if (!userId) {
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Precisas de fazer login.</p>';
+            return;
+        }
 
-        // Recolhe o URL da Loja pela RAM se já existir (Extremamente Flash!)
+        // Tenta obter a loja sem bloquear
         let lojaId = window.lojaIdAtivaDashboard;
         if (!lojaId) {
              const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
-             if (loja) lojaId = loja.id;
+             if (loja) {
+                 lojaId = loja.id;
+                 window.lojaIdAtivaDashboard = lojaId;
+             }
         }
 
         if (!lojaId) {
             lista.innerHTML = '<p class="text-center text-slate-400 py-4">Loja não encontrada.</p>';
             return;
         }
+
+        // CONEXÃO MÁGICA: Se o utilizador já veio do Dashboard, os pedidos já estão guardados! Sem repetições de Load.
+        if (window.pedidosCarregados && window.todosOsPedidos && window.todosOsPedidos.length > 0) {
+            const btnTudo = document.querySelector('.filtro-btn.active');
+            filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+            return;
+        }
+
+        // Só carrega da rede se a memória estiver vazia
+        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>Carregando pedidos...</div>';
 
         const { data: pedidos, error } = await window.supabaseClient
             .from('pedidos')
@@ -133,14 +146,61 @@ async function carregarHistoricoPedidos() {
 
         if (error) throw error;
 
-        todosOsPedidos = pedidos || [];
-        pedidosCarregados = true; 
+        // Atualiza a memória centralizada!
+        window.todosOsPedidos = pedidos || [];
+        window.pedidosCarregados = true;
         
+        if (typeof memDashboard !== 'undefined') {
+             memDashboard.pendentes = window.todosOsPedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente');
+        }
+
         const btnTudo = document.querySelector('.filtro-btn.active');
         filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
 
     } catch (e) {
         console.error("Erro ao carregar pedidos:", e);
-        lista.innerHTML = '<p class="text-center text-red-400 py-4">Erro ao carregar histórico.</p>';
+        lista.innerHTML = '<p class="text-center text-red-400 py-4">Erro ao carregar histórico de pedidos.</p>';
+    }
+}
+
+async function alterarStatusPedido(id, novoStatus) {
+    // 1. Atualizar a memória de Todos os Pedidos PREDITIVAMENTE (Instantâneo)
+    if (typeof window.todosOsPedidos !== 'undefined') {
+        const index = window.todosOsPedidos.findIndex(p => p.id === id);
+        if (index !== -1) window.todosOsPedidos[index].status = novoStatus;
+    }
+
+    // 2. Atualizar a memória de Pendentes na Página Inicial
+    if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
+        if (novoStatus === 'pendente') {
+            const existe = window.todosOsPedidos.find(p => p.id === id);
+            if (existe) memDashboard.pendentes.unshift(existe);
+        } else {
+            memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== id);
+        }
+    }
+
+    // 3. Atualizar as Interfaces Visuais
+    fecharModalPedido();
+    const btnTudo = document.querySelector('.filtro-btn.active');
+    if (btnTudo) {
+         filtrarPedidos(btnTudo.dataset.filter);
+    } else {
+         renderizarListaPedidos('tudo');
+    }
+    
+    // 4. Se a Home estiver invisível por detrás, fica já desenhada no HTML
+    if (typeof renderizarPendentesDashboard === 'function' && typeof memDashboard !== 'undefined') {
+         renderizarPendentesDashboard(memDashboard.pendentes);
+    }
+
+    // 5. Enviar apenas de facto para a base de dados nos bastidores (sem loadings)
+    try {
+        const { error } = await window.supabaseClient.from('pedidos').update({ status: novoStatus }).eq('id', id);
+        if (error) throw error;
+        
+    } catch(e) {
+        console.error(e);
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Atenção: A verificar ligação...');
     }
 }
