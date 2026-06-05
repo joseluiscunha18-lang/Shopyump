@@ -46,85 +46,57 @@ document.body.insertAdjacentHTML('beforeend', `
 // Lógica de Vendas/Pedidos
 let todosOsPedidos = [];
 let pedidosCarregados = false; // Variável para controlar o cache
+let canalTempoRealPedidos = null; // Guardião de Tempo Real SEGURO e ISOLADO
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'vendas') {
         if (!pedidosCarregados) {
             carregarHistoricoPedidos();
         } else {
-            // Se já temos na memória, mostramos imediatamente sem tela de 'carregando...'
+            // Se já temos memória, mostra imediatamente os pedidos gravados
             const btnTudo = document.querySelector('.filtro-btn.active');
             filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
         }
     }
 });
 
-// ────── CÓDIGO A SUBSTITUIR EM: pedidos.js ──────
-
-// 1. Torna a alteração de status INSTANTÂNEA, sem spinners!
-async function alterarStatusPedido(id, novoStatus) {
-    // A. Mágica Otimista: Atualiza a interface instantaneamente!
-    const index = todosOsPedidos.findIndex(p => p.id === id);
-    if (index !== -1) {
-        todosOsPedidos[index].status = novoStatus;
-    }
-    
-    // Esconde o modal e atualiza a grelha sem carregar absolutamente nada da internet!
-    fecharModalPedido();
-    const btnTudo = document.querySelector('.filtro-btn.active');
-    if (btnTudo) {
-         filtrarPedidos(btnTudo.dataset.filter);
-    } else {
-         renderizarListaPedidos('tudo');
-    }
-
-    try {
-        // B. Altera de facto no Supabase silenciosamente por trás
-        const { error } = await window.supabaseClient
-            .from('pedidos')
-            .update({ status: novoStatus })
-            .eq('id', id);
-            
-        if (error) throw error;
-        
-        // C. Limpa também no Dashboard principal (Home) para não perder sincronia
-        if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
-             memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== id);
-        }
-        
-    } catch(e) {
-        console.error(e);
-        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Erro ao atualizar status');
-    }
-}
-
-// 2. Torna o Histórico mais rápido a carregar!
 async function carregarHistoricoPedidos() {
     const lista = document.getElementById('lista-pedidos-historico');
     if (!lista) return;
 
-    // Só exibe spinner de processamento se a lista realmente estiver vazia
     if (todosOsPedidos.length === 0) {
-        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>Carregando pedidos...</div>';
+        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>A carregar pedidos...</div>';
     }
 
     try {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
-        if (!userId) return;
-
-        // Recolhe o URL da Loja pela RAM se já existir (Extremamente Flash!)
-        let lojaId = window.lojaIdAtivaDashboard;
-        if (!lojaId) {
-             const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
-             if (loja) lojaId = loja.id;
-        }
-
-        if (!lojaId) {
-            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Loja não encontrada.</p>';
+        
+        if (!userId) {
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Sessão expirada.</p>';
             return;
         }
 
+        // Recupera a loja da Memória, ou faz um pedido instantâneo se for a primeira vez
+        let lojaId = null;
+        if (typeof window.lojaIdAtivaDashboard !== 'undefined') {
+            lojaId = window.lojaIdAtivaDashboard;
+        }
+
+        if (!lojaId) {
+            const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
+            if (loja) {
+                lojaId = loja.id;
+                window.lojaIdAtivaDashboard = loja.id;
+            }
+        }
+
+        if (!lojaId) {
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">A tua loja não foi encontrada.</p>';
+            return;
+        }
+
+        // Vai à Base de Dados buscar todos os pedidos
         const { data: pedidos, error } = await window.supabaseClient
             .from('pedidos')
             .select('*')
@@ -133,14 +105,78 @@ async function carregarHistoricoPedidos() {
 
         if (error) throw error;
 
+        // Guarda-os no CACHE Seguro
         todosOsPedidos = pedidos || [];
         pedidosCarregados = true; 
         
         const btnTudo = document.querySelector('.filtro-btn.active');
         filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
 
+        // 🔥 ACTIVA O TEMPO REAL (Mas agora de forma Blindada e 100% Segura só no Painel)
+        configurarTempoRealDashboard(lojaId);
+
     } catch (e) {
         console.error("Erro ao carregar pedidos:", e);
         lista.innerHTML = '<p class="text-center text-red-400 py-4">Erro ao carregar histórico.</p>';
+    }
+}
+
+// Motor Seguro de Atualização de Tempo Real Restrito ao Lojista
+function configurarTempoRealDashboard(lojaId) {
+    if (!window.supabaseClient || canalTempoRealPedidos) return;
+
+    canalTempoRealPedidos = window.supabaseClient.channel('dash-pedidos-vendas')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+         
+         // 1. Atualizar Memória Local Magicamente
+         if (payload.eventType === 'INSERT') {
+             // Certifica-se que o pedido Realtime é mesmo desta Loja
+             if (payload.new.loja_id === lojaId) {
+                 const existe = todosOsPedidos.find(p => p.id === payload.new.id);
+                 if (!existe) todosOsPedidos.unshift(payload.new); 
+             }
+         } else if (payload.eventType === 'UPDATE') {
+             const idx = todosOsPedidos.findIndex(p => p.id === payload.new.id);
+             if (idx !== -1) todosOsPedidos[idx] = payload.new;
+         }
+
+         // 2. Refrescar a UI do utilizador imediatamente (se na visualização)
+         const rotaAtual = window.location.hash.replace('#', '') || 'dashboard';
+         if (rotaAtual === 'vendas' && typeof renderizarListaPedidos === 'function') {
+             const btnTudo = document.querySelector('.filtro-btn.active');
+             renderizarListaPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+         }
+
+         // 3. Forçar Descarte de Cache no Dashboard para Atualizar as Contagens Gerais
+         if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
+      })
+      .subscribe();
+}
+
+// ✨ Magia Otimista: Status Instantâneo (Trocas Sem "Loading")
+async function alterarStatusPedido(id, novoStatus) {
+    // 1. Atualiza Visualmente no momento EXATO do Clique
+    const idx = todosOsPedidos.findIndex(p => p.id === id);
+    if (idx !== -1) todosOsPedidos[idx].status = novoStatus;
+    
+    if (typeof fecharModalPedido === 'function') fecharModalPedido();
+    
+    const btnTudo = document.querySelector('.filtro-btn.active');
+    filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+
+    // Despistar Cache Central
+    if (typeof dashboardCarregado !== 'undefined') dashboardCarregado = false;
+
+    // 2. Executar no Background silenciosamente
+    try {
+        const { error } = await window.supabaseClient
+            .from('pedidos')
+            .update({ status: novoStatus })
+            .eq('id', id);
+        
+        if (error) console.error("Erro DB:", error);
+    } catch(e) {
+        console.error(e);
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Houve uma quebra de net, tentaremos validar em breve.');
     }
 }
