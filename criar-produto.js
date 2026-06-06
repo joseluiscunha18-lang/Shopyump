@@ -1323,6 +1323,9 @@ if (toggleAtivo && btnMainActionWrapper) {
 }
 
 // Salvar produto real no Supabase
+// criar-produto.js - Módulo completo integrado no SPA do Dashboard
+// As correções abaixo incluem a atualização instantânea do dashboard e produtos!
+
 async function guardarProduto() {
     const btnMain = document.getElementById('btn-main-action');
     const originalText = btnMain.innerHTML;
@@ -1333,7 +1336,6 @@ async function guardarProduto() {
     const categoria = document.getElementById('prod-categoria').value.trim();
     const preco = parseFloat(document.getElementById('prod-preco').value) || 0;
     
-    // Obter preço promo (o input dentro do campo-promo)
     const promoInput = document.querySelector('#campo-promo input[type="number"]');
     const preco_promo = promoInput && promoInput.value ? parseFloat(promoInput.value) : null;
     
@@ -1346,7 +1348,6 @@ async function guardarProduto() {
         return;
     }
 
-    // Variantes
     const variantes = {};
     const extractVariants = (containerId, key) => {
         const container = document.getElementById(containerId);
@@ -1358,7 +1359,7 @@ async function guardarProduto() {
     extractVariants('container-tamanhos', 'tamanhos');
     extractVariants('container-numeracao', 'numeracao');
 
-    btnMain.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>A guardar...</span>`;
+    btnMain.innerHTML = \`<i class="fa-solid fa-spinner fa-spin"></i> <span>A guardar...</span>\`;
     btnMain.style.pointerEvents = 'none';
 
     try {
@@ -1369,20 +1370,16 @@ async function guardarProduto() {
             throw new Error("Sessão expirada.");
         }
 
-        // Recuperar a loja_id deste usuário
         const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
         if (!loja) throw new Error("Loja não encontrada para este perfil.");
 
         const lojaId = loja.id;
-
-        // Fazer Upload das Imagens para o Bucket "produtos"
         const photoSlots = document.querySelectorAll('.photo-slot img');
         const urls = [];
 
         for(let i = 0; i < photoSlots.length; i++) {
             const src = photoSlots[i].src;
             if (src) {
-                // Se a imagem for Base64 (blob nativo gerado pelo File Viewer local)
                 if (src.startsWith('data:')) {
                     const img = new Image();
                     img.src = src;
@@ -1408,14 +1405,14 @@ async function guardarProduto() {
                     
                     const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
                     
-                    const fileName = `${lojaId}/${Date.now()}-${i}.jpg`;
+                    const fileName = \`\${lojaId}/\${Date.now()}-\${i}.jpg\`;
                     const { data, error } = await window.supabaseClient.storage
                         .from('produtos')
                         .upload(fileName, blob, { contentType: 'image/jpeg' });
                     
                     if (error) {
-                        console.error('Erro de upload da imagem:', error);
-                        throw new Error("Erro ao fazer upload da imagem. Certifique-se que o bucket 'produtos' existe e as políticas de storage estão corretas na base de dados.");
+                        console.error('Erro:', error);
+                        throw new Error("Erro ao fazer upload da imagem.");
                     }
 
                     const { data: pubData } = window.supabaseClient.storage.from('produtos').getPublicUrl(fileName);
@@ -1444,7 +1441,21 @@ async function guardarProduto() {
         
         if (insertError) throw insertError;
 
-        mostrarNotificacao(isRascunho ? 'Rascunho guardado!' : 'Produto publicado com sucesso!');
+        // ==========================================
+        //  NOVO: FORÇA ATUALIZAÇÃO DA CACHE 
+        // ==========================================
+        // Limpa a cache de produtos para que o Dashboard e a página de Produtos busquem os dados reais novos!
+        if (typeof window.forcarAtualizacaoDashboard === 'function') {
+            window.forcarAtualizacaoDashboard(); 
+        }
+        if (typeof window.forcarAtualizacaoProdutos === 'function') {
+            window.forcarAtualizacaoProdutos();
+        }
+        
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao(isRascunho ? 'Rascunho guardado!' : 'Produto publicado com sucesso!');
+        }
+
         setTimeout(() => navegarAnimado('produtos'), 800);
 
     } catch(err) {
