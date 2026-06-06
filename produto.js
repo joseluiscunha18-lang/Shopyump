@@ -23,7 +23,18 @@ let memProdutosPage = null;
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'produtos') {
-        carregarPaginaProdutos();
+        // Aproveita o carregamento que já foi feito no Painel de Controlo!
+        if (!memProdutosPage && typeof memDashboard !== 'undefined' && memDashboard.produtos) {
+            memProdutosPage = memDashboard.produtos;
+        }
+
+        // Desenha instantaneamente sem "loading"
+        if (memProdutosPage) {
+            renderizarProdutosLista(memProdutosPage);
+        } else {
+            // Só vai à nuvem se a memória estiver mesmo vazia
+            carregarPaginaProdutos();
+        }
     }
 });
 
