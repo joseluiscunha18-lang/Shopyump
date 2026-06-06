@@ -54,12 +54,23 @@ let pedidosCarregados = false; // Variável para controlar o cache
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'vendas') {
+        
+        // Verifica primeiro se o Dashboard já fez o carregamento inicial por trás
+        if (window.pedidosCarregados) {
+            pedidosCarregados = true;
+            todosOsPedidos = window.todosOsPedidos;
+        }
+
         if (!pedidosCarregados) {
             carregarHistoricoPedidos();
         } else {
-            // Se já temos na memória, mostramos imediatamente sem tela de 'carregando...'
+            // Se já temos na memória (Ou porque carregámos aqui, ou via Dashboard), desenha direto!
             const btnTudo = document.querySelector('.filtro-btn.active');
-            filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+            if (typeof filtrarPedidos === 'function') {
+                filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+            } else if (typeof renderizarListaPedidos === 'function') {
+                renderizarListaPedidos('tudo');
+            }
         }
     }
 });
@@ -146,10 +157,13 @@ async function carregarHistoricoPedidos() {
 
         if (error) throw error; // Se a Supabase falhar, atira erro!
 
-        // Se passamos, os dados estão saudáveis! Guardamos na memória "cache"
+        // Se passamos, os dados estão saudáveis! Guardamos na memória Local e Global
         todosOsPedidos = pedidos || [];
         pedidosCarregados = true; 
-        
+        // Partilha globalmente caso a Home venha a precisar deste Cache no futuro
+        window.todosOsPedidos = todosOsPedidos;
+        window.pedidosCarregados = true;
+
     } catch (e) {
         console.error("Erro na base de dados ao carregar pedidos:", e);
         lista.innerHTML = '<div class="py-6 text-center text-red-500 text-sm flex flex-col items-center"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i>Erro ao descarregar da nuvem. Tende de novo.</div>';

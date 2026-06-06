@@ -372,6 +372,11 @@ async function carregarPedidosPendentesDashboard(lojaId) {
             
         if (error) throw error;
         
+        // MÁGICA: Partilhamos a lista gigantesca que recebemos para a Memória Global,
+        // assim a página de Vendas não vai descarregar isso novamente!
+        window.todosOsPedidos = [...(pedidos || [])];
+        window.pedidosCarregados = true;
+        
         memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; // Guarda na memória
         renderizarPendentesDashboard(memDashboard.pendentes); // Aplica no visual
     } catch (e) {
