@@ -24,24 +24,29 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
             </div>
         </div>
+    </template>
+`);
 
+// Injeta o modal globalmente fora do template para funcionar também no Dashboard de forma fluída
+if (!document.getElementById('modal-pedido')) {
+    document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-pedido" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div id="modal-pedido-content" class="bg-white dark:bg-navy-900 w-full rounded-t-3xl pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[85vh] flex flex-col gap-4 relative">
-                <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto absolute top-2 left-1/2 -translate-x-1/2"></div>
+            <div id="modal-pedido-content" class="bg-white dark:bg-navy-900 w-full rounded-t-[32px] pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[85vh] flex flex-col gap-4 relative shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+                <div class="w-12 h-1.5 bg-slate-200 dark:bg-navy-700 rounded-full mx-auto absolute top-3 left-1/2 -translate-x-1/2"></div>
                 
-                <div class="flex justify-between items-center mt-2 border-b border-slate-100 pb-3">
-                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Detalhes do Pedido</h3>
-                    <button onclick="fecharModalPedido()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 active:scale-90 transition-transform">
+                <div class="flex justify-between items-center mt-3 border-b border-slate-50 dark:border-navy-800 pb-4">
+                    <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Detalhes da Encomenda</h3>
+                    <button onclick="fecharModalPedido()" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
                 
                 <div id="modal-pedido-corpo" class="overflow-y-auto no-scrollbar pb-6 space-y-4">
-                    </div>
+                </div>
             </div>
         </div>
-    </template>
-`);
+    `);
+}
 
 // Lógica de Vendas/Pedidos
 let todosOsPedidos = [];
@@ -295,9 +300,19 @@ window.renderizarListaPedidos = function(filtro) {
 
 // 3. Funções do Modal de Pedido (mostrar pormenores ao clicar no bilhete)
 window.abrirModalPedido = function(id) {
-    const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
-    const pedido = basePedidos.find(p => p.id === id);
-    if (!pedido) return;
+    // 1. Procura primeiro na página de vendas
+    let basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
+    let pedido = basePedidos.find(p => p.id === id);
+    
+    // 2. Se não encontrar (porque o utilizador está no Dashboard), procura na memória da Home
+    if (!pedido && typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
+        pedido = memDashboard.pendentes.find(p => p.id === id);
+    }
+
+    if (!pedido) {
+        console.error("Pedido não encontrado na memória.");
+        return;
+    }
 
     const modal = document.getElementById('modal-pedido');
     const content = document.getElementById('modal-pedido-content');
