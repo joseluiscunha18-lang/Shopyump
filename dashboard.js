@@ -404,36 +404,40 @@ function renderizarPendentesDashboard(pendentes) {
         
         let html = '';
         pendentes.slice(0, 3).forEach(p => {
+            // Novo Design Premium - Cartão Limpo e Clicável
             const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
-            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
+            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome : 'Pedido sem itens';
+            const extraItens = p.itens && p.itens.length > 1 ? `<span class="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-md ml-1">+${p.itens.length - 1}</span>` : '';
             
+            // Busca a foto do primeiro item. Se não existir, usa um placeholder elegante.
+            const fotoProduto = (p.itens && p.itens[0] && (p.itens[0].foto || p.itens[0].imagem)) 
+                                ? (p.itens[0].foto || p.itens[0].imagem) 
+                                : 'https://placehold.co/150x150/f8fafc/94a3b8?text=Sem+Foto';
+
             html += `
-                <div id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 overflow-hidden mb-3 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 transform origin-top">
-                    <div class="px-5 py-4 border-b border-slate-50 dark:border-navy-800/50 flex justify-between items-center">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500">
-                                <i class="fas fa-box-open text-sm"></i>
-                            </div>
-                            <div class="max-w-[130px]">
-                                <h4 class="text-[13px] font-bold text-slate-900 dark:text-white leading-tight truncate">${p.cliente_nome}</h4>
-                                <p class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">${descItens}</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>
-                            <p class="text-[9px] font-bold text-slate-400 mt-0.5">${dataFormatada}</p>
-                        </div>
+                <div onclick="abrirModalPedido('${p.id}')" id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 mb-3 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 transition-all active:scale-[0.98] cursor-pointer p-3 flex items-center gap-3 relative overflow-hidden group hover:border-slate-200 dark:hover:border-navy-700">
+                    
+                    <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-100 dark:border-navy-700 relative">
+                        <img src="${fotoProduto}" class="w-full h-full object-cover" alt="Produto do pedido">
                     </div>
-                    <div class="px-3 py-3 bg-slate-50/50 dark:bg-slate-800/30 flex gap-2">
-                        <button onclick="confirmarPedidoAction('${p.id}', this)" class="flex-1 bg-[#0F172A] text-white h-11 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
-                            <i class="fas fa-check text-[10px]"></i> Confirmar
-                        </button>
-                        <button onclick="recusarPedidoAction('${p.id}', this)" class="w-11 h-11 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-400 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
-                            <i class="fas fa-times text-[12px]"></i>
-                        </button>
-                        <a href="https://wa.me/${p.cliente_telefone}" target="_blank" class="w-11 h-11 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
-                            <i class="fab fa-whatsapp text-[14px]"></i>
-                        </a>
+                    
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-0.5">
+                            <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate pr-2">${p.cliente_nome}</h4>
+                            <span class="text-[9px] font-black text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-0.5 rounded-[6px] tracking-widest uppercase">Pendente</span>
+                        </div>
+                        
+                        <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1">
+                            <span class="truncate">${descItens}</span>
+                            ${extraItens}
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <p class="text-[12px] font-black text-slate-900 dark:text-white">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] font-bold text-slate-400">MT</span></p>
+                            <p class="text-[9px] font-bold text-slate-400 flex items-center gap-1">
+                                <i class="fa-regular fa-clock"></i> ${dataFormatada}
+                            </p>
+                        </div>
                     </div>
                 </div>
             `;
