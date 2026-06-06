@@ -1359,7 +1359,7 @@ async function guardarProduto() {
     extractVariants('container-tamanhos', 'tamanhos');
     extractVariants('container-numeracao', 'numeracao');
 
-    btnMain.innerHTML = \`<i class="fa-solid fa-spinner fa-spin"></i> <span>A guardar...</span>\`;
+    btnMain.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>A guardar...</span>`;
     btnMain.style.pointerEvents = 'none';
 
     try {
@@ -1405,7 +1405,7 @@ async function guardarProduto() {
                     
                     const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
                     
-                    const fileName = \`\${lojaId}/\${Date.now()}-\${i}.jpg\`;
+                    const fileName = `${lojaId}/${Date.now()}-${i}.jpg`;
                     const { data, error } = await window.supabaseClient.storage
                         .from('produtos')
                         .upload(fileName, blob, { contentType: 'image/jpeg' });
