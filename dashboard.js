@@ -5,16 +5,27 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h2 class="text-3xl font-medium text-slate-900 tracking-tight leading-none">Olá, Zé</h2>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span>
-                            <p class="text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em]">Loja Ativa</p>
+                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none flex items-center h-9">
+                            <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md"></div>
+                        </h2>
+                        <div class="flex items-center gap-1.5 mt-1.5 ml-1 opacity-80">
+                            <span class="relative flex h-1.5 w-1.5">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                            </span>
+                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">Loja Online</span>
                         </div>
                     </div>
-                    <button class="bg-white/35 backdrop-blur-xl border border-white/50 px-4 py-2.5 rounded-2xl shadow-sm active:scale-95 transition-all flex items-center gap-1.5 mt-1">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-800">7 Dias</span>
-                        <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
+                    <div class="flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm mt-1 p-1 gap-1">
+                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
+                            <i class="fa-regular fa-copy text-[14px]" id="icone-copiar"></i>
+                        </button>
+                        <div class="w-[1px] h-4 bg-slate-400/30"></div>
+                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-800 gap-1.5">
+                            <span class="text-[10px] font-black uppercase tracking-widest">Loja</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600"></i>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
@@ -28,10 +39,10 @@ document.body.insertAdjacentHTML('beforeend', `
                                     <div class="w-1.5 h-1.5 rounded-full bg-[#9f6ef5] animate-pulse"></div>
                                     <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
                                 </div>
-                                <span class="text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg">+4 hoje</span>
+                                <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg"></span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">18</h3>
+                                <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">0</h3>
                                 <span class="text-[12px] font-bold text-slate-600/80">no total</span>
                             </div>
                         </div>
@@ -43,7 +54,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">342</h4>
+                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
                                 <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas</p>
                             </div>
                         </div>
@@ -52,7 +63,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-confirmados" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">12</h4>
+                                <h4 id="stat-confirmados" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
                                 <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Confirmados</p>
                             </div>
                         </div>
@@ -70,61 +81,18 @@ document.body.insertAdjacentHTML('beforeend', `
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
                             <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
                         </div>
-                        <span class="text-[9px] font-black text-[#9f6ef5] bg-[#D4B5FD]/10 border border-[#D4B5FD]/20 px-2.5 py-1 rounded-md uppercase tracking-widest">2 Pendentes</span>
+                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
-                        <div class="bg-white dark:bg-navy-900 p-5 rounded-[24px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800" id="card-1">
-                            <div class="flex gap-3 items-start">
-                                <div class="w-12 h-12 rounded-[14px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-[8px] font-black text-slate-300 tracking-widest">IMG</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">Nike Jordan Retro</h4>
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        <div class="w-3.5 h-3.5 rounded-full bg-slate-900 text-white flex items-center justify-center text-[7px] font-bold">A</div>
-                                        <p class="text-[10px] font-bold text-slate-500 truncate">Ana Marques</p>
-                                    </div>
-                                    <div class="flex items-center gap-2 mt-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> WPP</span>
-                                        <span>•</span>
-                                        <span class="text-slate-900 dark:text-white">2.500 MT</span>
-                                    </div>
-                                </div>
+                        <div id="msg-vazio" class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3">
+                            <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-sm">
+                                <i class="fa-solid fa-receipt text-2xl"></i>
                             </div>
-                            <div class="flex gap-2 mt-5">
-                                <button onclick="confirmarComAnimacao('card-1')" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform shadow-sm">Confirmar</button>
-                                <button onclick="confirmarComAnimacao('card-1')" class="flex-1 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform">Recusar</button>
-                            </div>
-                        </div>
-
-                        <div class="bg-white dark:bg-navy-900 p-5 rounded-[24px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800" id="card-2">
-                            <div class="flex gap-3 items-start">
-                                <div class="w-12 h-12 rounded-[14px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
-                                    <span class="text-[8px] font-black text-slate-300 tracking-widest">IMG</span>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">T-shirt Oversized</h4>
-                                    <div class="flex items-center gap-1.5 mt-1">
-                                        <div class="w-3.5 h-3.5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[7px] font-bold">C</div>
-                                        <p class="text-[10px] font-bold text-slate-500 truncate">Carlos Silva</p>
-                                    </div>
-                                    <div class="flex items-center gap-2 mt-2 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                                        <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-pink-500"></div> IG</span>
-                                        <span>•</span>
-                                        <span class="text-slate-900 dark:text-white">850 MT</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex gap-2 mt-5">
-                                <button onclick="confirmarComAnimacao('card-2')" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform shadow-sm">Confirmar</button>
-                                <button onclick="confirmarComAnimacao('card-2')" class="flex-1 bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-[0.97] transition-transform">Recusar</button>
-                            </div>
-                        </div>
-
-                        <div id="msg-vazio" class="hidden col-span-full py-12 flex-col items-center justify-center text-center gap-3">
-                            <svg class="w-12 h-12 text-slate-200 dark:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <p class="text-sm font-bold text-slate-400">Sem pedidos pendentes</p>
+                            <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Sem pedidos pendentes</h4>
+                            <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
+                                Quando os teus clientes comprarem, os pedidos aparecerão aqui.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -132,7 +100,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden">
                     <div class="flex items-center justify-between mb-8">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tráfego da Loja</h3>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
                             <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
                         </div>
                         <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
@@ -152,43 +120,43 @@ document.body.insertAdjacentHTML('beforeend', `
                                         <stop offset="100%" stop-color="#D4B5FD" stop-opacity="0"/>
                                     </linearGradient>
                                 </defs>
-                                <path id="areaPath" fill="url(#chartGradient)" d="M0,130 C30,130 50,100 80,100 C110,100 130,140 160,140 C190,140 210,90 240,90 C270,90 280,60 300,60 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,130 C30,130 50,100 80,100 C110,100 130,140 160,140 C190,140 210,90 240,90 C270,90 280,60 300,60" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <circle id="p-atual" cx="300" cy="60" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
-                                <text id="valor-atual" x="295" y="45" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="end" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">342 Visitas</text>
+                                <path id="areaPath" fill="url(#chartGradient)" d="M0,150 L300,150 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,148 L300,148" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <circle id="p-atual" cx="150" cy="148" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
+                                <text id="valor-atual" x="150" y="135" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="middle" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">0 Visitas</text>
                             </svg>
                         </div>
                     </div>
                     <div class="flex justify-between mt-4 px-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
+                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>S?b</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
                     </div>
                 </section>
 
                 <div class="grid grid-cols-1 gap-6">
                     <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800">
-                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tráfego</h3>
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Origem do Tr?fego</h3>
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white">112</span></div>
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white">46</span></div>
-                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-pink-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Instagram</span></div><span class="font-black text-slate-900 dark:text-white">18</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">WhatsApp</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-blue-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Facebook</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
+                            <div class="flex justify-between items-center text-xs"><div class="flex items-center gap-3"><div class="w-2 h-2 rounded-full bg-pink-500"></div><span class="font-bold text-slate-700 dark:text-slate-300">Instagram</span></div><span class="font-black text-slate-900 dark:text-white opacity-30">0</span></div>
                         </div>
                     </section>
 
                     <section class="space-y-3">
                         <div class="flex justify-between items-center px-1">
                             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Os Meus Produtos</h3>
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">2 ativos</span>
+                            <span id="badge-produtos-ativos" class="text-[9px] font-black text-slate-500 uppercase tracking-widest">0 ativos</span>
                         </div>
-                        <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[8px] font-black text-slate-300 dark:text-slate-500">NIKE</div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Jordan 1 High</p>
-                                    <p class="text-[10px] text-slate-500 font-bold mt-0.5">2.500,00 MT</p>
+                        
+                        <div id="container-produtos" class="w-full mt-3">
+                            <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 dark:bg-slate-800 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-all active:scale-[0.98] group">
+                                <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-plus text-xl"></i>
                                 </div>
-                            </div>
-                            <button class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
+                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
+                                </div>
                             </button>
                         </div>
                     </section>
@@ -200,30 +168,20 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // dashboard.js - Lógica exclusiva do Dashboard
 
-const dadosDashboard = {
-    hoje: { pedidos: "3", visitas: "42", confirmados: "2", sufixo: "(Hoje)" },
-    "7dias": { pedidos: "18", visitas: "342", confirmados: "12", sufixo: "(7 dias)" },
-    "30dias": { pedidos: "72", visitas: "1.240", confirmados: "48", sufixo: "(30 dias)" }
-};
+// ==========================================
+// LÓGICA DO DASHBOARD (CORRIGIDA)
+// ==========================================
 
 function animarNumero(id, valorFinal) {
     const elemento = document.getElementById(id);
     if (!elemento) return;
+    
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
-    if (isNaN(valorAlvo)) { elemento.textContent = valorFinal; return; }
-    let valorInicial = 0;
-    const duracao = 900;
-    const incremento = valorAlvo / (duracao / 16);
-    const atualizar = () => {
-        valorInicial += incremento;
-        if (valorInicial < valorAlvo) {
-            elemento.textContent = Math.floor(valorInicial);
-            requestAnimationFrame(atualizar);
-        } else {
-            elemento.textContent = valorAlvo;
-        }
-    };
-    atualizar();
+    if (isNaN(valorAlvo)) { 
+        elemento.textContent = valorFinal; 
+    } else {
+        elemento.textContent = valorAlvo;
+    }
 }
 
 function confirmarComAnimacao(id) {
@@ -242,116 +200,339 @@ function confirmarComAnimacao(id) {
     }, 380);
 }
 
-// O CÉREBRO: Decide se mostra os dados ou se esvazia a tela
-function initDashboard() {
-    const p = document.getElementById('stat-pedidos');
-    const v = document.getElementById('stat-visitas');
-    const c = document.getElementById('stat-confirmados');
-    
-    if (p) animarNumero('stat-pedidos', p.innerText);
-    if (v) animarNumero('stat-visitas', v.innerText);
-    if (c) animarNumero('stat-confirmados', c.innerText);
-}
+// 1. Variáveis na memória para guardar os dados (CACHE)
+let dashboardCarregado = false;
+let memDashboard = {
+    loja: null,
+    produtos: null,
+    pendentes: null
+};
 
-// A FUNÇÃO QUE LIMPA OS DADOS FALSOS
-function aplicarEstadoZero() {
-    // 1. Zera os números principais logo de cara (sem animação)
-    const p = document.getElementById('stat-pedidos');
-    const v = document.getElementById('stat-visitas');
-    const c = document.getElementById('stat-confirmados');
-    if (p) p.innerText = '0';
-    if (v) v.innerText = '0';
-    if (c) c.innerText = '0';
-
-    // 2. Caçar e Ocultar Badges
-    const spans = document.querySelectorAll('span');
-    spans.forEach(span => {
-        const texto = span.innerText.trim().toUpperCase();
-        if (texto.includes('+4 HOJE')) span.style.display = 'none';
-        if (texto.includes('2 PENDENTES') && span.classList.contains('bg-[#D4B5FD]/10')) {
-            span.innerText = '0 PENDENTES';
-            span.className = 'text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest';
-        }
-    });
-
-    // 3. Limpar a secção de pedidos pendentes
-    const containerPedidos = document.getElementById('container-pedidos');
-    if (containerPedidos) {
-        containerPedidos.innerHTML = `
-            <div class="col-span-full py-8 flex flex-col items-center justify-center text-center gap-3 opacity-80">
-                <div class="w-14 h-14 bg-slate-50 border border-slate-100 rounded-[20px] flex items-center justify-center text-slate-300 mb-2 shadow-sm">
-                    <i class="fa-solid fa-receipt text-2xl"></i>
-                </div>
-                <h4 class="text-[14px] font-bold text-slate-900">Sem pedidos ainda</h4>
-                <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
-                    A tua montra está vazia. Começa a adicionar produtos abaixo.
-                </p>
-            </div>
-        `;
-    }
-
-    // 4. Achatar o gráfico SVG para zero
-    const areaPath = document.getElementById('areaPath');
-    const cordaPath = document.getElementById('cordaPath');
-    const pAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
-
-    if (areaPath) areaPath.setAttribute('d', 'M0,150 L300,150 L300,150 L0,150 Z');
-    if (cordaPath) cordaPath.setAttribute('d', 'M0,148 L300,148');
-    if (pAtual) { pAtual.setAttribute('cx', '150'); pAtual.setAttribute('cy', '148'); }
-    if (valorAtual) {
-        valorAtual.innerHTML = '0 Visitas';
-        valorAtual.setAttribute('x', '150');
-        valorAtual.setAttribute('y', '135');
-        valorAtual.setAttribute('text-anchor', 'middle');
-    }
-
-    // 5. Origens do tráfego para zero
-    const origens = document.querySelectorAll('.flex.justify-between.items-center span.font-black');
-    origens.forEach(el => {
-        el.innerText = '0';
-        el.classList.add('opacity-30');
-    });
-
-    // 6. Substituir ténis Nike por botão de Adicionar Produto
-    const titulos = document.querySelectorAll('h3');
-    titulos.forEach(titulo => {
-        if (titulo.innerText.trim().toUpperCase() === 'OS MEUS PRODUTOS') {
-            const badgeAtivos = titulo.nextElementSibling;
-            if (badgeAtivos && badgeAtivos.tagName.toLowerCase() === 'span') {
-                badgeAtivos.innerText = '0 ATIVOS';
-            }
-
-            const containerProduto = titulo.parentElement.nextElementSibling;
-            if (containerProduto) {
-                containerProduto.className = "w-full mt-3";
-                containerProduto.innerHTML = `
-                    <button onclick="SPA.navegar('criar-produto')" class="w-full bg-slate-50 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 transition-all active:scale-[0.98] group">
-                        <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-plus text-xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-slate-900">Adicionar Primeiro Produto</p>
-                            <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu catálogo para faturar</p>
-                        </div>
-                    </button>
-                `;
-            }
-        }
-    });
-}
-
-// INTERCEPTOR: Escolhe o caminho consoante os produtos
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        const produtosCriados = parseInt(localStorage.getItem('produtos_criados') || '0');
-        
-        // Se a conta for nova (0 produtos), o JavaScript esmaga os dados para zero ANTES de animar
-        if (produtosCriados === 0) {
-            aplicarEstadoZero();
+        // Se ainda não carregou do banco, buscamos a primeira vez
+        if (!dashboardCarregado) {
+            carregarDadosLojaDashboard().then(() => {
+                dashboardCarregado = true;
+            });
         } else {
-            // Se já tiver produtos, ele corre a tua função normal e anima os números!
-            initDashboard();
+            // SOLUÇÃO: Se já tínhamos o cache guardado, redesenhamos tudo instantaneamente!
+            renderizarSaudacaoMemoria();
+            if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
+            if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
         }
     }
 });
+
+// Permitir atualizações forçadas (ex: quando ouve um novo pedido via Socket)
+window.forcarAtualizacaoDashboard = () => {
+    dashboardCarregado = false;
+    carregarDadosLojaDashboard().then(() => {
+        dashboardCarregado = true;
+    });
+};
+
+// ----------------------------------------------------
+// DADOS DA LOJA E SAUDAÇÃO
+// ----------------------------------------------------
+async function carregarDadosLojaDashboard() {
+    try {
+        const { data: sessionData } = await window.supabaseClient.auth.getSession();
+        const userId = sessionData?.session?.user?.id;
+        
+        if (userId) {
+            const { data: loja } = await window.supabaseClient
+                .from('lojas')
+                .select('id, nome, vendedor_nome, slug')
+                .eq('perfil_id', userId)
+                .maybeSingle();
+                
+            if (loja) {
+                memDashboard.loja = loja; // Guarda na memória
+                renderizarSaudacaoMemoria(); // Aplica no visual
+                
+                await carregarProdutosDashboard(loja.id);
+                await carregarPedidosPendentesDashboard(loja.id);
+            } else {
+                const h2Saudacao = document.getElementById('dash-saudacao');
+                const headerTitulo = document.getElementById('header-titulo');
+                if (h2Saudacao) h2Saudacao.innerHTML = 'Olá! <span class="text-3xl">👋</span>';
+                if (headerTitulo) headerTitulo.innerText = 'Painel';
+            }
+        }
+    } catch (e) {
+        console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+function renderizarSaudacaoMemoria() {
+    if (!memDashboard.loja) return;
+    const loja = memDashboard.loja;
+    
+    const h2Saudacao = document.getElementById('dash-saudacao');
+    const headerTitulo = document.getElementById('header-titulo');
+    
+    if (h2Saudacao) {
+        const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
+        h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+    }
+    if (headerTitulo) headerTitulo.innerText = loja.nome || '';
+    
+    const btnVerLoja = document.getElementById('btn-ver-loja');
+    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
+    if (btnVerLoja) btnVerLoja.href = urlLoja;
+    
+    const btnCopiar = document.getElementById('btn-copiar-loja');
+    if (btnCopiar) {
+        btnCopiar.onclick = () => {
+            navigator.clipboard.writeText(urlLoja).then(() => {
+                const icone = document.getElementById('icone-copiar');
+                if (icone) {
+                    icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';
+                    setTimeout(() => icone.className = 'fa-regular fa-copy text-[14px]', 2000);
+                }
+            });
+        };
+    }
+}
+
+// ----------------------------------------------------
+// PRODUTOS
+// ----------------------------------------------------
+async function carregarProdutosDashboard(lojaId) {
+    try {
+        const { data: produtos, error } = await window.supabaseClient
+            .from('produtos')
+            .select('*')
+            .eq('loja_id', lojaId)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        memDashboard.produtos = produtos || []; // Guarda na memória
+        renderizarProdutosDashboard(memDashboard.produtos); // Aplica no visual
+    } catch (e) {
+        console.error("Erro ao carregar produtos:", e);
+    }
+}
+
+function renderizarProdutosDashboard(produtos) {
+    const containerProduto = document.getElementById('container-produtos');
+    const badgeAtivos = document.getElementById('badge-produtos-ativos');
+    if (!containerProduto) return;
+
+    const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
+    if (badgeAtivos) badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+    
+    if (produtos && produtos.length > 0) {
+        containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
+        let html = '';
+        
+        produtos.slice(0, 3).forEach(p => {
+            const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
+            html += `
+                <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 flex items-center justify-between transition-transform active:scale-[0.98]">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                            <img src="${fotoCapa}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">${p.nome}</p>
+                            <p class="text-[10px] text-slate-500 font-bold mt-0.5">${p.preco.toLocaleString('pt-MZ')} MT ${!p.ativo ? '<span class="text-red-400 font-bold ml-1">(Rascunho)</span>' : ''}</p>
+                        </div>
+                    </div>
+                    <button onclick="navegarAnimado('produto')" class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            `;
+        });
+        
+        html += `
+            <button onclick="navegarAnimado('produtos')" class="mt-2 w-full text-center text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest">
+                Ver Todos os Produtos
+            </button>
+        `;
+        containerProduto.innerHTML = html;
+    }
+}
+
+// ----------------------------------------------------
+// PEDIDOS PENDENTES
+// ----------------------------------------------------
+async function carregarPedidosPendentesDashboard(lojaId) {
+    if (lojaId) window.lojaIdAtivaDashboard = lojaId;
+    
+    try {
+        const { data: pedidos, error } = await window.supabaseClient
+            .from('pedidos')
+            .select('*')
+            .eq('loja_id', lojaId || window.lojaIdAtivaDashboard)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; // Guarda na memória
+        renderizarPendentesDashboard(memDashboard.pendentes); // Aplica no visual
+    } catch (e) {
+        console.error("Erro ao carregar pedidos pendentes:", e);
+    }
+}
+
+function renderizarPendentesDashboard(pendentes) {
+    const container = document.getElementById('container-pedidos');
+    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
+    const msgVazia = document.getElementById('msg-vazio');
+    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
+    const statPedidos = document.getElementById('stat-pedidos'); 
+    
+    if (!container) return;
+    
+    if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
+    if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
+    
+    if (badgePedidosHoje && pendentes.length > 0) {
+        badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
+        badgePedidosHoje.classList.remove('hidden');
+    } else if (badgePedidosHoje) {
+        badgePedidosHoje.classList.add('hidden');
+    }
+    
+    if (pendentes.length > 0) {
+        const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
+        container.innerHTML = '';
+        
+        let html = '';
+        pendentes.slice(0, 3).forEach(p => {
+            const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
+            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome + (p.itens.length > 1 ? ` (+${p.itens.length - 1})` : '') : 'Itens';
+            
+            html += `
+                <div id="card-pendente-${p.id}" class="bg-white dark:bg-navy-900 overflow-hidden mb-3 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 transform origin-top">
+                    <div class="px-5 py-4 border-b border-slate-50 dark:border-navy-800/50 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-500">
+                                <i class="fas fa-box-open text-sm"></i>
+                            </div>
+                            <div class="max-w-[130px]">
+                                <h4 class="text-[13px] font-bold text-slate-900 dark:text-white leading-tight truncate">${p.cliente_nome}</h4>
+                                <p class="text-[11px] font-medium text-slate-500 mt-0.5 truncate">${descItens}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[14px] font-black text-slate-900 dark:text-white tracking-tight">${p.total.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>
+                            <p class="text-[9px] font-bold text-slate-400 mt-0.5">${dataFormatada}</p>
+                        </div>
+                    </div>
+                    <div class="px-3 py-3 bg-slate-50/50 dark:bg-slate-800/30 flex gap-2">
+                        <button onclick="confirmarPedidoAction('${p.id}', this)" class="flex-1 bg-[#0F172A] text-white h-11 rounded-xl text-[11px] font-black uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all shadow-md">
+                            <i class="fas fa-check text-[10px]"></i> Confirmar
+                        </button>
+                        <button onclick="recusarPedidoAction('${p.id}', this)" class="w-11 h-11 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-400 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fas fa-times text-[12px]"></i>
+                        </button>
+                        <a href="https://wa.me/${p.cliente_telefone}" target="_blank" class="w-11 h-11 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-xl flex flex-shrink-0 items-center justify-center active:scale-95 transition-all">
+                            <i class="fab fa-whatsapp text-[14px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        if (cloneMsgVazio) {
+            cloneMsgVazio.style.display = 'none';
+            container.appendChild(cloneMsgVazio);
+        }
+    } else {
+        container.innerHTML = '';
+        if (msgVazia) {
+            container.appendChild(msgVazia);
+            msgVazia.style.display = 'flex';
+        }
+    }
+}
+
+// Em animarRemocaoPedidoEAtualizar(card), continue a usar:
+// if (window.lojaIdAtivaDashboard) { carregarPedidosPendentesDashboard(window.lojaIdAtivaDashboard); }
+async function confirmarPedidoAction(pedidoId, btnElement) {
+    const card = document.getElementById(`card-pendente-${pedidoId}`);
+    if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    
+    try {
+        const { error } = await window.supabaseClient.from('pedidos').update({ status: 'confirmado' }).eq('id', pedidoId);
+        if (!error) {
+            if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Pedido Confirmado!');
+            animarRemocaoPedidoEAtualizar(card);
+            
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'confirmado';
+            }
+        }
+    } catch (e) {
+        if (btnElement) btnElement.innerHTML = '<i class="fas fa-check text-[10px]"></i> Confirmar';
+    }
+}
+
+async function recusarPedidoAction(pedidoId, btnElement) {
+    const card = document.getElementById(`card-pendente-${pedidoId}`);
+    if (btnElement) btnElement.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+    
+    try {
+        const { error } = await window.supabaseClient.from('pedidos').update({ status: 'cancelado' }).eq('id', pedidoId);
+        if (!error) {
+            animarRemocaoPedidoEAtualizar(card);
+            
+            // MÁGICA: Atualiza instantaneamente a lista de Pedidos na memória (Página Vendas)
+            if (typeof todosOsPedidos !== 'undefined') {
+                const index = todosOsPedidos.findIndex(p => p.id === pedidoId);
+                if (index !== -1) todosOsPedidos[index].status = 'cancelado';
+            }
+        }
+    } catch (e) {
+        if (btnElement) btnElement.innerHTML = '<i class="fas fa-times text-[12px]"></i>';
+    }
+}
+
+// ────── CÓDIGO A SUBSTITUIR EM: dashboard.js ──────
+
+function animarRemocaoPedidoEAtualizar(card) {
+    const statPedidos = document.getElementById('stat-pedidos');
+    const badgeAtivos = document.getElementById('badge-acoes-pendentes');
+    const badgePedidosHoje = document.getElementById('badge-pedidos-hoje');
+    
+    // Altera os números da página imediatamente
+    if (statPedidos) {
+        let numeroGigante = parseInt(statPedidos.innerText) || 0;
+        if (numeroGigante > 0) statPedidos.innerText = (numeroGigante - 1).toString();
+    }
+    if (badgeAtivos) {
+        let numero = parseInt(badgeAtivos.innerText) || 0;
+        if (numero > 0) badgeAtivos.innerText = `${numero - 1} Pendentes`;
+    }
+    if (badgePedidosHoje) {
+        let numeroHoje = parseInt(badgePedidosHoje.innerText) || 0;
+        if (numeroHoje > 0) badgePedidosHoje.innerText = `${numeroHoje - 1} PENDENTE(S)`;
+        if (numeroHoje - 1 === 0) badgePedidosHoje.classList.add('hidden');
+    }
+
+    if (!card) return;
+    card.style.transition = 'all 0.35s ease';
+    card.style.transform = 'scale(0.95)';
+    card.style.opacity = '0';
+    
+    // Exclui o visual maravilhosamente sem travar ou sobrecarregar a BD
+    setTimeout(() => {
+        card.style.height = '0px';
+        card.style.margin = '0px';
+        card.style.border = 'none';
+        card.style.padding = '0px';
+        
+        setTimeout(() => {
+            card.remove();
+            // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
+        }, 300);
+    }, 150);
+}
