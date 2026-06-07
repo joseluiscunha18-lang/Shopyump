@@ -1,0 +1,73 @@
+/* =======================================================
+   SISTEMA UNIVERSAL DE MODAIS
+   ======================================================= */
+
+/* 1. O Recipiente Principal (Invisível por defeito) */
+.modal-container {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Quando o modal é ativado via JS */
+.modal-container.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* 2. O Fundo Escuro (Backdrop) */
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.65); /* A cor escura que pediste */
+    z-index: 1;
+}
+
+/* 3. A Gaveta que sobe (Sheet) */
+.modal-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 2;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Faz a gaveta subir quando ativada */
+.modal-container.active .modal-sheet {
+    transform: translateY(0);
+}
+
+/* TIPO A: Modal de Ecrã Inteiro (Ex: Editor de Fotos) */
+.modal-sheet.full {
+    height: 100dvh;
+    border-radius: 0;
+}
+
+/* TIPO B: Modal tipo Gaveta (Ex: Cores, Categorias) */
+.modal-sheet.drawer {
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    max-height: 90vh; /* Não deixa passar por cima da barra de notificações */
+}
+
+/* 4. A Barrinha cinzenta de puxar no topo */
+.modal-handle {
+    width: 48px;
+    height: 6px;
+    background-color: #E2E8F0;
+    border-radius: 99px;
+    margin: 16px auto 24px auto;
+    flex-shrink: 0;
+}

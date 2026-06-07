@@ -49,13 +49,14 @@ document.body.insertAdjacentHTML('beforeend', `
 // Injeta o modal de Detalhes da Encomenda
 if (!document.getElementById('modal-pedido')) {
     document.body.insertAdjacentHTML('beforeend', `
-        <div id="modal-pedido" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div id="modal-pedido-content" class="bg-white dark:bg-navy-900 w-full rounded-t-[32px] pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[85vh] flex flex-col gap-4 relative shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
-                <div class="w-12 h-1.5 bg-slate-200 dark:bg-navy-700 rounded-full mx-auto absolute top-3 left-1/2 -translate-x-1/2"></div>
+        <div id="modal-pedido" class="modal-container">
+            <div class="modal-backdrop"></div>
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[1001]">
+                <div class="modal-handle dark:bg-navy-700"></div>
                 
-                <div class="flex justify-between items-center mt-3 border-b border-slate-50 dark:border-navy-800 pb-4">
+                <div class="flex justify-between items-center mt-1 border-b border-slate-50 dark:border-navy-800 pb-4 shrink-0">
                     <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Detalhes da Encomenda</h3>
-                    <button onclick="fecharModalPedido()" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
+                    <button onclick="fecharModal('modal-pedido')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
@@ -70,13 +71,14 @@ if (!document.getElementById('modal-pedido')) {
 // Injeta o modal de Filtro de Período
 if (!document.getElementById('modal-periodo')) {
     document.body.insertAdjacentHTML('beforeend', `
-        <div id="modal-periodo" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-            <div id="modal-periodo-content" class="bg-white dark:bg-navy-900 w-full rounded-t-[32px] pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out flex flex-col gap-4 relative shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
-                <div class="w-12 h-1.5 bg-slate-200 dark:bg-navy-700 rounded-full mx-auto absolute top-3 left-1/2 -translate-x-1/2"></div>
+        <div id="modal-periodo" class="modal-container">
+            <div class="modal-backdrop"></div>
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[1001]">
+                <div class="modal-handle dark:bg-navy-700"></div>
                 
-                <div class="flex justify-between items-center mt-3 mb-2">
+                <div class="flex justify-between items-center mt-1 mb-2 shrink-0">
                     <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Filtrar por Período</h3>
-                    <button onclick="fecharModalPeriodo()" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
+                    <button onclick="fecharModal('modal-periodo')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
@@ -375,15 +377,14 @@ window.renderizarListaPedidos = function() {
 };
 
 // ══════════════════════════════════════════════════════════════
-// 4. GESTÃO DOS MODAIS (PERÍODO E PEDIDO)
+// 4. GESTÃO DOS MODAIS (PERÍODO E PEDIDO) - UNIVERSAL
 // ══════════════════════════════════════════════════════════════
 
 window.abrirModalPeriodo = function() {
     const modal = document.getElementById('modal-periodo');
-    const content = document.getElementById('modal-periodo-content');
-    if (!modal || !content) return;
+    if (!modal) return;
 
-    const botoes = content.querySelectorAll('button[onclick^="mudarPeriodo"]');
+    const botoes = modal.querySelectorAll('button[onclick^="mudarPeriodo"]');
     botoes.forEach(btn => {
         if (btn.getAttribute('onclick').includes(filtroPeriodoAtual)) {
             btn.className = "w-full text-left px-5 py-4 rounded-[16px] bg-[#0F172A] text-white text-[13px] font-bold active:scale-[0.98] transition-all flex justify-between items-center shadow-md";
@@ -394,21 +395,8 @@ window.abrirModalPeriodo = function() {
         }
     });
 
-    modal.classList.remove('pointer-events-none');
-    modal.classList.add('opacity-100');
-    setTimeout(() => content.classList.remove('translate-y-full'), 10);
-};
-
-window.fecharModalPeriodo = function() {
-    const modal = document.getElementById('modal-periodo');
-    const content = document.getElementById('modal-periodo-content');
-    if (!modal || !content) return;
-    
-    content.classList.add('translate-y-full');
-    setTimeout(() => {
-        modal.classList.remove('opacity-100');
-        modal.classList.add('pointer-events-none');
-    }, 300);
+    // Usa a magia universal:
+    abrirModal('modal-periodo');
 };
 
 window.mudarPeriodo = function(valor, texto) {
@@ -416,7 +404,8 @@ window.mudarPeriodo = function(valor, texto) {
     const spanTexto = document.getElementById('texto-periodo-atual');
     if (spanTexto) spanTexto.innerText = texto;
     
-    fecharModalPeriodo();
+    // Usa a magia universal:
+    fecharModal('modal-periodo');
     renderizarListaPedidos();
 };
 
@@ -433,10 +422,8 @@ window.abrirModalPedido = function(id) {
         return;
     }
 
-    const modal = document.getElementById('modal-pedido');
-    const content = document.getElementById('modal-pedido-content');
     const corpo = document.getElementById('modal-pedido-corpo');
-    if (!modal || !content || !corpo) return;
+    if (!corpo) return;
 
     const data = new Date(pedido.created_at);
     const dataFormatada = data.toLocaleDateString('pt-MZ');
@@ -514,23 +501,8 @@ window.abrirModalPedido = function(id) {
         ${acoesHtml}
     `;
 
-    modal.classList.remove('pointer-events-none');
-    modal.classList.add('opacity-100');
-    setTimeout(() => {
-        content.classList.remove('translate-y-full');
-    }, 10);
-};
-
-window.fecharModalPedido = function() {
-    const modal = document.getElementById('modal-pedido');
-    const content = document.getElementById('modal-pedido-content');
-    if (!modal || !content) return;
-
-    content.classList.add('translate-y-full');
-    setTimeout(() => {
-        modal.classList.remove('opacity-100');
-        modal.classList.add('pointer-events-none');
-    }, 300);
+    // Usa a magia universal:
+    abrirModal('modal-pedido');
 };
 
 // ══════════════════════════════════════════════════════════════
@@ -542,7 +514,9 @@ async function alterarStatusPedido(id, novoStatus) {
         todosOsPedidos[index].status = novoStatus;
     }
     
-    fecharModalPedido();
+    // Usa a magia universal:
+    fecharModal('modal-pedido');
+    
     const btnAtivo = document.querySelector('.filtro-btn.active');
     if (btnAtivo) {
          filtrarPedidos(btnAtivo.dataset.filter);
