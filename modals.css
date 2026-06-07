@@ -12,28 +12,28 @@
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    /* NUNCA usar "transition: all" — anima tudo e mata a GPU.
+       Só animamos opacity, e rápido. */
+    transition: opacity 0.25s ease, visibility 0.25s ease;
     overscroll-behavior: contain;
 }
 
-/* Quando o modal é ativado via JS */
 .modal-container.active {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
 }
 
-/* 2. O Fundo Escuro (Backdrop) */
+/* 2. Fundo escuro */
 .modal-backdrop {
     position: absolute;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.65);
     z-index: 1;
-    /* Corta COMPLETAMENTE qualquer gesto de scroll/pull por baixo do modal */
     touch-action: none;
 }
 
-/* 3. A Gaveta que sobe (Sheet) */
+/* 3. A Gaveta */
 .modal-sheet {
     position: absolute;
     bottom: 0;
@@ -41,31 +41,42 @@
     right: 0;
     background: white;
     z-index: 2;
-    transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+
+    /* Força promoção para camada GPU ANTES de qualquer toque.
+       Sem isto o primeiro frame é renderizado pela CPU — daí o arranque travado. */
+    will-change: transform;
+    transform: translateY(100%) translateZ(0);
+
+    /* Animação de entrada/saída: só transform, sem "all" */
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Faz a gaveta subir quando ativada */
+/* Entrada do modal */
 .modal-container.active .modal-sheet {
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
 }
 
-/* TIPO A: Modal de Ecrã Inteiro */
+/* Durante o arrasto com o dedo: remove transição para colagem imediata */
+.modal-sheet.arrastando {
+    transition: none !important;
+}
+
+/* TIPO A: Ecrã inteiro */
 .modal-sheet.full {
     height: 100dvh;
     border-radius: 0;
 }
 
-/* TIPO B: Modal tipo Gaveta (bottom sheet) */
+/* TIPO B: Gaveta */
 .modal-sheet.drawer {
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
     max-height: 90vh;
 }
 
-/* 4. A barrinha cinzenta de puxar no topo */
+/* 4. Barrinha de arrastar */
 .modal-handle {
     width: 48px;
     height: 6px;
@@ -73,22 +84,19 @@
     border-radius: 99px;
     margin: 16px auto 24px auto;
     flex-shrink: 0;
+    /* Área de toque maior que o visual — mais fácil de agarrar */
+    cursor: grab;
 }
 
 /* =======================================================
-   BLOQUEIO DE PÁGINA COM MODAL ATIVO
-   Aplica-se a html E body para garantir que o Pull-to-Refresh
-   e a barra do navegador não se mexem em nenhuma circunstância
+   BLOQUEIO DA PÁGINA COM MODAL ATIVO
    ======================================================= */
 body.modal-aberto,
 html.modal-aberto {
     overflow: hidden !important;
-    /* CHAVE: corta o rebote/pull-to-refresh na raiz do sistema */
     overscroll-behavior-y: none !important;
 }
 
-/* Impede que o scroll interno do modal "salte" para a página de fundo
-   quando chega ao fim da lista */
 .modal-container .overflow-y-auto {
     overscroll-behavior-y: contain !important;
 }

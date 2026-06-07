@@ -9,8 +9,8 @@ window.abrirModal = function(id) {
 
     document.body.classList.add('modal-aberto');
     document.documentElement.classList.add('modal-aberto');
-
     modal.classList.add('active');
+
     inicializarGestosModais();
 };
 
@@ -28,7 +28,7 @@ window.fecharModal = function(id) {
     }, 300);
 };
 
-// 3. Fechar ao clicar no fundo escuro
+// 3. Fechar ao clicar no backdrop
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-backdrop')) {
         const modalId = e.target.closest('.modal-container').id;
@@ -36,51 +36,51 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 4. Bloquear TODO o touchmove enquanto houver modal ativo
-//    Um único listener global, passive:false, aplicado desde o início.
-//    Isto cobre a barrinha, o backdrop, e qualquer zona do modal
-//    que não seja uma área de scroll interna.
+// 4. Bloqueio global de touchmove — cobre barrinha, backdrop, tudo
 document.addEventListener('touchmove', (e) => {
-    // Se não há modal ativo, não faz nada
     if (document.querySelectorAll('.modal-container.active').length === 0) return;
 
-    // Permite scroll apenas dentro de elementos com scroll interno
     const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
     if (areaScroll) {
-        // Dentro da área de scroll: só bloqueia se já estiver no topo
-        // (para não "escapar" para a página ao chegar ao início)
-        if (areaScroll.scrollTop <= 0 && e.cancelable) {
-            e.preventDefault();
-        }
+        if (areaScroll.scrollTop <= 0 && e.cancelable) e.preventDefault();
         return;
     }
 
-    // Tudo o resto (barrinha, backdrop, zonas brancas): bloqueia sempre
     if (e.cancelable) e.preventDefault();
+}, { passive: false });
 
-}, { passive: false }); // passive:false é obrigatório — sem isto o preventDefault não funciona
-
-// 5. Motor de Deslize — só lida com o arrastar visual do drawer
+// 5. Motor de Deslize — colado ao dedo, sem delay
 window.inicializarGestosModais = function() {
     document.querySelectorAll('.modal-sheet.drawer').forEach(sheet => {
         if (sheet.hasAttribute('data-gesto-ativo')) return;
         sheet.setAttribute('data-gesto-ativo', 'true');
 
         let startY = 0;
+        let currentY = 0;
         let arrastando = false;
+        let rafId = null;
 
-        // passive:false no touchstart para o browser saber LOGO que vai ser interceptado
-        // Sem isto há sempre 1 frame de atraso antes do touchmove poder agir
+        function aplicarTranslate() {
+            // Sincroniza com o ciclo de pintura do browser — zero delay visual
+            sheet.style.transform = `translateY(${currentY}px) translateZ(0)`;
+            rafId = null;
+        }
+
         sheet.addEventListener('touchstart', e => {
             const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
             if (areaScroll && areaScroll.scrollTop > 0) {
                 arrastando = false;
                 return;
             }
+
+            // Cancela qualquer animação CSS a decorrer ANTES do primeiro frame
+            // Isto elimina o delay de arranque
+            sheet.classList.add('arrastando');
+
             startY = e.touches[0].clientY;
+            currentY = 0;
             arrastando = true;
-            sheet.style.transition = 'none'; // Remove transição logo no toque — zero delay
-        }, { passive: false }); // CRÍTICO: passive:false elimina o delay inicial
+        }, { passive: false });
 
         sheet.addEventListener('touchmove', e => {
             if (!arrastando) return;
@@ -89,30 +89,37 @@ window.inicializarGestosModais = function() {
             if (areaScroll && areaScroll.scrollTop > 0) return;
 
             const diff = e.touches[0].clientY - startY;
-            if (diff > 0) {
-                sheet.style.transform = `translateY(${diff}px)`;
-            }
+            if (diff < 0) return; // não deixa subir acima da posição original
+
+            currentY = diff;
+
+            // Agenda no próximo frame de pintura — o movimento fica colado ao dedo
+            if (!rafId) rafId = requestAnimationFrame(aplicarTranslate);
         }, { passive: false });
 
-        sheet.addEventListener('touchend', e => {
+        function terminar(e) {
             if (!arrastando) return;
             arrastando = false;
 
-            const diff = e.changedTouches[0].clientY - startY;
-            sheet.style.transition = ''; // Devolve animação CSS
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+
+            const diff = (e.changedTouches?.[0]?.clientY ?? startY) - startY;
+
+            // Remove classe de arrasto e devolve transição suave do CSS
+            sheet.classList.remove('arrastando');
             sheet.style.transform = '';
 
             if (diff > 100) {
                 const modalId = sheet.closest('.modal-container').id;
                 fecharModal(modalId);
             }
-        });
+        }
 
-        sheet.addEventListener('touchcancel', () => {
-            arrastando = false;
-            sheet.style.transition = '';
-            sheet.style.transform = '';
-        });
+        sheet.addEventListener('touchend', terminar);
+        sheet.addEventListener('touchcancel', terminar);
     });
 };
 
