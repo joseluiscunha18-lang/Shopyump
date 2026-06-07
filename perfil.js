@@ -6,7 +6,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <input type="file" id="input-foto" accept="image/*" class="hidden" onchange="mudarFoto(event)">
                     <div class="relative group cursor-pointer" onclick="gerirCliqueFoto()">
                         <div id="circulo-foto" class="w-28 h-28 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-white font-black text-5xl shadow-xl ring-4 ring-white dark:ring-[#0b0f1a] transition-transform active:scale-95 overflow-hidden bg-cover bg-center">
-                            <span id="letra-inicial">Z</span>
+                            <span id="letra-inicial" style="display: none;"></span>
                         </div>
                         <button class="absolute bottom-1 right-1 w-9 h-9 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-full flex items-center justify-center shadow-md border border-slate-200 dark:border-slate-600 pointer-events-none">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
@@ -18,12 +18,12 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="sf-card p-6 space-y-6">
                         <div>
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Nome Completo</label>
-                            <input type="text" id="input-nome" oninput="ativarBotao()" value="Zé Lojista" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
+                            <input type="text" id="input-nome" oninput="ativarBotao()" value="" placeholder="A carregar nome..." class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
                         </div>
                         <div class="relative">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Email de Acesso</label>
-                            <input type="email" value="Carlosfernandes@gmail.com" readonly class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
-                            <button onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95">Alterar</button>
+                            <input type="email" id="input-email" value="" readonly placeholder="A carregar email..." class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
+                            <button id="btn-alterar-email" onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95 hidden">Alterar</button>
                         </div>
                     </div>
                     <div class="pt-2">
@@ -50,27 +50,45 @@ document.body.insertAdjacentHTML('beforeend', `
 
 async function initPerfil() {
     try {
-        // Pega os dados mais recentes do utilizador logado no Supabase
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) return;
         
-        // Procura no user_metadata do Supabase, se não achar tenta o localStorage como fallback
-        const nome = user.user_metadata?.full_name || localStorage.getItem('nomeLojista') || '';
-        const foto = user.user_metadata?.avatar_url || localStorage.getItem('fotoLojista') || '';
+        // Apenas dados reais da Base de Dados
+        const nome = user.user_metadata?.full_name || '';
+        const foto = user.user_metadata?.avatar_url || '';
         const email = user.email || '';
+        const isGoogle = user.app_metadata?.provider === 'google';
 
         const inputNome = document.getElementById('input-nome');
         if (inputNome) inputNome.value = nome;
         
-        // Puxa o input do email que está na tela (dinâmico)
-        const inputEmail = document.querySelector('#spa-view input[type="email"]');
+        const inputEmail = document.getElementById('input-email');
         if (inputEmail) inputEmail.value = email;
 
-        if (foto) {
-            const letra = document.getElementById('letra-inicial');
-            const circulo = document.getElementById('circulo-foto');
+        // Ocultar botão "Alterar" se o utilizador autenticou-se via Google
+        const btnAlterarEmail = document.getElementById('btn-alterar-email');
+        if (btnAlterarEmail) {
+            if (isGoogle) {
+                btnAlterarEmail.style.display = 'none';
+            } else {
+                btnAlterarEmail.classList.remove('hidden');
+                btnAlterarEmail.style.display = 'inline-block';
+            }
+        }
+
+        const circulo = document.getElementById('circulo-foto');
+        const letra = document.getElementById('letra-inicial');
+        
+        if (foto && circulo) {
             if (letra) letra.style.display = 'none';
-            if (circulo) circulo.style.backgroundImage = `url(${foto})`;
+            circulo.style.backgroundImage = `url(${foto})`;
+            circulo.setAttribute('data-foto-bd', 'true');
+        } else if (circulo && letra) {
+            circulo.style.backgroundImage = 'none';
+            letra.style.display = 'flex';
+            // Pega a primeira letra do nome verdadeiro para o ícone
+            letra.innerText = (nome && nome.trim().length > 0) ? nome.trim().charAt(0).toUpperCase() : 'L';
+            circulo.removeAttribute('data-foto-bd');
         }
     } catch (e) {
         console.error("Erro ao carregar perfil:", e);
@@ -197,7 +215,8 @@ async function salvarDados() {
 
 function gerirCliqueFoto() {
     const circulo = document.getElementById('circulo-foto');
-    const temFoto = localStorage.getItem('fotoLojista') || (circulo && circulo.getAttribute('data-nova-foto'));
+    // Verifica apenas se os dados reais existem
+    const temFoto = (circulo && circulo.getAttribute('data-foto-bd') === 'true') || (circulo && circulo.getAttribute('data-nova-foto'));
     if (temFoto && circulo && circulo.getAttribute('data-remover') !== 'true') {
         abrirMenuFoto();
     } else {
