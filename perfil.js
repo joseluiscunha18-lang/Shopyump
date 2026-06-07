@@ -11,7 +11,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         <button class="absolute bottom-1 right-1 w-9 h-9 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-full flex items-center justify-center shadow-md border border-slate-200 dark:border-slate-600 pointer-events-none">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </button>
-                    </div>
+  async function initPerfil                  </div>
                 </div>
 
                 <div class="lg:col-span-2 space-y-6">
@@ -22,7 +22,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                         <div class="relative">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Email de Acesso</label>
-                            <input type="email" value="" readonly placeholder="A carregar email..." class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
+                            <input type="email" id="input-email" value="" readonly placeholder="A carregar email..." class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
                             <button id="btn-alterar-email" onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95 hidden">Alterar</button>
                         </div>
                     </div>
@@ -53,21 +53,29 @@ async function initPerfil() {
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) return;
         
-        // 1. Apenas usa dados puros da base de dados (nada de localStorage do teste!)
-        const nome = user.user_metadata?.full_name || '';
+        // Tenta buscar o nome da loja, caso os metadados do auth não tenham nome
+        let nomeParaMostrar = user.user_metadata?.full_name || '';
+        
+        if (!nomeParaMostrar) {
+             const { data: loja } = await window.supabaseClient.from('lojas').select('vendedor_nome').eq('perfil_id', user.id).maybeSingle();
+             if (loja && loja.vendedor_nome) {
+                 nomeParaMostrar = loja.vendedor_nome;
+             }
+        }
+
         const foto = user.user_metadata?.avatar_url || '';
         const email = user.email || '';
         
-        // 2. Verifica se o login foi via Google
-        const isGoogle = user.app_metadata?.provider === 'google';
+        // Verifica de forma segura se o login foi via Google (seja pelo provider principal ou lista de identidades)
+        const isGoogle = user.app_metadata?.provider === 'google' || user.identities?.some(id => id.provider === 'google');
 
         const inputNome = document.getElementById('input-nome');
-        if (inputNome) inputNome.value = nome;
+        if (inputNome) inputNome.value = nomeParaMostrar;
         
-        const inputEmail = document.querySelector('#spa-view input[type="email"]');
+        const inputEmail = document.getElementById('input-email');
         if (inputEmail) inputEmail.value = email;
 
-        // 3. Mostra o botão de alterar email APENAS se não for conta Gmail/Google
+        // Oculta/Mostra o botão de alterar email dependendo se é Google ou não
         const btnAlterarEmail = document.getElementById('btn-alterar-email');
         if (btnAlterarEmail) {
             if (isGoogle) {
@@ -88,8 +96,7 @@ async function initPerfil() {
         } else if (circulo && letra) {
             circulo.style.backgroundImage = 'none';
             letra.style.display = 'flex';
-            // Coloca automaticamente a primeira letra do nome se não houver foto (Em vez do falso 'Z')
-            letra.innerText = (nome && nome.trim().length > 0) ? nome.trim().charAt(0).toUpperCase() : 'L';
+            letra.innerText = (nomeParaMostrar && nomeParaMostrar.trim().length > 0) ? nomeParaMostrar.trim().charAt(0).toUpperCase() : 'L';
             circulo.removeAttribute('data-foto-bd');
         }
     } catch (e) {
@@ -99,7 +106,7 @@ async function initPerfil() {
 
 function gerirCliqueFoto() {
     const circulo = document.getElementById('circulo-foto');
-    // Verifica apenas se existe a imagem confirmada vinda da BD ou uma nova
+    // Verifica apenas se a foto veio do banco de dados OU se acabou de escolher uma nova (nada de localStorage!)
     const temFoto = (circulo && circulo.getAttribute('data-foto-bd') === 'true') || (circulo && circulo.getAttribute('data-nova-foto'));
     
     if (temFoto && circulo && circulo.getAttribute('data-remover') !== 'true') {
