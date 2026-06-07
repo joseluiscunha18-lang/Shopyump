@@ -18,12 +18,12 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="sf-card p-6 space-y-6">
                         <div>
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Nome Completo</label>
-                            <input type="text" id="input-nome" oninput="ativarBotao()" value="Zé Lojista" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
+                            <input type="text" id="input-nome" oninput="ativarBotao()" value="" placeholder="O teu nome" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
                         </div>
                         <div class="relative">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Email de Acesso</label>
-                            <input type="email" value="Carlosfernandes@gmail.com" readonly class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
-                            <button onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95">Alterar</button>
+                            <input type="email" value="" readonly placeholder="A carregar email..." class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
+                            <button id="btn-alterar-email" onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95 hidden">Alterar</button>
                         </div>
                     </div>
                     <div class="pt-2">
@@ -67,13 +67,14 @@ async function initPerfil() {
         const inputEmail = document.querySelector('#spa-view input[type="email"]');
         if (inputEmail) inputEmail.value = email;
 
-        // 3. Bloqueia alteração de email se for Google (Oculta o botão)
-        const btnAlterarEmail = document.querySelector("button[onclick=\"navegarAnimado('seguranca')\"]");
+        // 3. Mostra o botão de alterar email APENAS se não for conta Gmail/Google
+        const btnAlterarEmail = document.getElementById('btn-alterar-email');
         if (btnAlterarEmail) {
             if (isGoogle) {
                 btnAlterarEmail.style.display = 'none';
             } else {
-                btnAlterarEmail.style.display = 'block';
+                btnAlterarEmail.classList.remove('hidden');
+                btnAlterarEmail.style.display = 'inline-block';
             }
         }
 
@@ -87,6 +88,8 @@ async function initPerfil() {
         } else if (circulo && letra) {
             circulo.style.backgroundImage = 'none';
             letra.style.display = 'flex';
+            // Coloca automaticamente a primeira letra do nome se não houver foto (Em vez do falso 'Z')
+            letra.innerText = (nome && nome.trim().length > 0) ? nome.trim().charAt(0).toUpperCase() : 'L';
             circulo.removeAttribute('data-foto-bd');
         }
     } catch (e) {
