@@ -386,12 +386,14 @@ window.abrirModalPeriodo = function() {
 
     const botoes = modal.querySelectorAll('button[onclick^="mudarPeriodo"]');
     botoes.forEach(btn => {
+        const textoBotao = btn.textContent.trim(); // Usa textContent em vez de innerText
+
         if (btn.getAttribute('onclick').includes(filtroPeriodoAtual)) {
             btn.className = "w-full text-left px-5 py-4 rounded-[16px] bg-[#0F172A] text-white text-[13px] font-bold active:scale-[0.98] transition-all flex justify-between items-center shadow-md";
-            btn.innerHTML = btn.innerText.trim() + ' <i class="fas fa-check text-[12px]"></i>';
+            btn.innerHTML = textoBotao + ' <i class="fas fa-check text-[12px]"></i>';
         } else {
             btn.className = "w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group hover:bg-slate-100 dark:hover:bg-navy-800";
-            btn.innerHTML = btn.innerText.trim() + ' <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i>';
+            btn.innerHTML = textoBotao + ' <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i>';
         }
     });
 
