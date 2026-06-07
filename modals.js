@@ -7,9 +7,9 @@ window.abrirModal = function(id) {
     const modal = document.getElementById(id);
     if (!modal) return;
     
-    // Bloqueia com mais força para iPhones e Androids
-    document.body.style.overflow = 'hidden'; 
-    document.documentElement.style.overflow = 'hidden'; 
+    // Liga as classes limpas de CSS que blindam o Pull-to-Refresh e o fundo
+    document.body.classList.add('modal-aberto');
+    document.documentElement.classList.add('modal-aberto');
     
     modal.classList.add('active');
 };
@@ -23,8 +23,8 @@ window.fecharModal = function(id) {
     // Só liberta a página se não houver outros modais abertos por cima
     setTimeout(() => {
         if (document.querySelectorAll('.modal-container.active').length === 0) {
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
+            document.body.classList.remove('modal-aberto');
+            document.documentElement.classList.remove('modal-aberto');
         }
     }, 300);
 };

@@ -73,3 +73,13 @@
     margin: 16px auto 24px auto;
     flex-shrink: 0;
 }
+/* CÓDIGO PARA COPIAR E COLAR NO FUNDO DO TEU CSS */
+body.modal-aberto,
+html.modal-aberto {
+    overflow: hidden !important;
+    overscroll-behavior-y: none !important; /* MÁGICA: Corta o Pull-to-Refresh na raiz */
+}
+
+.modal-container .overflow-y-auto {
+    overscroll-behavior-y: contain !important; /* MÁGICA: Impede que o "pico" final da lista puxe a página toda */
+}
