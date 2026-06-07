@@ -49,8 +49,9 @@
     will-change: transform;
     transform: translateY(100%) translateZ(0);
 
-    /* Animação de entrada/saída: só transform, sem "all" */
-    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    /* Entrada: rápida e com energia (spring-like) — não parece lenta mesmo em modais altos
+       Saída: ligeiramente mais lenta para parecer natural ao descer */
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Entrada do modal */
@@ -61,6 +62,11 @@
 /* Durante o arrasto com o dedo: remove transição para colagem imediata */
 .modal-sheet.arrastando {
     transition: none !important;
+}
+
+/* Animação de fecho — mais rápida e cai com peso */
+.modal-sheet.fechando {
+    transition: transform 0.22s cubic-bezier(0.4, 0, 1, 1) !important;
 }
 
 /* TIPO A: Ecrã inteiro */

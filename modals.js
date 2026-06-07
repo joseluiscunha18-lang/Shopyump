@@ -108,13 +108,18 @@ window.inicializarGestosModais = function() {
 
             const diff = (e.changedTouches?.[0]?.clientY ?? startY) - startY;
 
-            // Remove classe de arrasto e devolve transição suave do CSS
             sheet.classList.remove('arrastando');
-            sheet.style.transform = '';
 
             if (diff > 100) {
+                // Aplica animação de queda rápida antes de fechar
+                sheet.classList.add('fechando');
+                sheet.style.transform = '';
+                setTimeout(() => sheet.classList.remove('fechando'), 250);
                 const modalId = sheet.closest('.modal-container').id;
                 fecharModal(modalId);
+            } else {
+                // Volta à posição com a curva suave normal de entrada
+                sheet.style.transform = '';
             }
         }
 
