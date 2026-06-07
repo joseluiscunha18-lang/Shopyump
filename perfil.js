@@ -48,21 +48,33 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // perfil.js - Lógica exclusiva da página de Perfil da Loja
 
-function initPerfil() {
-    setTimeout(() => {
-        const nome = localStorage.getItem('nomeLojista');
-        const foto = localStorage.getItem('fotoLojista');
-        if (nome) {
-            const inputNome = document.getElementById('input-nome');
-            if (inputNome) inputNome.value = nome;
-        }
+async function initPerfil() {
+    try {
+        // Pega os dados mais recentes do utilizador logado no Supabase
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        if (!user) return;
+        
+        // Procura no user_metadata do Supabase, se não achar tenta o localStorage como fallback
+        const nome = user.user_metadata?.full_name || localStorage.getItem('nomeLojista') || '';
+        const foto = user.user_metadata?.avatar_url || localStorage.getItem('fotoLojista') || '';
+        const email = user.email || '';
+
+        const inputNome = document.getElementById('input-nome');
+        if (inputNome) inputNome.value = nome;
+        
+        // Puxa o input do email que está na tela (dinâmico)
+        const inputEmail = document.querySelector('#spa-view input[type="email"]');
+        if (inputEmail) inputEmail.value = email;
+
         if (foto) {
             const letra = document.getElementById('letra-inicial');
             const circulo = document.getElementById('circulo-foto');
             if (letra) letra.style.display = 'none';
             if (circulo) circulo.style.backgroundImage = `url(${foto})`;
         }
-    }, 100);
+    } catch (e) {
+        console.error("Erro ao carregar perfil:", e);
+    }
 }
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -109,34 +121,78 @@ function ativarBotao() {
     btn.classList.add('active:scale-95');
 }
 
-function salvarDados() {
+async function salvarDados() {
     const btn = document.getElementById('btn-guardar');
     const inputNome = document.getElementById('input-nome');
     const circulo = document.getElementById('circulo-foto');
     if (!btn || !inputNome) return;
 
     const novoNome = inputNome.value;
-    const novaFoto = circulo ? circulo.getAttribute('data-nova-foto') : null;
+    let novaFoto = circulo ? circulo.getAttribute('data-nova-foto') : null;
+    const remover = circulo && circulo.getAttribute('data-remover') === 'true';
 
     btn.innerHTML = `<svg class="animate-spin h-5 w-5 mx-auto text-white dark:text-slate-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
     btn.disabled = true;
     btn.classList.remove('active:scale-95');
 
-    setTimeout(() => {
-        localStorage.setItem('nomeLojista', novoNome);
-        if (novaFoto) localStorage.setItem('fotoLojista', novaFoto);
-        if (circulo && circulo.getAttribute('data-remover') === 'true') {
-            localStorage.removeItem('fotoLojista');
+    try {
+        let updateData = { full_name: novoNome };
+        
+        if (novaFoto) {
+            updateData.avatar_url = novaFoto;
+        } else if (remover) {
+            updateData.avatar_url = null;
         }
+
+        // 1. Atualizar o nome e a foto nos metadados do utilizador no Supabase Base de Dados
+        const { error } = await window.supabaseClient.auth.updateUser({
+            data: updateData
+        });
+
+        if (error) throw error;
+
+        // 2. Atualizar o nome e a foto também na tabela 'lojas' caso a uses noutros lados
+        const { data: sessionData } = await window.supabaseClient.auth.getSession();
+        if (sessionData?.session?.user?.id) {
+            await window.supabaseClient
+                .from('lojas')
+                .update({ vendedor_nome: novoNome })
+                .eq('perfil_id', sessionData.session.user.id);
+                
+            // Limpar cache Global se necessário
+            if (typeof window.forcarAtualizacaoDashboard === 'function') {
+                window.forcarAtualizacaoDashboard();
+            }
+        }
+
+        // Sucesso visual
         btn.classList.remove('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900');
         btn.classList.add('bg-emerald-500', 'text-white', 'dark:bg-emerald-500', 'dark:text-white');
         btn.innerHTML = '✓ Guardado com Sucesso';
+        
+        // Limpar LocalStorage caso existisse (porque agora a Base de dados manda)
+        localStorage.removeItem('nomeLojista');
+        localStorage.removeItem('fotoLojista');
+
         setTimeout(() => {
             btn.classList.remove('bg-emerald-500', 'dark:bg-emerald-500');
             btn.classList.add('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900', 'opacity-50', 'cursor-not-allowed');
             btn.innerHTML = 'Guardar Alterações';
         }, 2000);
-    }, 1000);
+        
+    } catch (e) {
+        console.error("Erro ao salvar no banco:", e);
+        btn.innerHTML = 'X Erro ao guardar';
+        btn.classList.remove('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900');
+        btn.classList.add('bg-red-500', 'text-white');
+        setTimeout(() => {
+            btn.classList.remove('bg-red-500', 'opacity-50', 'cursor-not-allowed');
+            btn.classList.add('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900');
+            btn.innerHTML = 'Tentar Novamente';
+            btn.disabled = false;
+            btn.classList.add('active:scale-95');
+        }, 3000);
+    }
 }
 
 function gerirCliqueFoto() {
