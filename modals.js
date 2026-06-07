@@ -1,12 +1,16 @@
 /* =======================================================
-   SISTEMA UNIVERSAL DE MODAIS (LÓGICA)
+   SISTEMA UNIVERSAL DE MODAIS (LÓGICA - CORRIGIDO)
    ======================================================= */
 
 // 1. Abrir Modal
 window.abrirModal = function(id) {
     const modal = document.getElementById(id);
     if (!modal) return;
-    document.body.style.overflow = 'hidden'; // Bloqueia a página de baixo
+    
+    // Bloqueia com mais força para iPhones e Androids
+    document.body.style.overflow = 'hidden'; 
+    document.documentElement.style.overflow = 'hidden'; 
+    
     modal.classList.add('active');
 };
 
@@ -19,18 +23,26 @@ window.fecharModal = function(id) {
     // Só liberta a página se não houver outros modais abertos por cima
     setTimeout(() => {
         if (document.querySelectorAll('.modal-container.active').length === 0) {
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
         }
     }, 300);
 };
 
-// 3. Fechar ao Clicar no Fundo Escuro (Backdrop)
+// 3. Fechar ao Clicar no Fundo Escuro e Bloquear Mover a tela nele
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-backdrop')) {
         const modalId = e.target.closest('.modal-container').id;
         fecharModal(modalId);
     }
 });
+
+// Bloqueia tentativas de arrastar na zona escura (arrastar a página debaixo)
+document.addEventListener('touchmove', (e) => {
+    if (e.target.classList.contains('modal-backdrop')) {
+        if (e.cancelable) e.preventDefault();
+    }
+}, {passive: false});
 
 // 4. Motor de Deslize Inteligente
 window.inicializarGestosModais = function() {
@@ -54,15 +66,20 @@ window.inicializarGestosModais = function() {
 
             let diff = e.touches[0].clientY - startY;
             if (diff > 0) { // Só puxa para baixo
+                
+                // >>> MAGIA AQUI <<<
+                // Isto bloqueia o Pull-to-Refresh do navegador nativo!
+                if (e.cancelable) e.preventDefault();
+                
                 sheet.style.transform = `translateY(${diff}px)`;
                 sheet.style.transition = 'none';
             }
-        }, {passive: true});
+        }, {passive: false}); // IMPORTANTE SER false PARA ANULAR O NAVEGADOR
 
         sheet.addEventListener('touchend', e => {
             let diff = e.changedTouches[0].clientY - startY;
             sheet.style.transition = ''; // Devolve a animação ao CSS
-            sheet.style.transform = '';  // Volta à posição original
+            sheet.style.transform = '';  // Volta a posição original
             
             if (diff > 100) { // Se puxou muito para baixo, fecha
                 const modalId = sheet.closest('.modal-container').id;
@@ -71,4 +88,4 @@ window.inicializarGestosModais = function() {
         });
     });
 };
-document.addEventListener('DOMContentLoaded', inicializarGestosModais);
+document.addEventListener('DOMContentLoaded', window.inicializarGestosModais);
