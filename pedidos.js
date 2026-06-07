@@ -1,4 +1,4 @@
-// Injeta a Interface da Página de Pedidos
+y// Injeta a Interface da Página de Pedidos
 document.body.insertAdjacentHTML('beforeend', `
                <template id="tpl-vendas">
     <div class="bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen pb-24">
@@ -51,17 +51,17 @@ if (!document.getElementById('modal-pedido')) {
     document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-pedido" class="modal-container">
             <div class="modal-backdrop"></div>
-            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
-                <div class="modal-handle dark:bg-navy-700"></div>
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+                <div class="modal-handle dark:bg-navy-700 mb-2"></div>
                 
-                <div class="flex justify-between items-center mt-1 border-b border-slate-50 dark:border-navy-800 pb-4 shrink-0">
+                <div class="px-6 flex justify-between items-center mt-1 border-b border-slate-50 dark:border-navy-800 pb-4 shrink-0">
                     <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Detalhes da Encomenda</h3>
                     <button onclick="fecharModal('modal-pedido')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
                 
-                <div id="modal-pedido-corpo" class="overflow-y-auto no-scrollbar pb-6 space-y-4">
+                <div id="modal-pedido-corpo" class="overflow-y-auto flex-1 no-scrollbar px-6 py-4 space-y-4">
                 </div>
             </div>
         </div>
@@ -73,17 +73,17 @@ if (!document.getElementById('modal-periodo')) {
     document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-periodo" class="modal-container">
             <div class="modal-backdrop"></div>
-            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
-                <div class="modal-handle dark:bg-navy-700"></div>
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+                <div class="modal-handle dark:bg-navy-700 mb-2"></div>
                 
-                <div class="flex justify-between items-center mt-1 mb-2 shrink-0">
+                <div class="px-6 flex justify-between items-center mt-1 mb-2 shrink-0">
                     <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Filtrar por Período</h3>
                     <button onclick="fecharModal('modal-periodo')" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
                         <i class="fas fa-times text-sm"></i>
                     </button>
                 </div>
                 
-                <div class="flex flex-col gap-2" id="lista-opcoes-periodo">
+                <div class="flex flex-col gap-2 overflow-y-auto flex-1 no-scrollbar px-6 pb-8" id="lista-opcoes-periodo">
                     <button onclick="mudarPeriodo('hoje', 'Hoje')" class="w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group">Hoje <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i></button>
                     <button onclick="mudarPeriodo('semana', 'Esta Semana')" class="w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group">Esta Semana <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i></button>
                     <button onclick="mudarPeriodo('mes', 'Este Mês')" class="w-full text-left px-5 py-4 rounded-[16px] bg-[#0F172A] text-white active:scale-[0.98] transition-all flex justify-between items-center shadow-md">Este Mês <i class="fas fa-check text-[12px]"></i></button>
@@ -93,7 +93,6 @@ if (!document.getElementById('modal-periodo')) {
         </div>
     `);
 }
-
 // ══════════════════════════════════════════════════════════════
 // 1. DADOS E INICIALIZAÇÃO
 // ══════════════════════════════════════════════════════════════
