@@ -52,15 +52,7 @@
     <div id="overlay" onclick="toggleSidebar()"></div>
 
     <aside id="menuZ">
-        <div class="profile-card dark:bg-navy-800 dark:border-navy-900/50">
-            <div class="w-14 h-14 rounded-2xl bg-[#0f172a] dark:bg-emerald-500 flex items-center justify-center text-white font-black text-xl shadow-lg">S</div>
-            <div>
-                <h3 class="font-bold text-gray-900 dark:text-white text-base leading-tight">Shopyump</h3>
-                <p class="text-[10px] font-bold text-gray-400 dark:text-emerald-500/80 mt-0.5 uppercase tracking-wider">Conta Ativa</p>
-            </div>
-        </div>
-
-        <div class="flex-1 overflow-y-auto no-scrollbar">
+        <div class="flex-1 overflow-y-auto no-scrollbar flex flex-col pt-8">
             <p class="section-title">Definições da Conta</p>
             <div class="menu-card">
                 <div class="nav-item" onclick="navegarAnimado('perfil')">
@@ -91,15 +83,6 @@
 
             <p class="section-title">Negócio & Estilo</p>
             <div class="menu-card">
-                <div class="nav-item cursor-pointer" onclick="toggleModoNovato()">
-                    <div class="flex items-center gap-3">
-                        <svg class="icon-elite text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        <span>Modo Novato</span>
-                    </div>
-                    <div class="w-9 h-5 bg-slate-300 shadow-inner dark:bg-slate-700 rounded-full relative transition-all duration-300">
-                        <div id="toggle-novato-bola" class="w-4 h-4 bg-white rounded-full absolute left-0.5 top-0.5 shadow-md border border-slate-200 dark:border-transparent transition-transform duration-300"></div>
-                    </div>
-                </div>
                 <div class="nav-item cursor-pointer" onclick="toggleDarkMode()">
                     <div class="flex items-center gap-3">
                         <svg class="icon-elite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -145,7 +128,17 @@
                 }
             </script>
 
-            <div class="legal-footer flex-col items-center gap-1 mb-4 mt-2">
+            <div class="mt-auto"></div>
+
+            <div class="profile-card dark:bg-navy-800 dark:border-navy-900/50" style="margin-top: 16px; margin-bottom: 16px;">
+                <div class="w-12 h-12 rounded-2xl bg-[#0f172a] dark:bg-emerald-500 flex items-center justify-center text-white font-black text-lg shadow-lg">S</div>
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm leading-tight">Shopyump</h3>
+                    <p class="text-[10px] font-bold text-gray-400 dark:text-emerald-500/80 mt-0.5 uppercase tracking-wider">Conta Ativa</p>
+                </div>
+            </div>
+
+            <div class="legal-footer flex-col items-center gap-1 mb-4">
                 <div class="flex gap-3">
                     <a href="#">Privacidade</a>
                     <a href="#">Termos</a>
