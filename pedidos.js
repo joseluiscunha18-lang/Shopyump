@@ -3,7 +3,7 @@ document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-vendas">
         <div class="pt-2 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen pb-24">
             
-            <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-8 pb-3 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-4">
+            <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-8 pb-3 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-3">
                 
                 <div class="px-5 mt-2">
                     <div class="relative group">
@@ -24,8 +24,6 @@ document.body.insertAdjacentHTML('beforeend', `
                     <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">Cancelados</button>
                 </div>
             </div>
-            
-            `);
 
             <div class="px-5 mt-4 space-y-3" id="lista-pedidos-historico">
                 <div class="py-12 text-center text-slate-400 text-sm flex flex-col items-center">
@@ -42,6 +40,7 @@ document.body.insertAdjacentHTML('beforeend', `
         </div>
     </template>
 `);
+
 
 // Injeta o modal de Detalhes da Encomenda
 if (!document.getElementById('modal-pedido')) {
