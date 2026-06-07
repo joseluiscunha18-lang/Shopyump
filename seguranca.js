@@ -10,11 +10,13 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                     <div id="form-email" class="expandable border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
                         <div class="p-5 space-y-4 text-left">
-                            <div class="space-y-1.5"><label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Novo Email</label><input type="email" placeholder="novo@exemplo.com" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3.5 rounded-xl text-sm outline-none focus:border-slate-900 dark:focus:border-white transition-colors"></div>
-                            <div class="space-y-1.5 relative"><label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Senha Atual para Confirmar</label><input type="password" id="pass-email-confirm" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3.5 rounded-xl text-sm outline-none focus:border-slate-900 dark:focus:border-white transition-colors">
-                                <button type="button" onclick="toggleVerSenha('pass-email-confirm', this)" class="absolute right-4 top-9 text-slate-400 active:scale-90 transition-transform"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Novo Email</label>
+                                <input type="email" id="input-novo-email" placeholder="novo@exemplo.com" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3.5 rounded-xl text-sm outline-none focus:border-slate-900 dark:focus:border-white transition-colors">
+                                <p class="text-[10px] text-slate-400 mt-1">O Supabase enviará um link de confirmação para validar.</p>
                             </div>
-                            <button onclick="mostrarNotificacao('Email atualizado com sucesso', 'form-email')" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-[0.98] transition-all">Atualizar Email</button>
+                            <p id="msg-erro-email" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden"></p>
+                            <button id="btn-salvar-email" onclick="validarESalvarEmail()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-[0.98] transition-all">Atualizar Email</button>
                         </div>
                     </div>
                 </div>
@@ -37,7 +39,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <button type="button" onclick="toggleVerSenha('pass-conf', this)" class="absolute right-4 top-9 text-slate-400 active:scale-90 transition-transform"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></button>
                                 <p id="msg-erro-senha" class="text-red-500 text-[10px] font-bold uppercase mt-2 hidden"></p>
                             </div>
-                            <button onclick="validarESalvarSenha()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all">Salvar Nova Senha</button>
+                            <button id="btn-salvar-senha" onclick="validarESalvarSenha()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all">Salvar Nova Senha</button>
                         </div>
                     </div>
                 </div>
@@ -136,39 +138,134 @@ function checarForca(val) {
     if (val.length > 8) f3.className = b.replace('bg-slate-200 dark:bg-slate-700', 'bg-emerald-500');
 }
 
-function validarESalvarSenha() {
+async function validarESalvarEmail() {
+    const inputEmail = document.getElementById('input-novo-email');
+    const msg = document.getElementById('msg-erro-email');
+    const btn = document.getElementById('btn-salvar-email');
+    
+    if (!inputEmail || !msg || !btn) return;
+
+    const novoEmail = inputEmail.value.trim();
+    if (!novoEmail || !novoEmail.includes('@')) {
+        msg.innerText = '⚠ Por favor, insira um e-mail válido';
+        msg.style.display = 'block';
+        inputEmail.classList.add('border-red-500');
+        return;
+    }
+
+    msg.style.display = 'none';
+    inputEmail.classList.remove('border-red-500');
+    
+    const textoOriginal = btn.innerText;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> A processar...';
+    btn.disabled = true;
+
+    try {
+        const { error } = await window.supabaseClient.auth.updateUser({ email: novoEmail });
+        
+        if (error) throw error;
+
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Verifica a tua caixa de e-mail.');
+        } else {
+            alert('Verifica a caixa de entrada no e-mail antigo e no novo para confirmar.');
+        }
+
+        const formEmail = document.getElementById('form-email');
+        if (formEmail) formEmail.classList.remove('open');
+        inputEmail.value = '';
+    } catch (error) {
+        console.error('Erro ao atualizar e-mail:', error);
+        msg.innerText = '⚠ ' + (error.message || 'Erro ao atualizar e-mail.');
+        msg.style.display = 'block';
+    } finally {
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
+    }
+}
+
+async function validarESalvarSenha() {
     const atual = document.getElementById('pass-atual');
     const nova = document.getElementById('pass-nova');
     const conf = document.getElementById('pass-conf');
     const msg = document.getElementById('msg-erro-senha');
+    const btn = document.getElementById('btn-salvar-senha');
+    
     if (!nova || !conf || !msg) return;
 
     msg.style.display = 'none';
     nova.classList.remove('border-red-500');
     conf.classList.remove('border-red-500');
 
-    if (!nova.value || !conf.value) return;
+    if (!nova.value || !conf.value || (atual && !atual.value)) {
+        msg.innerText = '⚠ Por favor, preenche todos os campos.';
+        msg.style.display = 'block';
+        return;
+    }
 
     if (atual && atual.value === nova.value) {
-        msg.innerText = '⚠ A nova senha não pode ser igual à atual';
+        msg.innerText = '⚠ A nova senha não pode ser igual à atual.';
         msg.style.display = 'block';
         nova.classList.add('border-red-500');
         return;
     }
 
     if (nova.value !== conf.value) {
-        msg.innerText = '⚠ As senhas não coincidem';
+        msg.innerText = '⚠ As senhas não coincidem.';
         msg.style.display = 'block';
         conf.classList.add('border-red-500');
         return;
     }
 
-    mostrarNotificacao('Senha alterada com sucesso!');
-    const formSenha = document.getElementById('form-senha');
-    if (formSenha) formSenha.classList.remove('open');
+    const textoOriginal = btn ? btn.innerText : 'SALVAR NOVA SENHA';
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> A processar...';
+        btn.disabled = true;
+    }
 
-    if (atual) atual.value = '';
-    nova.value = '';
-    conf.value = '';
-    checarForca('');
+    try {
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+        if (!user || (!user.email && !user.phone)) throw new Error('Não foi possível aceder à tua conta.');
+
+        // 1. Validar primeiro a senha atual forçando um sign in silencioso (Acesso Implacável)
+        const { error: signInError } = await window.supabaseClient.auth.signInWithPassword({
+            email: user.email,
+            password: atual.value
+        });
+
+        if (signInError) {
+            throw new Error('A senha atual está incorreta.');
+        }
+
+        // 2. Só após confirmar que a senha atual está certa, passamos a atualizar para a nova!
+        const { error: updateError } = await window.supabaseClient.auth.updateUser({
+            password: nova.value
+        });
+
+        if (updateError) throw updateError;
+
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao('Senha alterada no Supabase com sucesso!');
+        } else {
+            alert('Senha alterada com sucesso!');
+        }
+        
+        const formSenha = document.getElementById('form-senha');
+        if (formSenha) formSenha.classList.remove('open');
+
+        if (atual) atual.value = '';
+        nova.value = '';
+        conf.value = '';
+        if (typeof checarForca === 'function') checarForca('');
+
+    } catch (error) {
+        console.error('Erro ao alterar senha:', error);
+        msg.innerText = '⚠ ' + (error.message || 'Erro ao alterar a senha.');
+        msg.style.display = 'block';
+    } finally {
+        if (btn) {
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
+    }
 }
