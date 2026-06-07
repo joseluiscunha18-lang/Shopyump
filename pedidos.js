@@ -6,9 +6,12 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="sticky top-0 z-20 bg-[#f6f6f7]/90 dark:bg-[#0b0f1a]/90 backdrop-blur-xl pt-4 pb-3 space-y-4 border-b border-slate-200/50 dark:border-navy-800/50">
                 
                 <div class="flex justify-between items-center px-5">
-                    <h2 class="text-[22px] font-black text-slate-900 dark:text-white tracking-tight">Pedidos</h2>
-                    <button onclick="abrirModalPeriodo()" class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-full text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-navy-800">
-                        <i class="far fa-calendar-alt"></i> <span id="texto-periodo-atual">Este Mês</span> <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i>
+                    <div>
+                        <h2 class="text-[20px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">Histórico</h2>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Gestão do Catálogo</p>
+                    </div>
+                    <button onclick="abrirModalPeriodo()" class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-[12px] text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all hover:border-slate-300 dark:hover:border-navy-600">
+                        <i class="far fa-calendar-alt opacity-70"></i> <span id="texto-periodo-atual">Este Mês</span> <i class="fas fa-chevron-down text-[9px] ml-1 opacity-40"></i>
                     </button>
                 </div>
                 
