@@ -1,6 +1,6 @@
 // Injeta a Interface da Página de Pedidos
 document.body.insertAdjacentHTML('beforeend', `
-               <template id="tpl-vendas">
+<template id="tpl-vendas">
     <div class="bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen pb-24">
         
         <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-24 pb-4 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-4 shadow-sm">
@@ -31,18 +31,15 @@ document.body.insertAdjacentHTML('beforeend', `
                  A carregar histórico...
             </div>
         </div>
+
+        <div id="container-carregar-mais" class="px-5 mt-5 hidden pb-8">
+            <button onclick="carregarMaisPedidos()" class="w-full h-12 bg-slate-100 dark:bg-navy-800 rounded-[16px] text-[12px] font-bold text-slate-600 dark:text-slate-300 active:scale-95 transition-all border border-slate-200 dark:border-navy-700 flex items-center justify-center gap-2">
+                Ver encomendas anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
+            </button>
+        </div>
+
     </div>
 </template>
-
-
-    
-            <div id="container-carregar-mais" class="px-5 mt-5 hidden pb-8">
-                <button onclick="carregarMaisPedidos()" class="w-full h-12 bg-slate-100 dark:bg-navy-800 rounded-[16px] text-[12px] font-bold text-slate-600 dark:text-slate-300 active:scale-95 transition-all border border-slate-200 dark:border-navy-700 flex items-center justify-center gap-2">
-                    Ver encomendas anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
-                </button>
-            </div>
-        </div>
-    </template>
 `);
 
 
