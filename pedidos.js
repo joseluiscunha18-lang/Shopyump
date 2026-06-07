@@ -7,15 +7,15 @@ document.body.insertAdjacentHTML('beforeend', `
                 
                 <div class="flex justify-between items-center px-5">
                     <h2 class="text-[22px] font-black text-slate-900 dark:text-white tracking-tight">Pedidos</h2>
-                    <button class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-full text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all">
-                        <i class="far fa-calendar-alt"></i> Este Mês <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i>
+                    <button onclick="abrirModalPeriodo()" class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-full text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all hover:bg-slate-50 dark:hover:bg-navy-800">
+                        <i class="far fa-calendar-alt"></i> <span id="texto-periodo-atual">Este Mês</span> <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i>
                     </button>
                 </div>
                 
                 <div class="px-5">
                     <div class="relative group">
                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm transition-colors group-focus-within:text-[#0F172A] dark:group-focus-within:text-white"></i>
-                        <input type="text" id="input-pesquisa-pedidos" placeholder="Nº do pedido, cliente ou telefone..." class="w-full h-[46px] pl-11 pr-4 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 rounded-[16px] text-[13px] font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-400 dark:focus:border-navy-500 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all">
+                        <input type="text" id="input-pesquisa-pedidos" placeholder="Nº da encomenda, cliente ou telefone..." class="w-full h-[46px] pl-11 pr-4 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 rounded-[16px] text-[13px] font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-400 dark:focus:border-navy-500 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all">
                     </div>
                 </div>
 
@@ -41,7 +41,7 @@ document.body.insertAdjacentHTML('beforeend', `
             
             <div id="container-carregar-mais" class="px-5 mt-5 hidden pb-8">
                 <button onclick="carregarMaisPedidos()" class="w-full h-12 bg-slate-100 dark:bg-navy-800 rounded-[16px] text-[12px] font-bold text-slate-600 dark:text-slate-300 active:scale-95 transition-all border border-slate-200 dark:border-navy-700 flex items-center justify-center gap-2">
-                    Ver pedidos anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
+                    Ver encomendas anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
                 </button>
             </div>
 
@@ -49,7 +49,7 @@ document.body.insertAdjacentHTML('beforeend', `
     </template>
 `);
 
-// Injeta o modal globalmente fora do template para funcionar também no Dashboard de forma fluída
+// Injeta o modal de Detalhes da Encomenda
 if (!document.getElementById('modal-pedido')) {
     document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-pedido" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
@@ -70,9 +70,42 @@ if (!document.getElementById('modal-pedido')) {
     `);
 }
 
-// Lógica de Vendas/Pedidos
+// Injeta o modal de Filtro de Período
+if (!document.getElementById('modal-periodo')) {
+    document.body.insertAdjacentHTML('beforeend', `
+        <div id="modal-periodo" class="fixed inset-0 z-[200] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+            <div id="modal-periodo-content" class="bg-white dark:bg-navy-900 w-full rounded-t-[32px] pt-5 pb-8 px-6 transform translate-y-full transition-transform duration-300 ease-out flex flex-col gap-4 relative shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+                <div class="w-12 h-1.5 bg-slate-200 dark:bg-navy-700 rounded-full mx-auto absolute top-3 left-1/2 -translate-x-1/2"></div>
+                
+                <div class="flex justify-between items-center mt-3 mb-2">
+                    <h3 class="text-[13px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Filtrar por Período</h3>
+                    <button onclick="fecharModalPeriodo()" class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-navy-800 text-slate-500 dark:text-slate-400 active:scale-90 transition-all border border-slate-100 dark:border-navy-700">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+                
+                <div class="flex flex-col gap-2" id="lista-opcoes-periodo">
+                    <button onclick="mudarPeriodo('hoje', 'Hoje')" class="w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group">Hoje <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i></button>
+                    <button onclick="mudarPeriodo('semana', 'Esta Semana')" class="w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group">Esta Semana <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i></button>
+                    <button onclick="mudarPeriodo('mes', 'Este Mês')" class="w-full text-left px-5 py-4 rounded-[16px] bg-[#0F172A] text-white active:scale-[0.98] transition-all flex justify-between items-center shadow-md">Este Mês <i class="fas fa-check text-[12px]"></i></button>
+                    <button onclick="mudarPeriodo('sempre', 'Todo o Período')" class="w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group">Todo o Período <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i></button>
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+// ══════════════════════════════════════════════════════════════
+// 1. DADOS E INICIALIZAÇÃO
+// ══════════════════════════════════════════════════════════════
 let todosOsPedidos = [];
 let pedidosCarregados = false; 
+
+// Variáveis de Controlo da Interface
+let filtroStatusAtual = 'pendente';
+let filtroPeriodoAtual = 'mes'; 
+let termoPesquisaAtual = '';
+let limiteExibicaoPedidos = 15;
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'vendas') {
@@ -87,47 +120,11 @@ document.addEventListener('spa:page-loaded', (e) => {
             const btnTudo = document.querySelector('.filtro-btn.active');
             if (typeof filtrarPedidos === 'function') {
                 filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'pendente');
-            } else if (typeof renderizarListaPedidos === 'function') {
-                renderizarListaPedidos('pendente');
             }
         }
     }
 });
 
-// Altera o status instantaneamente (UI optimista)
-async function alterarStatusPedido(id, novoStatus) {
-    const index = todosOsPedidos.findIndex(p => p.id === id);
-    if (index !== -1) {
-        todosOsPedidos[index].status = novoStatus;
-    }
-    
-    fecharModalPedido();
-    const btnAtivo = document.querySelector('.filtro-btn.active');
-    if (btnAtivo) {
-         filtrarPedidos(btnAtivo.dataset.filter);
-    } else {
-         renderizarListaPedidos();
-    }
-
-    try {
-        const { error } = await window.supabaseClient
-            .from('pedidos')
-            .update({ status: novoStatus })
-            .eq('id', id);
-            
-        if (error) throw error;
-        
-        if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
-             memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== id);
-        }
-        
-    } catch(e) {
-        console.error(e);
-        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Erro ao atualizar status');
-    }
-}
-
-// Descarrega do Supabase e guarda na memória
 async function carregarHistoricoPedidos() {
     const lista = document.getElementById('lista-pedidos-historico');
     if (!lista) return;
@@ -181,19 +178,46 @@ async function carregarHistoricoPedidos() {
     try {
         const btnAtivo = document.querySelector('.filtro-btn.active');
         const filtroAtual = btnAtivo ? btnAtivo.dataset.filter : 'pendente';
-        
-        if (typeof filtrarPedidos === 'function') {
-             filtrarPedidos(filtroAtual);
-        }
+        if (typeof filtrarPedidos === 'function') filtrarPedidos(filtroAtual);
     } catch (erroInterface) {
         console.error("Erro UI:", erroInterface);
     }
 }
 
-// Variáveis de Controlo da Interface
-let filtroStatusAtual = 'pendente';
-let termoPesquisaAtual = '';
-let limiteExibicaoPedidos = 15;
+// ══════════════════════════════════════════════════════════════
+// 2. LÓGICA DE FILTROS E PESQUISA
+// ══════════════════════════════════════════════════════════════
+
+// Função utilitária de UX: Remove acentos e caracteres especiais para a pesquisa
+function normalizarTexto(texto) {
+    if (!texto) return '';
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+function dataDentroDoPeriodo(dataString, periodo) {
+    if (periodo === 'sempre') return true;
+    
+    const dataPedido = new Date(dataString);
+    const hoje = new Date();
+    
+    if (periodo === 'hoje') {
+        return dataPedido.getDate() === hoje.getDate() && 
+               dataPedido.getMonth() === hoje.getMonth() && 
+               dataPedido.getFullYear() === hoje.getFullYear();
+    }
+    
+    if (periodo === 'semana') {
+        const primeiroDiaSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
+        primeiroDiaSemana.setHours(0,0,0,0);
+        return dataPedido >= primeiroDiaSemana;
+    }
+    
+    if (periodo === 'mes') {
+        return dataPedido.getMonth() === hoje.getMonth() && 
+               dataPedido.getFullYear() === hoje.getFullYear();
+    }
+    return true;
+}
 
 window.filtrarPedidos = function(filtro) {
     filtroStatusAtual = filtro;
@@ -213,7 +237,7 @@ window.filtrarPedidos = function(filtro) {
 
 document.addEventListener('input', (e) => {
     if (e.target.id === 'input-pesquisa-pedidos') {
-        termoPesquisaAtual = e.target.value.toLowerCase().trim();
+        termoPesquisaAtual = e.target.value;
         renderizarListaPedidos();
     }
 });
@@ -223,34 +247,50 @@ window.carregarMaisPedidos = function() {
     renderizarListaPedidos();
 };
 
-// Motor de Renderização
+// ══════════════════════════════════════════════════════════════
+// 3. MOTOR DE RENDERIZAÇÃO
+// ══════════════════════════════════════════════════════════════
 window.renderizarListaPedidos = function() {
     const lista = document.getElementById('lista-pedidos-historico');
     const btnCarregarMais = document.getElementById('container-carregar-mais');
     if (!lista) return;
 
     const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
-    
-    let pedidosFiltrados = basePedidos.filter(p => p.status === filtroStatusAtual);
+    let pedidosFiltrados = [...basePedidos];
 
+    // LÓGICA DA LUPA INTELIGENTE (Prioridade Máxima)
     if (termoPesquisaAtual !== '') {
+        const termoLimpo = normalizarTexto(termoPesquisaAtual);
+        
+        // Ignora abas e períodos: procura em TODA a base de dados
         pedidosFiltrados = pedidosFiltrados.filter(p => 
-            (p.cliente_nome && p.cliente_nome.toLowerCase().includes(termoPesquisaAtual)) ||
-            (p.id && p.id.toLowerCase().includes(termoPesquisaAtual)) ||
-            (p.cliente_telefone && p.cliente_telefone.includes(termoPesquisaAtual))
+            normalizarTexto(p.cliente_nome).includes(termoLimpo) ||
+            normalizarTexto(p.id).includes(termoLimpo) ||
+            normalizarTexto(p.cliente_telefone).includes(termoLimpo)
         );
-    }
+        
+        if (btnCarregarMais) btnCarregarMais.classList.add('hidden');
 
-    const totalResultados = pedidosFiltrados.length;
-    if (filtroStatusAtual !== 'pendente') {
-        pedidosFiltrados = pedidosFiltrados.slice(0, limiteExibicaoPedidos);
-    }
+    } else {
+        // NAVEGAÇÃO NORMAL
+        pedidosFiltrados = pedidosFiltrados.filter(p => p.status === filtroStatusAtual);
+        
+        if (typeof dataDentroDoPeriodo === 'function' && typeof filtroPeriodoAtual !== 'undefined') {
+            pedidosFiltrados = pedidosFiltrados.filter(p => dataDentroDoPeriodo(p.created_at, filtroPeriodoAtual));
+        }
 
-    if (btnCarregarMais) {
-        if (filtroStatusAtual !== 'pendente' && totalResultados > limiteExibicaoPedidos && termoPesquisaAtual === '') {
-            btnCarregarMais.classList.remove('hidden');
-        } else {
-            btnCarregarMais.classList.add('hidden');
+        const totalResultados = pedidosFiltrados.length;
+        
+        if (filtroStatusAtual !== 'pendente') {
+            pedidosFiltrados = pedidosFiltrados.slice(0, limiteExibicaoPedidos);
+        }
+
+        if (btnCarregarMais) {
+            if (filtroStatusAtual !== 'pendente' && totalResultados > limiteExibicaoPedidos) {
+                btnCarregarMais.classList.remove('hidden');
+            } else {
+                btnCarregarMais.classList.add('hidden');
+            }
         }
     }
 
@@ -262,7 +302,7 @@ window.renderizarListaPedidos = function() {
                 </div>
                 <h4 class="text-[15px] font-bold text-slate-900 dark:text-white tracking-tight">Nenhum resultado</h4>
                 <p class="text-[12px] text-slate-500 mt-0.5 max-w-[220px] leading-relaxed mx-auto">
-                    ${termoPesquisaAtual !== '' ? 'Não encontrámos encomendas com essa referência.' : 'A lista está limpa nesta categoria.'}
+                    ${termoPesquisaAtual !== '' ? 'Não encontrámos encomendas com essa referência no catálogo.' : 'A lista está limpa nesta categoria e período.'}
                 </p>
             </div>
         `;
@@ -298,11 +338,9 @@ window.renderizarListaPedidos = function() {
         
         html += `
             <div onclick="abrirModalPedido('${p.id}')" class="bg-white dark:bg-navy-900 p-3 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 transition-all active:scale-[0.98] cursor-pointer mb-3 flex items-center gap-3 relative overflow-hidden group hover:border-slate-200 dark:hover:border-navy-700">
-                
                 <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-100 dark:border-navy-700 relative">
                     <img src="${fotoProduto}" class="w-full h-full object-cover" alt="Produto">
                 </div>
-                
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between mb-0.5">
                         <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate pr-2">${p.cliente_nome || 'Anónimo'}</h4>
@@ -311,13 +349,11 @@ window.renderizarListaPedidos = function() {
                             <span class="text-[9px] font-black tracking-widest uppercase">${statusTexto}</span>
                         </div>
                     </div>
-                    
                     <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1.5">
                         <span class="truncate">${p.id.split('-')[0].toUpperCase()}</span>
                         <span class="mx-1.5 opacity-30">•</span>
                         <span>${qtdItens} item(s)</span>
                     </div>
-                    
                     <div class="flex items-center justify-between">
                         <p class="text-[12px] font-black text-slate-900 dark:text-white">${totalNum.toLocaleString('pt-MZ')} <span class="text-[9px] font-bold text-slate-400">MT</span></p>
                         <p class="text-[9px] font-bold text-slate-400 flex items-center gap-1">
@@ -332,7 +368,52 @@ window.renderizarListaPedidos = function() {
     lista.innerHTML = html;
 };
 
-// Abre o Modal
+// ══════════════════════════════════════════════════════════════
+// 4. GESTÃO DOS MODAIS (PERÍODO E PEDIDO)
+// ══════════════════════════════════════════════════════════════
+
+window.abrirModalPeriodo = function() {
+    const modal = document.getElementById('modal-periodo');
+    const content = document.getElementById('modal-periodo-content');
+    if (!modal || !content) return;
+
+    const botoes = content.querySelectorAll('button[onclick^="mudarPeriodo"]');
+    botoes.forEach(btn => {
+        if (btn.getAttribute('onclick').includes(filtroPeriodoAtual)) {
+            btn.className = "w-full text-left px-5 py-4 rounded-[16px] bg-[#0F172A] text-white text-[13px] font-bold active:scale-[0.98] transition-all flex justify-between items-center shadow-md";
+            btn.innerHTML = btn.innerText.trim() + ' <i class="fas fa-check text-[12px]"></i>';
+        } else {
+            btn.className = "w-full text-left px-5 py-4 rounded-[16px] bg-slate-50 dark:bg-navy-800/50 text-[13px] font-bold text-slate-700 dark:text-slate-300 active:scale-[0.98] transition-all flex justify-between items-center group hover:bg-slate-100 dark:hover:bg-navy-800";
+            btn.innerHTML = btn.innerText.trim() + ' <i class="fas fa-chevron-right text-[10px] opacity-0 group-hover:opacity-100 transition-all"></i>';
+        }
+    });
+
+    modal.classList.remove('pointer-events-none');
+    modal.classList.add('opacity-100');
+    setTimeout(() => content.classList.remove('translate-y-full'), 10);
+};
+
+window.fecharModalPeriodo = function() {
+    const modal = document.getElementById('modal-periodo');
+    const content = document.getElementById('modal-periodo-content');
+    if (!modal || !content) return;
+    
+    content.classList.add('translate-y-full');
+    setTimeout(() => {
+        modal.classList.remove('opacity-100');
+        modal.classList.add('pointer-events-none');
+    }, 300);
+};
+
+window.mudarPeriodo = function(valor, texto) {
+    filtroPeriodoAtual = valor;
+    const spanTexto = document.getElementById('texto-periodo-atual');
+    if (spanTexto) spanTexto.innerText = texto;
+    
+    fecharModalPeriodo();
+    renderizarListaPedidos();
+};
+
 window.abrirModalPedido = function(id) {
     let basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
     let pedido = basePedidos.find(p => p.id === id);
@@ -342,7 +423,7 @@ window.abrirModalPedido = function(id) {
     }
 
     if (!pedido) {
-        console.error("Pedido não encontrado na memória.");
+        console.error("Encomenda não encontrada na memória.");
         return;
     }
 
@@ -445,3 +526,38 @@ window.fecharModalPedido = function() {
         modal.classList.add('pointer-events-none');
     }, 300);
 };
+
+// ══════════════════════════════════════════════════════════════
+// 5. ATUALIZAÇÃO OTIMISTA (SUPABASE UI)
+// ══════════════════════════════════════════════════════════════
+async function alterarStatusPedido(id, novoStatus) {
+    const index = todosOsPedidos.findIndex(p => p.id === id);
+    if (index !== -1) {
+        todosOsPedidos[index].status = novoStatus;
+    }
+    
+    fecharModalPedido();
+    const btnAtivo = document.querySelector('.filtro-btn.active');
+    if (btnAtivo) {
+         filtrarPedidos(btnAtivo.dataset.filter);
+    } else {
+         renderizarListaPedidos();
+    }
+
+    try {
+        const { error } = await window.supabaseClient
+            .from('pedidos')
+            .update({ status: novoStatus })
+            .eq('id', id);
+            
+        if (error) throw error;
+        
+        if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
+             memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== id);
+        }
+        
+    } catch(e) {
+        console.error(e);
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Erro ao atualizar status');
+    }
+}
