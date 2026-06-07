@@ -11,19 +11,19 @@ document.body.insertAdjacentHTML('beforeend', `
                         <button class="absolute bottom-1 right-1 w-9 h-9 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-full flex items-center justify-center shadow-md border border-slate-200 dark:border-slate-600 pointer-events-none">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </button>
-  async function initPerfil                  </div>
+                    </div>
                 </div>
 
                 <div class="lg:col-span-2 space-y-6">
                     <div class="sf-card p-6 space-y-6">
                         <div>
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Nome Completo</label>
-                            <input type="text" id="input-nome" oninput="ativarBotao()" value="" placeholder="O teu nome" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
+                            <input type="text" id="input-nome" oninput="ativarBotao()" value="Zé Lojista" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 focus:ring-slate-900 dark:focus:ring-white transition-all">
                         </div>
                         <div class="relative">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Email de Acesso</label>
-                            <input type="email" id="input-email" value="" readonly placeholder="A carregar email..." class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
-                            <button id="btn-alterar-email" onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95 hidden">Alterar</button>
+                            <input type="email" value="Carlosfernandes@gmail.com" readonly class="w-full bg-slate-100 dark:bg-[#0b0f1a]/50 border border-transparent dark:border-slate-800 text-slate-500 dark:text-slate-500 px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none cursor-not-allowed">
+                            <button onclick="navegarAnimado('seguranca')" class="absolute right-3 top-[26px] text-[10px] font-black text-slate-900 dark:text-white hover:text-slate-600 transition-colors uppercase tracking-widest bg-white dark:bg-[#161b2c] px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 active:scale-95">Alterar</button>
                         </div>
                     </div>
                     <div class="pt-2">
@@ -50,71 +50,75 @@ document.body.insertAdjacentHTML('beforeend', `
 
 async function initPerfil() {
     try {
+        // Pega os dados mais recentes do utilizador logado no Supabase
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) return;
         
-        // Tenta buscar o nome da loja, caso os metadados do auth não tenham nome
-        let nomeParaMostrar = user.user_metadata?.full_name || '';
-        
-        if (!nomeParaMostrar) {
-             const { data: loja } = await window.supabaseClient.from('lojas').select('vendedor_nome').eq('perfil_id', user.id).maybeSingle();
-             if (loja && loja.vendedor_nome) {
-                 nomeParaMostrar = loja.vendedor_nome;
-             }
-        }
-
-        const foto = user.user_metadata?.avatar_url || '';
+        // Procura no user_metadata do Supabase, se não achar tenta o localStorage como fallback
+        const nome = user.user_metadata?.full_name || localStorage.getItem('nomeLojista') || '';
+        const foto = user.user_metadata?.avatar_url || localStorage.getItem('fotoLojista') || '';
         const email = user.email || '';
-        
-        // Verifica de forma segura se o login foi via Google (seja pelo provider principal ou lista de identidades)
-        const isGoogle = user.app_metadata?.provider === 'google' || user.identities?.some(id => id.provider === 'google');
 
         const inputNome = document.getElementById('input-nome');
-        if (inputNome) inputNome.value = nomeParaMostrar;
+        if (inputNome) inputNome.value = nome;
         
-        const inputEmail = document.getElementById('input-email');
+        // Puxa o input do email que está na tela (dinâmico)
+        const inputEmail = document.querySelector('#spa-view input[type="email"]');
         if (inputEmail) inputEmail.value = email;
 
-        // Oculta/Mostra o botão de alterar email dependendo se é Google ou não
-        const btnAlterarEmail = document.getElementById('btn-alterar-email');
-        if (btnAlterarEmail) {
-            if (isGoogle) {
-                btnAlterarEmail.style.display = 'none';
-            } else {
-                btnAlterarEmail.classList.remove('hidden');
-                btnAlterarEmail.style.display = 'inline-block';
-            }
-        }
-
-        const circulo = document.getElementById('circulo-foto');
-        const letra = document.getElementById('letra-inicial');
-        
-        if (foto && circulo) {
+        if (foto) {
+            const letra = document.getElementById('letra-inicial');
+            const circulo = document.getElementById('circulo-foto');
             if (letra) letra.style.display = 'none';
-            circulo.style.backgroundImage = `url(${foto})`;
-            circulo.setAttribute('data-foto-bd', 'true');
-        } else if (circulo && letra) {
-            circulo.style.backgroundImage = 'none';
-            letra.style.display = 'flex';
-            letra.innerText = (nomeParaMostrar && nomeParaMostrar.trim().length > 0) ? nomeParaMostrar.trim().charAt(0).toUpperCase() : 'L';
-            circulo.removeAttribute('data-foto-bd');
+            if (circulo) circulo.style.backgroundImage = `url(${foto})`;
         }
     } catch (e) {
         console.error("Erro ao carregar perfil:", e);
     }
 }
 
-function gerirCliqueFoto() {
-    const circulo = document.getElementById('circulo-foto');
-    // Verifica apenas se a foto veio do banco de dados OU se acabou de escolher uma nova (nada de localStorage!)
-    const temFoto = (circulo && circulo.getAttribute('data-foto-bd') === 'true') || (circulo && circulo.getAttribute('data-nova-foto'));
-    
-    if (temFoto && circulo && circulo.getAttribute('data-remover') !== 'true') {
-        abrirMenuFoto();
-    } else {
-        const input = document.getElementById('input-foto');
-        if (input) input.click();
-    }
+document.addEventListener('spa:page-loaded', (e) => {
+    if (e.detail === 'perfil') initPerfil();
+});
+
+// Ler a nova foto do computador/telemóvel
+function mudarFoto(event) {
+    const ficheiro = event.target.files[0];
+    if (!ficheiro) return;
+    const leitor = new FileReader();
+    leitor.onload = function(e) {
+        const img = new Image();
+        img.src = e.target.result;
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const size = 400;
+            canvas.width = size;
+            canvas.height = size;
+            const scale = Math.max(size / img.width, size / img.height);
+            const x = (size / 2) - (img.width / 2) * scale;
+            const y = (size / 2) - (img.height / 2) * scale;
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            const urlOtimizada = canvas.toDataURL('image/webp', 0.8);
+            const letra = document.getElementById('letra-inicial');
+            const circulo = document.getElementById('circulo-foto');
+            if (letra) letra.style.display = 'none';
+            if (circulo) {
+                circulo.style.backgroundImage = `url(${urlOtimizada})`;
+                circulo.setAttribute('data-nova-foto', urlOtimizada);
+            }
+            ativarBotao();
+        };
+    };
+    leitor.readAsDataURL(ficheiro);
+}
+
+function ativarBotao() {
+    const btn = document.getElementById('btn-guardar');
+    if (!btn) return;
+    btn.disabled = false;
+    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    btn.classList.add('active:scale-95');
 }
 
 async function salvarDados() {
@@ -140,12 +144,14 @@ async function salvarDados() {
             updateData.avatar_url = null;
         }
 
+        // 1. Atualizar o nome e a foto nos metadados do utilizador no Supabase Base de Dados
         const { error } = await window.supabaseClient.auth.updateUser({
             data: updateData
         });
 
         if (error) throw error;
 
+        // 2. Atualizar o nome e a foto também na tabela 'lojas' caso a uses noutros lados
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         if (sessionData?.session?.user?.id) {
             await window.supabaseClient
@@ -153,23 +159,20 @@ async function salvarDados() {
                 .update({ vendedor_nome: novoNome })
                 .eq('perfil_id', sessionData.session.user.id);
                 
+            // Limpar cache Global se necessário
             if (typeof window.forcarAtualizacaoDashboard === 'function') {
                 window.forcarAtualizacaoDashboard();
             }
         }
 
+        // Sucesso visual
         btn.classList.remove('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900');
         btn.classList.add('bg-emerald-500', 'text-white', 'dark:bg-emerald-500', 'dark:text-white');
         btn.innerHTML = '✓ Guardado com Sucesso';
         
-        // Confirma estado da foto real da BD
-        if (novaFoto && circulo) {
-            circulo.setAttribute('data-foto-bd', 'true');
-            circulo.removeAttribute('data-nova-foto');
-        } else if (remover && circulo) {
-            circulo.removeAttribute('data-foto-bd');
-            circulo.removeAttribute('data-remover');
-        }
+        // Limpar LocalStorage caso existisse (porque agora a Base de dados manda)
+        localStorage.removeItem('nomeLojista');
+        localStorage.removeItem('fotoLojista');
 
         setTimeout(() => {
             btn.classList.remove('bg-emerald-500', 'dark:bg-emerald-500');
