@@ -54,10 +54,23 @@ async function initPerfil() {
         if (!user) return;
         
         // Apenas dados reais da Base de Dados
-        const nome = user.user_metadata?.full_name || '';
+        let nome = user.user_metadata?.full_name || '';
         const foto = user.user_metadata?.avatar_url || '';
         const email = user.email || '';
         const isGoogle = user.app_metadata?.provider === 'google';
+
+        // Se o nome vier vazio (login por email), vai buscar o nome definido no onboarding à tabela lojas
+        if (!nome || nome.trim() === '') {
+            const { data: loja } = await window.supabaseClient
+                .from('lojas')
+                .select('vendedor_nome')
+                .eq('perfil_id', user.id)
+                .maybeSingle();
+                
+            if (loja && loja.vendedor_nome) {
+                nome = loja.vendedor_nome;
+            }
+        }
 
         const inputNome = document.getElementById('input-nome');
         if (inputNome) inputNome.value = nome;
