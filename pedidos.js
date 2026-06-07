@@ -32,7 +32,6 @@ document.body.insertAdjacentHTML('beforeend', `
                  A carregar histórico...
             </div>
         </div>
-    </div>
 </template>
 
 
