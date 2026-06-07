@@ -50,75 +50,61 @@ document.body.insertAdjacentHTML('beforeend', `
 
 async function initPerfil() {
     try {
-        // Pega os dados mais recentes do utilizador logado no Supabase
         const { data: { user } } = await window.supabaseClient.auth.getUser();
         if (!user) return;
         
-        // Procura no user_metadata do Supabase, se não achar tenta o localStorage como fallback
-        const nome = user.user_metadata?.full_name || localStorage.getItem('nomeLojista') || '';
-        const foto = user.user_metadata?.avatar_url || localStorage.getItem('fotoLojista') || '';
+        // 1. Apenas usa dados puros da base de dados (nada de localStorage do teste!)
+        const nome = user.user_metadata?.full_name || '';
+        const foto = user.user_metadata?.avatar_url || '';
         const email = user.email || '';
+        
+        // 2. Verifica se o login foi via Google
+        const isGoogle = user.app_metadata?.provider === 'google';
 
         const inputNome = document.getElementById('input-nome');
         if (inputNome) inputNome.value = nome;
         
-        // Puxa o input do email que está na tela (dinâmico)
         const inputEmail = document.querySelector('#spa-view input[type="email"]');
         if (inputEmail) inputEmail.value = email;
 
-        if (foto) {
-            const letra = document.getElementById('letra-inicial');
-            const circulo = document.getElementById('circulo-foto');
+        // 3. Bloqueia alteração de email se for Google (Oculta o botão)
+        const btnAlterarEmail = document.querySelector("button[onclick=\"navegarAnimado('seguranca')\"]");
+        if (btnAlterarEmail) {
+            if (isGoogle) {
+                btnAlterarEmail.style.display = 'none';
+            } else {
+                btnAlterarEmail.style.display = 'block';
+            }
+        }
+
+        const circulo = document.getElementById('circulo-foto');
+        const letra = document.getElementById('letra-inicial');
+        
+        if (foto && circulo) {
             if (letra) letra.style.display = 'none';
-            if (circulo) circulo.style.backgroundImage = `url(${foto})`;
+            circulo.style.backgroundImage = `url(${foto})`;
+            circulo.setAttribute('data-foto-bd', 'true');
+        } else if (circulo && letra) {
+            circulo.style.backgroundImage = 'none';
+            letra.style.display = 'flex';
+            circulo.removeAttribute('data-foto-bd');
         }
     } catch (e) {
         console.error("Erro ao carregar perfil:", e);
     }
 }
 
-document.addEventListener('spa:page-loaded', (e) => {
-    if (e.detail === 'perfil') initPerfil();
-});
-
-// Ler a nova foto do computador/telemóvel
-function mudarFoto(event) {
-    const ficheiro = event.target.files[0];
-    if (!ficheiro) return;
-    const leitor = new FileReader();
-    leitor.onload = function(e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const size = 400;
-            canvas.width = size;
-            canvas.height = size;
-            const scale = Math.max(size / img.width, size / img.height);
-            const x = (size / 2) - (img.width / 2) * scale;
-            const y = (size / 2) - (img.height / 2) * scale;
-            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-            const urlOtimizada = canvas.toDataURL('image/webp', 0.8);
-            const letra = document.getElementById('letra-inicial');
-            const circulo = document.getElementById('circulo-foto');
-            if (letra) letra.style.display = 'none';
-            if (circulo) {
-                circulo.style.backgroundImage = `url(${urlOtimizada})`;
-                circulo.setAttribute('data-nova-foto', urlOtimizada);
-            }
-            ativarBotao();
-        };
-    };
-    leitor.readAsDataURL(ficheiro);
-}
-
-function ativarBotao() {
-    const btn = document.getElementById('btn-guardar');
-    if (!btn) return;
-    btn.disabled = false;
-    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-    btn.classList.add('active:scale-95');
+function gerirCliqueFoto() {
+    const circulo = document.getElementById('circulo-foto');
+    // Verifica apenas se existe a imagem confirmada vinda da BD ou uma nova
+    const temFoto = (circulo && circulo.getAttribute('data-foto-bd') === 'true') || (circulo && circulo.getAttribute('data-nova-foto'));
+    
+    if (temFoto && circulo && circulo.getAttribute('data-remover') !== 'true') {
+        abrirMenuFoto();
+    } else {
+        const input = document.getElementById('input-foto');
+        if (input) input.click();
+    }
 }
 
 async function salvarDados() {
@@ -144,14 +130,12 @@ async function salvarDados() {
             updateData.avatar_url = null;
         }
 
-        // 1. Atualizar o nome e a foto nos metadados do utilizador no Supabase Base de Dados
         const { error } = await window.supabaseClient.auth.updateUser({
             data: updateData
         });
 
         if (error) throw error;
 
-        // 2. Atualizar o nome e a foto também na tabela 'lojas' caso a uses noutros lados
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         if (sessionData?.session?.user?.id) {
             await window.supabaseClient
@@ -159,20 +143,23 @@ async function salvarDados() {
                 .update({ vendedor_nome: novoNome })
                 .eq('perfil_id', sessionData.session.user.id);
                 
-            // Limpar cache Global se necessário
             if (typeof window.forcarAtualizacaoDashboard === 'function') {
                 window.forcarAtualizacaoDashboard();
             }
         }
 
-        // Sucesso visual
         btn.classList.remove('bg-slate-900', 'dark:bg-white', 'text-white', 'dark:text-slate-900');
         btn.classList.add('bg-emerald-500', 'text-white', 'dark:bg-emerald-500', 'dark:text-white');
         btn.innerHTML = '✓ Guardado com Sucesso';
         
-        // Limpar LocalStorage caso existisse (porque agora a Base de dados manda)
-        localStorage.removeItem('nomeLojista');
-        localStorage.removeItem('fotoLojista');
+        // Confirma estado da foto real da BD
+        if (novaFoto && circulo) {
+            circulo.setAttribute('data-foto-bd', 'true');
+            circulo.removeAttribute('data-nova-foto');
+        } else if (remover && circulo) {
+            circulo.removeAttribute('data-foto-bd');
+            circulo.removeAttribute('data-remover');
+        }
 
         setTimeout(() => {
             btn.classList.remove('bg-emerald-500', 'dark:bg-emerald-500');
