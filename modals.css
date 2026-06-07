@@ -1,5 +1,5 @@
 /* =======================================================
-   SISTEMA UNIVERSAL DE MODAIS (DESIGN - CORRIGIDO)
+   SISTEMA UNIVERSAL DE MODAIS
    ======================================================= */
 
 /* 1. O Recipiente Principal */
@@ -13,7 +13,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
-    overscroll-behavior: contain; /* Bloqueia o arrastar desnecessário */
+    overscroll-behavior: contain;
 }
 
 /* Quando o modal é ativado via JS */
@@ -29,7 +29,8 @@
     inset: 0;
     background-color: rgba(0, 0, 0, 0.65);
     z-index: 1;
-    touch-action: none; /* Corta completamente o scroll por debaixo no fundo!! */
+    /* Corta COMPLETAMENTE qualquer gesto de scroll/pull por baixo do modal */
+    touch-action: none;
 }
 
 /* 3. A Gaveta que sobe (Sheet) */
@@ -57,14 +58,14 @@
     border-radius: 0;
 }
 
-/* TIPO B: Modal tipo Gaveta */
+/* TIPO B: Modal tipo Gaveta (bottom sheet) */
 .modal-sheet.drawer {
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
-    max-height: 90vh; /* Respeita a status bar nas lojas Android/iOS */
+    max-height: 90vh;
 }
 
-/* 4. A Barrinha cinzenta de puxar no topo */
+/* 4. A barrinha cinzenta de puxar no topo */
 .modal-handle {
     width: 48px;
     height: 6px;
@@ -73,24 +74,21 @@
     margin: 16px auto 24px auto;
     flex-shrink: 0;
 }
-/* CÓDIGO PARA COPIAR E COLAR NO FUNDO DO TEU CSS */
+
+/* =======================================================
+   BLOQUEIO DE PÁGINA COM MODAL ATIVO
+   Aplica-se a html E body para garantir que o Pull-to-Refresh
+   e a barra do navegador não se mexem em nenhuma circunstância
+   ======================================================= */
 body.modal-aberto,
 html.modal-aberto {
     overflow: hidden !important;
-    overscroll-behavior-y: none !important; /* MÁGICA: Corta o Pull-to-Refresh na raiz */
+    /* CHAVE: corta o rebote/pull-to-refresh na raiz do sistema */
+    overscroll-behavior-y: none !important;
 }
 
+/* Impede que o scroll interno do modal "salte" para a página de fundo
+   quando chega ao fim da lista */
 .modal-container .overflow-y-auto {
-    overscroll-behavior-y: contain !important; /* MÁGICA: Impede que o "pico" final da lista puxe a página toda */
-}
-
-/* CÓDIGO DA MAGIA DOS MODAIS (CSS) */
-body.modal-aberto,
-html.modal-aberto {
-    overflow: hidden !important;
-    overscroll-behavior-y: none !important; /* Corta o rebote/pull-to-refresh */
-}
-
-.modal-container .overflow-y-auto {
-    overscroll-behavior-y: contain !important; /* Impede salto para a camada inferior */
+    overscroll-behavior-y: contain !important;
 }
