@@ -7,14 +7,10 @@ window.abrirModal = function(id) {
     const modal = document.getElementById(id);
     if (!modal) return;
 
-    // Adiciona classes em AMBOS (html + body) para bloquear
-    // o Pull-to-Refresh e qualquer movimento da página de fundo
     document.body.classList.add('modal-aberto');
     document.documentElement.classList.add('modal-aberto');
 
     modal.classList.add('active');
-
-    // Garante que os gestos de deslize estão ativos neste modal
     inicializarGestosModais();
 };
 
@@ -24,7 +20,6 @@ window.fecharModal = function(id) {
     if (!modal) return;
     modal.classList.remove('active');
 
-    // Só liberta a página se não houver outros modais abertos por cima
     setTimeout(() => {
         if (document.querySelectorAll('.modal-container.active').length === 0) {
             document.body.classList.remove('modal-aberto');
@@ -33,7 +28,7 @@ window.fecharModal = function(id) {
     }, 300);
 };
 
-// 3. Fechar ao clicar no fundo escuro (Backdrop)
+// 3. Fechar ao clicar no fundo escuro
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-backdrop')) {
         const modalId = e.target.closest('.modal-container').id;
@@ -41,57 +36,84 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// 4. Bloquear qualquer toque/deslize no backdrop — impede que o fundo se mova
+// 4. Bloquear TODO o touchmove enquanto houver modal ativo
+//    Um único listener global, passive:false, aplicado desde o início.
+//    Isto cobre a barrinha, o backdrop, e qualquer zona do modal
+//    que não seja uma área de scroll interna.
 document.addEventListener('touchmove', (e) => {
-    if (e.target.classList.contains('modal-backdrop')) {
-        if (e.cancelable) e.preventDefault();
-    }
-}, { passive: false }); // CRÍTICO: passive:false permite o preventDefault
+    // Se não há modal ativo, não faz nada
+    if (document.querySelectorAll('.modal-container.active').length === 0) return;
 
-// 5. Motor de Deslize Inteligente
+    // Permite scroll apenas dentro de elementos com scroll interno
+    const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
+    if (areaScroll) {
+        // Dentro da área de scroll: só bloqueia se já estiver no topo
+        // (para não "escapar" para a página ao chegar ao início)
+        if (areaScroll.scrollTop <= 0 && e.cancelable) {
+            e.preventDefault();
+        }
+        return;
+    }
+
+    // Tudo o resto (barrinha, backdrop, zonas brancas): bloqueia sempre
+    if (e.cancelable) e.preventDefault();
+
+}, { passive: false }); // passive:false é obrigatório — sem isto o preventDefault não funciona
+
+// 5. Motor de Deslize — só lida com o arrastar visual do drawer
 window.inicializarGestosModais = function() {
     document.querySelectorAll('.modal-sheet.drawer').forEach(sheet => {
-        // Evita duplicar os listeners se já estiverem ativos
         if (sheet.hasAttribute('data-gesto-ativo')) return;
         sheet.setAttribute('data-gesto-ativo', 'true');
 
         let startY = 0;
+        let arrastando = false;
 
+        // passive:false no touchstart para o browser saber LOGO que vai ser interceptado
+        // Sem isto há sempre 1 frame de atraso antes do touchmove poder agir
         sheet.addEventListener('touchstart', e => {
-            // Se o utilizador está a fazer scroll dentro de uma lista, não ativa o deslize do modal
-            const areaScroll = e.target.closest('.overflow-y-auto');
-            if (areaScroll && areaScroll.scrollTop > 0) return;
-
+            const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
+            if (areaScroll && areaScroll.scrollTop > 0) {
+                arrastando = false;
+                return;
+            }
             startY = e.touches[0].clientY;
-        }, { passive: true });
+            arrastando = true;
+            sheet.style.transition = 'none'; // Remove transição logo no toque — zero delay
+        }, { passive: false }); // CRÍTICO: passive:false elimina o delay inicial
 
         sheet.addEventListener('touchmove', e => {
-            const areaScroll = e.target.closest('.overflow-y-auto');
+            if (!arrastando) return;
+
+            const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
             if (areaScroll && areaScroll.scrollTop > 0) return;
 
-            let diff = e.touches[0].clientY - startY;
+            const diff = e.touches[0].clientY - startY;
             if (diff > 0) {
-                // >>> CHAVE DO BLOQUEIO: cancela o comportamento nativo do navegador <<<
-                // Sem isto o topo da barra do browser mexe-se ao deslizar
-                if (e.cancelable) e.preventDefault();
-
                 sheet.style.transform = `translateY(${diff}px)`;
-                sheet.style.transition = 'none';
             }
-        }, { passive: false }); // CRÍTICO: passive:false é obrigatório para o preventDefault funcionar
+        }, { passive: false });
 
         sheet.addEventListener('touchend', e => {
-            let diff = e.changedTouches[0].clientY - startY;
-            sheet.style.transition = ''; // Devolve a animação ao CSS
-            sheet.style.transform = '';  // Volta à posição original
+            if (!arrastando) return;
+            arrastando = false;
 
-            if (diff > 100) { // Se puxou mais de 100px para baixo, fecha o modal
+            const diff = e.changedTouches[0].clientY - startY;
+            sheet.style.transition = ''; // Devolve animação CSS
+            sheet.style.transform = '';
+
+            if (diff > 100) {
                 const modalId = sheet.closest('.modal-container').id;
                 fecharModal(modalId);
             }
         });
+
+        sheet.addEventListener('touchcancel', () => {
+            arrastando = false;
+            sheet.style.transition = '';
+            sheet.style.transform = '';
+        });
     });
 };
 
-// Inicializa os gestos nos modais já presentes no DOM
 document.addEventListener('DOMContentLoaded', inicializarGestosModais);
