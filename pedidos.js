@@ -3,7 +3,7 @@ document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-vendas">
         <div class="pt-2 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen pb-24">
             
-            <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-8 pb-3 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-3">
+            <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-12 pb-3 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-3">
                 
                 <div class="px-5 mt-2">
                     <div class="relative group">
