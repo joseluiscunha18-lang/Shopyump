@@ -65,13 +65,42 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // seguranca.js - Lógica exclusiva da página de Segurança
 
-document.addEventListener('spa:page-loaded', (e) => {
+document.addEventListener('spa:page-loaded', async (e) => {
     if (e.detail === 'seguranca') {
         // Reset todos os acordeões ao entrar na página
         ['form-email', 'form-senha', 'form-delete'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.remove('open');
         });
+
+        // Buscar dados do banco de dados na hora
+        try {
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (user) {
+                // Coloca o email verdadeiro do user na tela
+                const painelEmail = document.getElementById('form-email');
+                if (painelEmail) {
+                    const textoEmail = painelEmail.previousElementSibling.querySelector('p.text-sm');
+                    if (textoEmail) textoEmail.innerText = user.email || '';
+                }
+
+                // Verifica se foi registo pelo Google
+                const isGoogle = user.app_metadata?.provider === 'google';
+                
+                // Se for Google, esconde os botões e avisa que é conta Google
+                if (isGoogle) {
+                    const btnAlterarEmail = document.getElementById('form-email')?.previousElementSibling?.querySelector('button');
+                    const btnAlterarSenha = document.getElementById('form-senha')?.previousElementSibling?.querySelector('button');
+                    const textoSenha = document.getElementById('form-senha')?.previousElementSibling?.querySelector('p.text-sm');
+                    
+                    if (btnAlterarEmail) btnAlterarEmail.style.display = 'none';
+                    if (btnAlterarSenha) btnAlterarSenha.style.display = 'none';
+                    if (textoSenha) textoSenha.innerText = 'Gerido por Google';
+                }
+            }
+        } catch (err) {
+            console.error('Erro ao verificar segurança', err);
+        }
     }
 });
 
