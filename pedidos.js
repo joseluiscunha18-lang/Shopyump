@@ -1,44 +1,34 @@
 // Injeta a Interface da Página de Pedidos
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-vendas">
-        <div class="pt-16 pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
+        <div class="pt-2 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen pb-24">
             
-            <div class="sticky top-0 z-20 bg-[#f6f6f7]/90 dark:bg-[#0b0f1a]/90 backdrop-blur-xl pt-4 pb-3 space-y-4 border-b border-slate-200/50 dark:border-navy-800/50">
-                
-                <div class="flex justify-between items-center px-5">
-                    <div>
-                        <h2 class="text-[20px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">Histórico</h2>
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">Gestão do Catálogo</p>
-                    </div>
-                    <button onclick="abrirModalPeriodo()" class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-[12px] text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all hover:border-slate-300 dark:hover:border-navy-600">
-                        <i class="far fa-calendar-alt opacity-70"></i> <span id="texto-periodo-atual">Este Mês</span> <i class="fas fa-chevron-down text-[9px] ml-1 opacity-40"></i>
-                    </button>
-                </div>
+            <div class="sticky top-0 z-20 bg-[#f6f6f7]/95 dark:bg-[#0b0f1a]/95 backdrop-blur-xl pt-4 pb-3 border-b border-slate-200/50 dark:border-navy-800/50 flex flex-col gap-3">
                 
                 <div class="px-5">
                     <div class="relative group">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm transition-colors group-focus-within:text-[#0F172A] dark:group-focus-within:text-white"></i>
-                        <input type="text" id="input-pesquisa-pedidos" placeholder="Nº da encomenda, cliente ou telefone..." class="w-full h-[46px] pl-11 pr-4 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 rounded-[16px] text-[13px] font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-400 dark:focus:border-navy-500 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm transition-colors group-focus-within:text-slate-900 dark:group-focus-within:text-white"></i>
+                        <input type="text" id="input-pesquisa-pedidos" placeholder="Pesquisar encomendas..." class="w-full h-[48px] pl-11 pr-4 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 rounded-[20px] text-[13px] font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-400 dark:focus:border-navy-500 shadow-sm transition-all">
                     </div>
                 </div>
 
-                <div class="flex gap-2 px-5 overflow-x-auto no-scrollbar pb-1" id="pedidos-filtros">
-                    <button onclick="filtrarPedidos('pendente')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-btn active" data-filter="pendente">
-                        Pendentes
+                <div class="flex gap-2 px-5 overflow-x-auto no-scrollbar pb-1 items-center">
+                    <button onclick="abrirModalPeriodo()" class="flex-shrink-0 flex items-center gap-1.5 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-4 py-2 rounded-full text-[12px] font-bold text-slate-700 dark:text-slate-300 active:scale-95 transition-all shadow-sm">
+                        <i class="far fa-calendar-alt text-slate-400"></i> <span id="texto-periodo-atual">Este Mês</span> <i class="fas fa-chevron-down text-[9px] ml-0.5 opacity-40"></i>
                     </button>
-                    <button onclick="filtrarPedidos('confirmado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="confirmado">
-                        Confirmados
-                    </button>
-                    <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">
-                        Cancelados
-                    </button>
+                    
+                    <div class="w-px h-6 bg-slate-300 dark:bg-navy-700 flex-shrink-0 mx-0.5"></div>
+
+                    <button onclick="filtrarPedidos('pendente')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-btn active" data-filter="pendente">Pendentes</button>
+                    <button onclick="filtrarPedidos('confirmado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="confirmado">Confirmados</button>
+                    <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">Cancelados</button>
                 </div>
             </div>
 
             <div class="px-5 mt-4 space-y-3" id="lista-pedidos-historico">
                 <div class="py-12 text-center text-slate-400 text-sm flex flex-col items-center">
                      <i class="fas fa-circle-notch fa-spin text-2xl mb-3"></i>
-                     A verificar catálogo...
+                     A carregar histórico...
                 </div>
             </div>
             
@@ -47,7 +37,6 @@ document.body.insertAdjacentHTML('beforeend', `
                     Ver encomendas anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
                 </button>
             </div>
-
         </div>
     </template>
 `);
