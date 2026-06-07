@@ -2,7 +2,6 @@
    SISTEMA UNIVERSAL DE MODAIS
    ======================================================= */
 
-/* 1. O Recipiente Principal */
 .modal-container {
     position: fixed;
     inset: 0;
@@ -12,9 +11,8 @@
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
-    /* NUNCA usar "transition: all" — anima tudo e mata a GPU.
-       Só animamos opacity, e rápido. */
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+    /* Suavizado o tempo de fade do fundo escuro para acompanhar a gaveta */
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.4s;
     overscroll-behavior: contain;
 }
 
@@ -24,7 +22,6 @@
     pointer-events: auto;
 }
 
-/* 2. Fundo escuro */
 .modal-backdrop {
     position: absolute;
     inset: 0;
@@ -33,7 +30,6 @@
     touch-action: none;
 }
 
-/* 3. A Gaveta */
 .modal-sheet {
     position: absolute;
     bottom: 0;
@@ -44,45 +40,40 @@
     display: flex;
     flex-direction: column;
 
-    /* Força promoção para camada GPU ANTES de qualquer toque.
-       Sem isto o primeiro frame é renderizado pela CPU — daí o arranque travado. */
     will-change: transform;
     transform: translateY(100%) translateZ(0);
 
-    /* Entrada: rápida e com energia (spring-like) — não parece lenta mesmo em modais altos
-       Saída: ligeiramente mais lenta para parecer natural ao descer */
-    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    /* ENTRADA: 500ms. Começa rápido e desacelera suavemente no final. 
+       Ideal para ecrãs grandes não parecerem agressivos. */
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Entrada do modal */
 .modal-container.active .modal-sheet {
     transform: translateY(0) translateZ(0);
 }
 
-/* Durante o arrasto com o dedo: remove transição para colagem imediata */
 .modal-sheet.arrastando {
     transition: none !important;
 }
 
-/* Animação de fecho — mais rápida e cai com peso */
+/* SAÍDA (Botão X, Backdrop ou Swipe): 
+   400ms. Desce com aceleração natural (gravidade), sem solavancos. */
+.modal-container:not(.active) .modal-sheet,
 .modal-sheet.fechando {
-    transition: transform 0.42s cubic-bezier(0.4, 0, 0.8, 1) !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* TIPO A: Ecrã inteiro */
 .modal-sheet.full {
     height: 100dvh;
     border-radius: 0;
 }
 
-/* TIPO B: Gaveta */
 .modal-sheet.drawer {
     border-top-left-radius: 32px;
     border-top-right-radius: 32px;
     max-height: 90vh;
 }
 
-/* 4. Barrinha de arrastar */
 .modal-handle {
     width: 48px;
     height: 6px;
@@ -90,13 +81,9 @@
     border-radius: 99px;
     margin: 16px auto 24px auto;
     flex-shrink: 0;
-    /* Área de toque maior que o visual — mais fácil de agarrar */
     cursor: grab;
 }
 
-/* =======================================================
-   BLOQUEIO DA PÁGINA COM MODAL ATIVO
-   ======================================================= */
 body.modal-aberto,
 html.modal-aberto {
     overflow: hidden !important;
