@@ -51,7 +51,7 @@ if (!document.getElementById('modal-pedido')) {
     document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-pedido" class="modal-container">
             <div class="modal-backdrop"></div>
-            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[1001]">
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
                 <div class="modal-handle dark:bg-navy-700"></div>
                 
                 <div class="flex justify-between items-center mt-1 border-b border-slate-50 dark:border-navy-800 pb-4 shrink-0">
@@ -73,7 +73,7 @@ if (!document.getElementById('modal-periodo')) {
     document.body.insertAdjacentHTML('beforeend', `
         <div id="modal-periodo" class="modal-container">
             <div class="modal-backdrop"></div>
-            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)] relative z-[1001]">
+            <div class="modal-sheet drawer bg-white dark:bg-navy-900 pb-8 px-6 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
                 <div class="modal-handle dark:bg-navy-700"></div>
                 
                 <div class="flex justify-between items-center mt-1 mb-2 shrink-0">
