@@ -1,3 +1,4 @@
+// Injeta a Interface da Página de Pedidos
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-vendas">
         <div class="pt-16 pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
@@ -25,12 +26,6 @@ document.body.insertAdjacentHTML('beforeend', `
                     <button onclick="filtrarPedidos('confirmado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="confirmado">
                         Confirmados
                     </button>
-                    <button onclick="filtrarPedidos('enviado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="enviado">
-                        Enviados
-                    </button>
-                    <button onclick="filtrarPedidos('concluido')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="concluido">
-                        Concluídos
-                    </button>
                     <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">
                         Cancelados
                     </button>
@@ -53,7 +48,6 @@ document.body.insertAdjacentHTML('beforeend', `
         </div>
     </template>
 `);
-
 
 // Injeta o modal globalmente fora do template para funcionar também no Dashboard de forma fluída
 if (!document.getElementById('modal-pedido')) {
@@ -78,12 +72,10 @@ if (!document.getElementById('modal-pedido')) {
 
 // Lógica de Vendas/Pedidos
 let todosOsPedidos = [];
-let pedidosCarregados = false; // Variável para controlar o cache
+let pedidosCarregados = false; 
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'vendas') {
-        
-        // Verifica primeiro se o Dashboard já fez o carregamento inicial por trás
         if (window.pedidosCarregados) {
             pedidosCarregados = true;
             todosOsPedidos = window.todosOsPedidos;
@@ -92,38 +84,32 @@ document.addEventListener('spa:page-loaded', (e) => {
         if (!pedidosCarregados) {
             carregarHistoricoPedidos();
         } else {
-            // Se já temos na memória (Ou porque carregámos aqui, ou via Dashboard), desenha direto!
             const btnTudo = document.querySelector('.filtro-btn.active');
             if (typeof filtrarPedidos === 'function') {
-                filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'tudo');
+                filtrarPedidos(btnTudo ? btnTudo.dataset.filter : 'pendente');
             } else if (typeof renderizarListaPedidos === 'function') {
-                renderizarListaPedidos('tudo');
+                renderizarListaPedidos('pendente');
             }
         }
     }
 });
 
-// ────── CÓDIGO A SUBSTITUIR EM: pedidos.js ──────
-
-// 1. Torna a alteração de status INSTANTÂNEA, sem spinners!
+// Altera o status instantaneamente (UI optimista)
 async function alterarStatusPedido(id, novoStatus) {
-    // A. Mágica Otimista: Atualiza a interface instantaneamente!
     const index = todosOsPedidos.findIndex(p => p.id === id);
     if (index !== -1) {
         todosOsPedidos[index].status = novoStatus;
     }
     
-    // Esconde o modal e atualiza a grelha sem carregar absolutamente nada da internet!
     fecharModalPedido();
-    const btnTudo = document.querySelector('.filtro-btn.active');
-    if (btnTudo) {
-         filtrarPedidos(btnTudo.dataset.filter);
+    const btnAtivo = document.querySelector('.filtro-btn.active');
+    if (btnAtivo) {
+         filtrarPedidos(btnAtivo.dataset.filter);
     } else {
-         renderizarListaPedidos('tudo');
+         renderizarListaPedidos();
     }
 
     try {
-        // B. Altera de facto no Supabase silenciosamente por trás
         const { error } = await window.supabaseClient
             .from('pedidos')
             .update({ status: novoStatus })
@@ -131,7 +117,6 @@ async function alterarStatusPedido(id, novoStatus) {
             
         if (error) throw error;
         
-        // C. Limpa também no Dashboard principal (Home) para não perder sincronia
         if (typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
              memDashboard.pendentes = memDashboard.pendentes.filter(p => p.id !== id);
         }
@@ -141,16 +126,14 @@ async function alterarStatusPedido(id, novoStatus) {
         if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Erro ao atualizar status');
     }
 }
-// ────── CÓDIGO A SUBSTITUIR EM: pedidos.js ──────
 
-// 2. Torna o Histórico mais rápido a carregar e SEPARA A UI DO BANCO DE DADOS!
+// Descarrega do Supabase e guarda na memória
 async function carregarHistoricoPedidos() {
     const lista = document.getElementById('lista-pedidos-historico');
     if (!lista) return;
 
-    // Só exibe spinner de processamento se a lista realmente estiver vazia
     if (todosOsPedidos.length === 0) {
-        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>Carregando pedidos...</div>';
+        lista.innerHTML = '<div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>A verificar catálogo...</div>';
     }
 
     try {
@@ -158,22 +141,21 @@ async function carregarHistoricoPedidos() {
         const userId = sessionData?.session?.user?.id;
         
         if (!userId) {
-            lista.innerHTML = '<p class="text-center text-slate-400 py-4">A sua sessão expirou. Atualize a página.</p>';
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Sessão expirada. Atualize a página.</p>';
             return;
         }
 
-        // Recolhe o URL da Loja pela RAM se já existir
         let lojaId = window.lojaIdAtivaDashboard;
         if (!lojaId) {
              const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
              if (loja) {
                  lojaId = loja.id;
-                 window.lojaIdAtivaDashboard = loja.id; // Guarda para que os próximos acessos sejam instantâneos!
+                 window.lojaIdAtivaDashboard = loja.id; 
              }
         }
 
         if (!lojaId) {
-            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Nenhuma loja encontrada conectada a si.</p>';
+            lista.innerHTML = '<p class="text-center text-slate-400 py-4">Nenhuma loja conectada.</p>';
             return;
         }
 
@@ -183,54 +165,40 @@ async function carregarHistoricoPedidos() {
             .eq('loja_id', lojaId)
             .order('created_at', { ascending: false });
 
-        if (error) throw error; // Se a Supabase falhar, atira erro!
+        if (error) throw error; 
 
-        // Se passamos, os dados estão saudáveis! Guardamos na memória Local e Global
         todosOsPedidos = pedidos || [];
         pedidosCarregados = true; 
-        // Partilha globalmente caso a Home venha a precisar deste Cache no futuro
         window.todosOsPedidos = todosOsPedidos;
         window.pedidosCarregados = true;
 
     } catch (e) {
-        console.error("Erro na base de dados ao carregar pedidos:", e);
-        lista.innerHTML = '<div class="py-6 text-center text-red-500 text-sm flex flex-col items-center"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i>Erro ao descarregar da nuvem. Tende de novo.</div>';
-        return; // Pára aqui apenas se os dados da Internet falharem
+        console.error("Erro BD:", e);
+        lista.innerHTML = '<div class="py-6 text-center text-red-500 text-sm flex flex-col items-center"><i class="fas fa-exclamation-triangle text-2xl mb-2"></i>Erro ao descarregar da nuvem.</div>';
+        return; 
     }
 
-    // =========================================================
-    // MÁGICA: Renderizar Interface (UI) FORA da operação do Banco de Dados.
-    // Assim, falhas visuais deixam de travar toda a máquina de leitura!
-    // =========================================================
     try {
-        const btnTudo = document.querySelector('.filtro-btn.active');
-        const filtroAtual = btnTudo ? btnTudo.dataset.filter : 'tudo';
+        const btnAtivo = document.querySelector('.filtro-btn.active');
+        const filtroAtual = btnAtivo ? btnAtivo.dataset.filter : 'pendente';
         
-        // Garante compatibilidade caso esteja a usar `filtrarPedidos` ou `renderizarListaPedidos`
         if (typeof filtrarPedidos === 'function') {
              filtrarPedidos(filtroAtual);
-        } else if (typeof renderizarListaPedidos === 'function') {
-             renderizarListaPedidos(filtroAtual);
-        } else {
-             lista.innerHTML = '<p class="text-center text-red-500 py-4 font-bold">Aviso: Função de mostrar e desenhar os bilhetes visuais em falta.</p>';
         }
     } catch (erroInterface) {
-        // Se houver um typo na parte da Interface, fica retido aqui visualmente sem corromper a base!
-        console.error("Erro no JavaScript ao desenhar pedidos na tela:", erroInterface);
-        lista.innerHTML = '<p class="text-center text-amber-500 py-4">Os dados carregaram bem, mas ocorreu um erro a desenhá-los na tela. (Ver Console)</p>';
+        console.error("Erro UI:", erroInterface);
     }
 }
+
 // Variáveis de Controlo da Interface
 let filtroStatusAtual = 'pendente';
 let termoPesquisaAtual = '';
 let limiteExibicaoPedidos = 15;
 
-// 1. Função de Filtragem (Abas Superiores)
 window.filtrarPedidos = function(filtro) {
     filtroStatusAtual = filtro;
-    limiteExibicaoPedidos = 15; // Reinicia o limite ao trocar de aba
+    limiteExibicaoPedidos = 15; 
     
-    // Atualiza a estética dos botões
     const botoes = document.querySelectorAll('.filtro-btn');
     botoes.forEach(btn => {
         if (btn.dataset.filter === filtro) {
@@ -243,7 +211,6 @@ window.filtrarPedidos = function(filtro) {
     renderizarListaPedidos();
 };
 
-// 1.1 Escuta Dinâmica para a Lupa de Pesquisa
 document.addEventListener('input', (e) => {
     if (e.target.id === 'input-pesquisa-pedidos') {
         termoPesquisaAtual = e.target.value.toLowerCase().trim();
@@ -251,13 +218,12 @@ document.addEventListener('input', (e) => {
     }
 });
 
-// 1.2 Função para expandir a lista de antigos
 window.carregarMaisPedidos = function() {
     limiteExibicaoPedidos += 15;
     renderizarListaPedidos();
 };
 
-// 2. Motor de Renderização Inteligente
+// Motor de Renderização
 window.renderizarListaPedidos = function() {
     const lista = document.getElementById('lista-pedidos-historico');
     const btnCarregarMais = document.getElementById('container-carregar-mais');
@@ -265,10 +231,8 @@ window.renderizarListaPedidos = function() {
 
     const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
     
-    // A) Filtra por Aba (Pendente é o default)
     let pedidosFiltrados = basePedidos.filter(p => p.status === filtroStatusAtual);
 
-    // B) Aplica Filtro de Pesquisa (se existir)
     if (termoPesquisaAtual !== '') {
         pedidosFiltrados = pedidosFiltrados.filter(p => 
             (p.cliente_nome && p.cliente_nome.toLowerCase().includes(termoPesquisaAtual)) ||
@@ -277,13 +241,11 @@ window.renderizarListaPedidos = function() {
         );
     }
 
-    // C) Paginação Visual (Esconde o excesso se não for pendente)
     const totalResultados = pedidosFiltrados.length;
     if (filtroStatusAtual !== 'pendente') {
         pedidosFiltrados = pedidosFiltrados.slice(0, limiteExibicaoPedidos);
     }
 
-    // Gere o botão de "Carregar Mais"
     if (btnCarregarMais) {
         if (filtroStatusAtual !== 'pendente' && totalResultados > limiteExibicaoPedidos && termoPesquisaAtual === '') {
             btnCarregarMais.classList.remove('hidden');
@@ -292,7 +254,6 @@ window.renderizarListaPedidos = function() {
         }
     }
 
-    // Empty State (Sem resultados)
     if (pedidosFiltrados.length === 0) {
         lista.innerHTML = `
             <div class="py-16 flex flex-col items-center justify-center text-center gap-3 fade-in mt-4">
@@ -308,7 +269,6 @@ window.renderizarListaPedidos = function() {
         return;
     }
 
-    // Renderiza os Cartões Premium
     let html = '';
     pedidosFiltrados.forEach(p => {
         const data = new Date(p.created_at);
@@ -330,23 +290,12 @@ window.renderizarListaPedidos = function() {
                 statusTexto = 'Cancelado';
                 dotCor = 'bg-red-500';
                 break;
-            case 'enviado':
-                statusCorBg = 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500 border border-blue-200 dark:border-blue-500/20';
-                statusTexto = 'Enviado';
-                dotCor = 'bg-blue-500';
-                break;
-            case 'concluido':
-                statusCorBg = 'bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-500 border border-purple-200 dark:border-purple-500/20';
-                statusTexto = 'Concluído';
-                dotCor = 'bg-purple-500';
-                break;
         }
 
         const qtdItens = p.itens ? p.itens.length : 0;
         const totalNum = parseFloat(p.total) || 0;
         const fotoProduto = (p.itens && p.itens[0] && (p.itens[0].foto || p.itens[0].imagem)) ? (p.itens[0].foto || p.itens[0].imagem) : 'https://placehold.co/150x150/f8fafc/94a3b8?text=Sem+Foto';
-        const extraItens = qtdItens > 1 ? `<span class="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-md ml-1">+${qtdItens - 1}</span>` : '';
-
+        
         html += `
             <div onclick="abrirModalPedido('${p.id}')" class="bg-white dark:bg-navy-900 p-3 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 transition-all active:scale-[0.98] cursor-pointer mb-3 flex items-center gap-3 relative overflow-hidden group hover:border-slate-200 dark:hover:border-navy-700">
                 
@@ -383,14 +332,11 @@ window.renderizarListaPedidos = function() {
     lista.innerHTML = html;
 };
 
-
-// 3. Funções do Modal de Pedido (mostrar pormenores ao clicar no bilhete)
+// Abre o Modal
 window.abrirModalPedido = function(id) {
-    // 1. Procura primeiro na página de vendas
     let basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
     let pedido = basePedidos.find(p => p.id === id);
     
-    // 2. Se não encontrar (porque o utilizador está no Dashboard), procura na memória da Home
     if (!pedido && typeof memDashboard !== 'undefined' && memDashboard.pendentes) {
         pedido = memDashboard.pendentes.find(p => p.id === id);
     }
@@ -435,22 +381,6 @@ window.abrirModalPedido = function(id) {
                 </button>
                 <button onclick="alterarStatusPedido('${pedido.id}', 'cancelado')" class="w-1/3 bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all">
                     Cancelar
-                </button>
-            </div>
-        `;
-    } else if (pedido.status === 'confirmado') {
-         acoesHtml = `
-            <div class="mt-5">
-                <button onclick="alterarStatusPedido('${pedido.id}', 'enviado')" class="w-full bg-blue-500 text-white h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all shadow-md">
-                    Marcar como Enviado
-                </button>
-            </div>
-        `;
-    } else if (pedido.status === 'enviado') {
-         acoesHtml = `
-            <div class="mt-5">
-                <button onclick="alterarStatusPedido('${pedido.id}', 'concluido')" class="w-full bg-purple-500 text-white h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all shadow-md">
-                    Concluir Entrega
                 </button>
             </div>
         `;
@@ -515,4 +445,3 @@ window.fecharModalPedido = function() {
         modal.classList.add('pointer-events-none');
     }, 300);
 };
-
