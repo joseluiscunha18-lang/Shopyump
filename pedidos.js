@@ -200,24 +200,33 @@ function dataDentroDoPeriodo(dataString, periodo) {
     const dataPedido = new Date(dataString);
     const hoje = new Date();
     
+    // Zera as horas para comparar dias limpos (evita problemas de fuso horário)
+    const dataPedidoClean = new Date(dataPedido.getFullYear(), dataPedido.getMonth(), dataPedido.getDate());
+    const hojeClean = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    
     if (periodo === 'hoje') {
-        return dataPedido.getDate() === hoje.getDate() && 
-               dataPedido.getMonth() === hoje.getMonth() && 
-               dataPedido.getFullYear() === hoje.getFullYear();
+        return dataPedidoClean.getTime() === hojeClean.getTime();
     }
     
     if (periodo === 'semana') {
-        const primeiroDiaSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
-        primeiroDiaSemana.setHours(0,0,0,0);
-        return dataPedido >= primeiroDiaSemana;
+        // Ajuste UX: A semana começa à Segunda-feira (Padrão Moçambique) e não ao Domingo (Padrão EUA)
+        const diaDaSemana = hojeClean.getDay(); // 0 é Domingo, 1 é Segunda...
+        const diasParaVoltar = diaDaSemana === 0 ? 6 : diaDaSemana - 1; 
+        
+        const primeiroDiaSemana = new Date(hojeClean);
+        primeiroDiaSemana.setDate(hojeClean.getDate() - diasParaVoltar);
+        
+        return dataPedidoClean >= primeiroDiaSemana;
     }
     
     if (periodo === 'mes') {
         return dataPedido.getMonth() === hoje.getMonth() && 
                dataPedido.getFullYear() === hoje.getFullYear();
     }
+    
     return true;
 }
+
 
 window.filtrarPedidos = function(filtro) {
     filtroStatusAtual = filtro;
