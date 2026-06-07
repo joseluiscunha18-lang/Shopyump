@@ -1,31 +1,59 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-vendas">
-        <div class="pt-24 px-6 main-wrapper pb-20 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
-            <div class="max-w-lg mx-auto space-y-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Pedidos</h2>
-                    <div class="flex gap-2" id="pedidos-filtros">
-                        <button onclick="filtrarPedidos('tudo')" class="px-3 py-1 rounded-full text-xs font-bold bg-[#0F172A] text-white filtro-btn active" data-filter="tudo">Todos</button>
-                        <button onclick="filtrarPedidos('pendente')" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 filtro-btn" data-filter="pendente">Pendentes</button>
+        <div class="pt-16 pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
+            
+            <div class="sticky top-0 z-20 bg-[#f6f6f7]/90 dark:bg-[#0b0f1a]/90 backdrop-blur-xl pt-4 pb-3 space-y-4 border-b border-slate-200/50 dark:border-navy-800/50">
+                
+                <div class="flex justify-between items-center px-5">
+                    <h2 class="text-[22px] font-black text-slate-900 dark:text-white tracking-tight">Pedidos</h2>
+                    <button class="flex items-center gap-2 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 px-3 py-1.5 rounded-full text-[11px] font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition-all">
+                        <i class="far fa-calendar-alt"></i> Este Mês <i class="fas fa-chevron-down text-[9px] ml-1 opacity-50"></i>
+                    </button>
+                </div>
+                
+                <div class="px-5">
+                    <div class="relative group">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm transition-colors group-focus-within:text-[#0F172A] dark:group-focus-within:text-white"></i>
+                        <input type="text" id="input-pesquisa-pedidos" placeholder="Nº do pedido, cliente ou telefone..." class="w-full h-[46px] pl-11 pr-4 bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 rounded-[16px] text-[13px] font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-400 dark:focus:border-navy-500 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all">
                     </div>
                 </div>
 
-                <div class="sf-card p-6">
-                    <div class="flex justify-between items-center mb-5">
-                       <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Histórico de Pedidos</h3>
-                       <button onclick="carregarHistoricoPedidos()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                    <div class="space-y-3" id="lista-pedidos-historico">
-                        <div class="py-6 text-center text-slate-400 text-sm flex flex-col items-center">
-                             <i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i>
-                             Carregando pedidos...
-                        </div>
-                    </div>
+                <div class="flex gap-2 px-5 overflow-x-auto no-scrollbar pb-1" id="pedidos-filtros">
+                    <button onclick="filtrarPedidos('pendente')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-btn active" data-filter="pendente">
+                        Pendentes
+                    </button>
+                    <button onclick="filtrarPedidos('confirmado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="confirmado">
+                        Confirmados
+                    </button>
+                    <button onclick="filtrarPedidos('enviado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="enviado">
+                        Enviados
+                    </button>
+                    <button onclick="filtrarPedidos('concluido')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="concluido">
+                        Concluídos
+                    </button>
+                    <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">
+                        Cancelados
+                    </button>
                 </div>
             </div>
+
+            <div class="px-5 mt-4 space-y-3" id="lista-pedidos-historico">
+                <div class="py-12 text-center text-slate-400 text-sm flex flex-col items-center">
+                     <i class="fas fa-circle-notch fa-spin text-2xl mb-3"></i>
+                     A verificar catálogo...
+                </div>
+            </div>
+            
+            <div id="container-carregar-mais" class="px-5 mt-5 hidden pb-8">
+                <button onclick="carregarMaisPedidos()" class="w-full h-12 bg-slate-100 dark:bg-navy-800 rounded-[16px] text-[12px] font-bold text-slate-600 dark:text-slate-300 active:scale-95 transition-all border border-slate-200 dark:border-navy-700 flex items-center justify-center gap-2">
+                    Ver pedidos anteriores <i class="fas fa-arrow-down text-[10px] opacity-70"></i>
+                </button>
+            </div>
+
         </div>
     </template>
 `);
+
 
 // Injeta o modal globalmente fora do template para funcionar também no Dashboard de forma fluída
 if (!document.getElementById('modal-pedido')) {
@@ -192,117 +220,160 @@ async function carregarHistoricoPedidos() {
         lista.innerHTML = '<p class="text-center text-amber-500 py-4">Os dados carregaram bem, mas ocorreu um erro a desenhá-los na tela. (Ver Console)</p>';
     }
 }
-// pedidos-fix.js - Ficheiro com as funções de renderização em falta para a página de vendas
+// Variáveis de Controlo da Interface
+let filtroStatusAtual = 'pendente';
+let termoPesquisaAtual = '';
+let limiteExibicaoPedidos = 15;
 
-// 1. Função para Filtrar Pedidos (chamada pelos botões no topo da página de vendas)
+// 1. Função de Filtragem (Abas Superiores)
 window.filtrarPedidos = function(filtro) {
-    // Atualizar feedback visual dos botões
+    filtroStatusAtual = filtro;
+    limiteExibicaoPedidos = 15; // Reinicia o limite ao trocar de aba
+    
+    // Atualiza a estética dos botões
     const botoes = document.querySelectorAll('.filtro-btn');
     botoes.forEach(btn => {
         if (btn.dataset.filter === filtro) {
-            btn.classList.add('active', 'bg-[#0F172A]', 'text-white');
-            btn.classList.remove('bg-slate-200', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+            btn.className = "flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-btn active";
         } else {
-            btn.classList.remove('active', 'bg-[#0F172A]', 'text-white');
-            btn.classList.add('bg-slate-200', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+            btn.className = "flex-shrink-0 px-4 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn";
         }
     });
 
-    // Chamar a função principal de desenho
-    renderizarListaPedidos(filtro);
+    renderizarListaPedidos();
 };
 
-// 2. Função para Renderizar e Desenhar os Bilhetes/Cards de Pedidos
-window.renderizarListaPedidos = function(filtro) {
+// 1.1 Escuta Dinâmica para a Lupa de Pesquisa
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'input-pesquisa-pedidos') {
+        termoPesquisaAtual = e.target.value.toLowerCase().trim();
+        renderizarListaPedidos();
+    }
+});
+
+// 1.2 Função para expandir a lista de antigos
+window.carregarMaisPedidos = function() {
+    limiteExibicaoPedidos += 15;
+    renderizarListaPedidos();
+};
+
+// 2. Motor de Renderização Inteligente
+window.renderizarListaPedidos = function() {
     const lista = document.getElementById('lista-pedidos-historico');
+    const btnCarregarMais = document.getElementById('container-carregar-mais');
     if (!lista) return;
 
-    // Filtrar a lista global que vem do Supabase (guardada em todosOsPedidos)
     const basePedidos = typeof todosOsPedidos !== 'undefined' ? todosOsPedidos : window.todosOsPedidos || [];
-    let pedidosFiltrados = [...basePedidos];
-    if (filtro && filtro !== 'tudo') {
-        pedidosFiltrados = pedidosFiltrados.filter(p => p.status === filtro);
+    
+    // A) Filtra por Aba (Pendente é o default)
+    let pedidosFiltrados = basePedidos.filter(p => p.status === filtroStatusAtual);
+
+    // B) Aplica Filtro de Pesquisa (se existir)
+    if (termoPesquisaAtual !== '') {
+        pedidosFiltrados = pedidosFiltrados.filter(p => 
+            (p.cliente_nome && p.cliente_nome.toLowerCase().includes(termoPesquisaAtual)) ||
+            (p.id && p.id.toLowerCase().includes(termoPesquisaAtual)) ||
+            (p.cliente_telefone && p.cliente_telefone.includes(termoPesquisaAtual))
+        );
     }
 
-    // Se estiver vazio, mostrar mensagem amigável
+    // C) Paginação Visual (Esconde o excesso se não for pendente)
+    const totalResultados = pedidosFiltrados.length;
+    if (filtroStatusAtual !== 'pendente') {
+        pedidosFiltrados = pedidosFiltrados.slice(0, limiteExibicaoPedidos);
+    }
+
+    // Gere o botão de "Carregar Mais"
+    if (btnCarregarMais) {
+        if (filtroStatusAtual !== 'pendente' && totalResultados > limiteExibicaoPedidos && termoPesquisaAtual === '') {
+            btnCarregarMais.classList.remove('hidden');
+        } else {
+            btnCarregarMais.classList.add('hidden');
+        }
+    }
+
+    // Empty State (Sem resultados)
     if (pedidosFiltrados.length === 0) {
         lista.innerHTML = `
-            <div class="py-12 flex flex-col items-center justify-center text-center gap-3 fade-in">
-                <div class="w-14 h-14 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-navy-700 rounded-[20px] flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-sm">
-                    <i class="fa-solid fa-receipt text-2xl"></i>
+            <div class="py-16 flex flex-col items-center justify-center text-center gap-3 fade-in mt-4">
+                <div class="w-16 h-16 bg-white dark:bg-navy-800 border border-slate-100 dark:border-navy-700 rounded-full flex items-center justify-center text-slate-300 dark:text-slate-500 mb-2 shadow-[0_4px_15px_rgba(0,0,0,0.03)]">
+                    <i class="fa-solid ${termoPesquisaAtual !== '' ? 'fa-search' : 'fa-box-open'} text-2xl"></i>
                 </div>
-                <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Nenhum pedido encontrado</h4>
-                <p class="text-[12px] text-slate-500 mt-1 max-w-[220px] leading-relaxed mx-auto">
-                    ${filtro === 'pendente' ? 'Não tens pedidos pendentes neste momento.' : 'Ainda não recebeste nenhum pedido nesta categoria.'}
+                <h4 class="text-[15px] font-bold text-slate-900 dark:text-white tracking-tight">Nenhum resultado</h4>
+                <p class="text-[12px] text-slate-500 mt-0.5 max-w-[220px] leading-relaxed mx-auto">
+                    ${termoPesquisaAtual !== '' ? 'Não encontrámos encomendas com essa referência.' : 'A lista está limpa nesta categoria.'}
                 </p>
             </div>
         `;
         return;
     }
 
-    // Desenhar os bilhetes (cards)
+    // Renderiza os Cartões Premium
     let html = '';
     pedidosFiltrados.forEach(p => {
         const data = new Date(p.created_at);
         const dataFormatada = data.toLocaleDateString('pt-MZ');
         const horaFormatada = data.toLocaleTimeString('pt-MZ', {hour: '2-digit', minute: '2-digit'});
         
-        let statusCorBg = 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700';
-        let statusIcone = 'fa-clock';
+        let statusCorBg = 'bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700';
         let statusTexto = 'Pendente';
+        let dotCor = 'bg-orange-500';
         
         switch(p.status?.toLowerCase()) {
             case 'confirmado':
                 statusCorBg = 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-500/20';
-                statusIcone = 'fa-check';
                 statusTexto = 'Confirmado';
+                dotCor = 'bg-emerald-500';
                 break;
             case 'cancelado':
                 statusCorBg = 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-500 border border-red-200 dark:border-red-500/20';
-                statusIcone = 'fa-times';
                 statusTexto = 'Cancelado';
+                dotCor = 'bg-red-500';
                 break;
             case 'enviado':
                 statusCorBg = 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500 border border-blue-200 dark:border-blue-500/20';
-                statusIcone = 'fa-truck';
                 statusTexto = 'Enviado';
+                dotCor = 'bg-blue-500';
                 break;
             case 'concluido':
                 statusCorBg = 'bg-purple-50 text-purple-600 dark:bg-purple-500/10 dark:text-purple-500 border border-purple-200 dark:border-purple-500/20';
-                statusIcone = 'fa-check-double';
                 statusTexto = 'Concluído';
+                dotCor = 'bg-purple-500';
                 break;
         }
 
         const qtdItens = p.itens ? p.itens.length : 0;
         const totalNum = parseFloat(p.total) || 0;
+        const fotoProduto = (p.itens && p.itens[0] && (p.itens[0].foto || p.itens[0].imagem)) ? (p.itens[0].foto || p.itens[0].imagem) : 'https://placehold.co/150x150/f8fafc/94a3b8?text=Sem+Foto';
+        const extraItens = qtdItens > 1 ? `<span class="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-md ml-1">+${qtdItens - 1}</span>` : '';
 
         html += `
-            <div onclick="abrirModalPedido('${p.id}')" class="bg-white dark:bg-navy-900 p-5 rounded-[24px] shadow-[0_8px_30px_rgba(0,0,0,0.03)] border border-slate-100/80 dark:border-navy-800 transition-all duration-300 hover:shadow-lg active:scale-[0.98] cursor-pointer mb-3 fade-in group">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-11 h-11 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 group-hover:scale-105 transition-transform">
-                            <i class="fa-solid fa-box-open"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-[14px] font-bold text-slate-900 dark:text-white leading-tight">${p.cliente_nome || 'Cliente Anónimo'}</h4>
-                            <p class="text-[11px] font-medium text-slate-500 mt-1 flex items-center gap-1.5">
-                                <span>${dataFormatada}</span>
-                                <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-                                <span>${horaFormatada}</span>
-                            </p>
-                        </div>
-                    </div>
+            <div onclick="abrirModalPedido('${p.id}')" class="bg-white dark:bg-navy-900 p-3 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 transition-all active:scale-[0.98] cursor-pointer mb-3 flex items-center gap-3 relative overflow-hidden group hover:border-slate-200 dark:hover:border-navy-700">
+                
+                <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex-shrink-0 overflow-hidden border border-slate-100 dark:border-navy-700 relative">
+                    <img src="${fotoProduto}" class="w-full h-full object-cover" alt="Produto">
                 </div>
                 
-                <div class="flex justify-between items-end pt-3 border-t border-slate-50 dark:border-navy-800/50">
-                    <div class="px-2.5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 ${statusCorBg}">
-                        <i class="fa-solid ${statusIcone}"></i> ${statusTexto}
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-0.5">
+                        <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate pr-2">${p.cliente_nome || 'Anónimo'}</h4>
+                        <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px] ${statusCorBg}">
+                            <div class="w-1.5 h-1.5 rounded-full ${dotCor}"></div>
+                            <span class="text-[9px] font-black tracking-widest uppercase">${statusTexto}</span>
+                        </div>
                     </div>
                     
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">${qtdItens} item(s)</p>
-                        <p class="text-[15px] font-black text-slate-900 dark:text-white tracking-tight">${totalNum.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400 uppercase tracking-widest ml-0.5">MT</span></p>
+                    <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1.5">
+                        <span class="truncate">${p.id.split('-')[0].toUpperCase()}</span>
+                        <span class="mx-1.5 opacity-30">•</span>
+                        <span>${qtdItens} item(s)</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <p class="text-[12px] font-black text-slate-900 dark:text-white">${totalNum.toLocaleString('pt-MZ')} <span class="text-[9px] font-bold text-slate-400">MT</span></p>
+                        <p class="text-[9px] font-bold text-slate-400 flex items-center gap-1">
+                            ${dataFormatada} - ${horaFormatada}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -311,6 +382,7 @@ window.renderizarListaPedidos = function(filtro) {
 
     lista.innerHTML = html;
 };
+
 
 // 3. Funções do Modal de Pedido (mostrar pormenores ao clicar no bilhete)
 window.abrirModalPedido = function(id) {
