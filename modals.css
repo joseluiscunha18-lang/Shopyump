@@ -83,3 +83,14 @@ html.modal-aberto {
 .modal-container .overflow-y-auto {
     overscroll-behavior-y: contain !important; /* MÁGICA: Impede que o "pico" final da lista puxe a página toda */
 }
+
+/* CÓDIGO DA MAGIA DOS MODAIS (CSS) */
+body.modal-aberto,
+html.modal-aberto {
+    overflow: hidden !important;
+    overscroll-behavior-y: none !important; /* Corta o rebote/pull-to-refresh */
+}
+
+.modal-container .overflow-y-auto {
+    overscroll-behavior-y: contain !important; /* Impede salto para a camada inferior */
+}
