@@ -84,12 +84,36 @@ document.addEventListener('spa:page-loaded', async (e) => {
         });
 
         try {
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
-            if (user) {
-                const displayEmail = document.getElementById('display-email-atual');
-                if (displayEmail) displayEmail.innerText = user.email || '';
+            let email = '';
+            let isGoogle = false;
 
-                const isGoogle = user.app_metadata?.provider === 'google';
+            // Usa a cache de forma fulminante se já vieste do Perfil
+            if (window.memUtilizador) {
+                email = window.memUtilizador.email;
+                isGoogle = window.memUtilizador.isGoogle;
+            } else {
+                // Caso contrário (se entraram primeiro nas definições) busca do banco
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (user) {
+                    email = user.email || '';
+                    isGoogle = user.app_metadata?.provider === 'google';
+                    
+                    // Adiciona à cache!
+                    window.memUtilizador = {
+                        user: user,
+                        nome: user.user_metadata?.full_name || '',
+                        foto: user.user_metadata?.avatar_url || '',
+                        email: email,
+                        isGoogle: isGoogle
+                    };
+                }
+            }
+
+            // Popula os elementos em tempo recorde
+            if (email) {
+                const displayEmail = document.getElementById('display-email-atual');
+                if (displayEmail) displayEmail.innerText = email;
+
                 if (isGoogle) {
                     const btnEmail = document.getElementById('btn-alterar-email-toggle');
                     const badgeEmail = document.getElementById('badge-google-email');
@@ -133,6 +157,11 @@ window.atualizarEmail = async function() {
         const { error } = await window.supabaseClient.auth.updateUser({ email: novoEmail });
         
         if (error) throw error;
+
+        // Atualizar cache se existir
+        if (window.memUtilizador) {
+            window.memUtilizador.email = novoEmail; 
+        }
 
         msg.innerText = "Email de verificação enviado! Confirme a caixa de entrada.";
         msg.classList.remove('hidden', 'text-red-500');

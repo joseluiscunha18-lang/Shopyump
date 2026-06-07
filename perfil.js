@@ -48,28 +48,50 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // perfil.js - Lógica exclusiva da página de Perfil da Loja
 
+// Variável Global para Cache do Utilizador
+window.memUtilizador = window.memUtilizador || null;
+
 async function initPerfil() {
     try {
-        const { data: { user } } = await window.supabaseClient.auth.getUser();
-        if (!user) return;
-        
-        // Apenas dados reais da Base de Dados
-        let nome = user.user_metadata?.full_name || '';
-        const foto = user.user_metadata?.avatar_url || '';
-        const email = user.email || '';
-        const isGoogle = user.app_metadata?.provider === 'google';
+        let user;
+        let nome = '';
+        let foto = '';
+        let email = '';
+        let isGoogle = false;
 
-        // Se o nome vier vazio (login por email), vai buscar o nome definido no onboarding à tabela lojas
-        if (!nome || nome.trim() === '') {
-            const { data: loja } = await window.supabaseClient
-                .from('lojas')
-                .select('vendedor_nome')
-                .eq('perfil_id', user.id)
-                .maybeSingle();
-                
-            if (loja && loja.vendedor_nome) {
-                nome = loja.vendedor_nome;
+        // Se já temos na memória cache, carrega tudo de forma instantânea
+        if (window.memUtilizador) {
+            user = window.memUtilizador.user;
+            nome = window.memUtilizador.nome;
+            foto = window.memUtilizador.foto;
+            email = window.memUtilizador.email;
+            isGoogle = window.memUtilizador.isGoogle;
+        } else {
+            // Senão, vai buscar ao banco de dados pela primeira vez
+            const { data } = await window.supabaseClient.auth.getUser();
+            user = data.user;
+            if (!user) return;
+            
+            nome = user.user_metadata?.full_name || '';
+            foto = user.user_metadata?.avatar_url || '';
+            email = user.email || '';
+            isGoogle = user.app_metadata?.provider === 'google';
+
+            // Se o nome vier vazio (login por email), vai buscar à tabela lojas
+            if (!nome || nome.trim() === '') {
+                const { data: loja } = await window.supabaseClient
+                    .from('lojas')
+                    .select('vendedor_nome')
+                    .eq('perfil_id', user.id)
+                    .maybeSingle();
+                    
+                if (loja && loja.vendedor_nome) {
+                    nome = loja.vendedor_nome;
+                }
             }
+
+            // Ganja tudo na memória cache para a próxima vez!
+            window.memUtilizador = { user, nome, foto, email, isGoogle };
         }
 
         const inputNome = document.getElementById('input-nome');
@@ -194,6 +216,13 @@ async function salvarDados() {
             if (typeof window.forcarAtualizacaoDashboard === 'function') {
                 window.forcarAtualizacaoDashboard();
             }
+        }
+
+        // 3. Atualizar a Cache do Utilizador para as restantes páginas não terem de carregar a antiga
+        if (window.memUtilizador) {
+            window.memUtilizador.nome = novoNome;
+            if (novaFoto) window.memUtilizador.foto = novaFoto;
+            else if (remover) window.memUtilizador.foto = null;
         }
 
         // Sucesso visual
