@@ -36,10 +36,18 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // 👉 REGISTAR A VISITA SILENCIOSAMENTE NO SUPABASE
-        window.supabaseClient.from('visitas').insert([{ loja_id: loja.id }]).then(({error})=> {
-            if(error) console.error("Aviso: Falha ao registar a visita.", error);
-        });
+        // --- REGISTAR A VISITA DO CLIENTE ---
+        // Nota: O sessionStorage previne contabilização dupla caso o utilizador 
+        // faça "refresh" contante na página, contando de forma mais real (1 vez por sessão).
+        const dataHojeStr = new Date().toISOString().split('T')[0];
+        const chaveVisita = 'visita_' + loja.id + '_' + dataHojeStr;
+        if (!sessionStorage.getItem(chaveVisita)) {
+            window.supabaseClient.from('visitas')
+                .insert([{ loja_id: loja.id }])
+                .then(() => sessionStorage.setItem(chaveVisita, 'true'))
+                .catch(e => console.error("Erro ao registar visita:", e));
+        }
+        // ------------------------------------
 
         // Fetch produtos
         const { data: prods, error: erroProdutos } = await window.supabaseClient

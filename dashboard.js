@@ -281,6 +281,7 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
+                await carregarVisitasDashboard(loja.id); // <-- Carrega as visitas para os gráficos
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -290,6 +291,32 @@ async function carregarDadosLojaDashboard() {
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+async function carregarVisitasDashboard(lojaId) {
+    try {
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+        const dataInicioHoje = hoje.toISOString();
+        
+        // 1. Conta as visitas totais (para o card de "Visitas")
+        const { count: totalVisitas, error: errTotal } = await window.supabaseClient
+            .from('visitas')
+            .select('*', { count: 'exact', head: true })
+            .eq('loja_id', lojaId);
+            
+        // 2. Conta as visitas apenas de hoje (para o gráfico principal de "visitas hoje")
+        const { count: visitasHoje, error: errHoje } = await window.supabaseClient
+            .from('visitas')
+            .select('*', { count: 'exact', head: true })
+            .eq('loja_id', lojaId)
+            .gte('created_at', dataInicioHoje);
+            
+        if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
+        if (!errHoje) animarNumero('valor-atual-texto', visitasHoje || 0);
+    } catch (e) {
+        console.error("Erro ao carregar visitas:", e);
     }
 }
 
