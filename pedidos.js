@@ -21,6 +21,7 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="flex gap-2 px-5 overflow-x-auto no-scrollbar items-center">
                 <button onclick="filtrarPedidos('pendente')" class="flex-shrink-0 px-5 py-2 rounded-full text-[12px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-btn active" data-filter="pendente">Pendentes</button>
                 <button onclick="filtrarPedidos('confirmado')" class="flex-shrink-0 px-5 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="confirmado">Confirmados</button>
+                <button onclick="filtrarPedidos('concluido')" class="flex-shrink-0 px-5 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="concluido">Concluídos</button>
                 <button onclick="filtrarPedidos('cancelado')" class="flex-shrink-0 px-5 py-2 rounded-full text-[12px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-btn" data-filter="cancelado">Cancelados</button>
             </div>
         </div>
@@ -330,6 +331,11 @@ window.renderizarListaPedidos = function() {
                 statusTexto = 'Confirmado';
                 dotCor = 'bg-emerald-500';
                 break;
+            case 'concluido':
+                statusCorBg = 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-500 border border-blue-200 dark:border-blue-500/20';
+                statusTexto = 'Concluído';
+                dotCor = 'bg-blue-500';
+                break;
             case 'cancelado':
                 statusCorBg = 'bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-500 border border-red-200 dark:border-red-500/20';
                 statusTexto = 'Cancelado';
@@ -451,6 +457,17 @@ window.abrirModalPedido = function(id) {
             <div class="flex gap-2 mt-5">
                 <button onclick="alterarStatusPedido('${pedido.id}', 'confirmado')" class="flex-1 bg-[#0F172A] text-white h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all shadow-md">
                     Confirmar
+                </button>
+                <button onclick="alterarStatusPedido('${pedido.id}', 'cancelado')" class="w-1/3 bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all">
+                    Cancelar
+                </button>
+            </div>
+        `;
+    } else if (pedido.status === 'confirmado') {
+        acoesHtml = `
+            <div class="flex gap-2 mt-5">
+                <button onclick="alterarStatusPedido('${pedido.id}', 'concluido')" class="flex-1 bg-blue-600 text-white h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all shadow-md">
+                    Concluir Entrega
                 </button>
                 <button onclick="alterarStatusPedido('${pedido.id}', 'cancelado')" class="w-1/3 bg-slate-100 dark:bg-navy-800 text-slate-600 dark:text-slate-300 h-12 rounded-xl text-[11px] font-black uppercase tracking-wider active:scale-95 transition-all">
                     Cancelar
