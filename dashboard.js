@@ -302,12 +302,11 @@ async function carregarDadosLojaDashboard() {
 // ===========================================
 // BLOCO 2: APAGAR E SUBSTITUIR O CÓDIGO DO GRÁFICO (dashboard.js)
 // ===========================================
-
 async function carregarVisitasDashboard(lojaId) {
     try {
         console.log("À procura de dados fantásticos de fluxo para a loja:", lojaId);
         
-        // 1. Conta as visitas totais (Estatística Global Numérica)
+        // 1. Conta as visitas totais
         const { count: totalVisitas, error: errTotal } = await window.supabaseClient
             .from('visitas')
             .select('*', { count: 'exact', head: true })
@@ -329,7 +328,6 @@ async function carregarVisitasDashboard(lojaId) {
         if (!errVisitas && visitas) {
             console.log("A BD encontrou este número de Visitas brutas (Semana):", visitas.length);
             
-            // Criar uma contagem de dias com base no FUSO HORÁRIO LOCAL PERFEITO
             const contagemDias = {};
             const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const ordemNomes = [];
@@ -340,54 +338,61 @@ async function carregarVisitasDashboard(lojaId) {
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
-                const dataStr = `${year}-${month}-${day}`; // Usa data perfeitamente formatada
+                const dataStr = `${year}-${month}-${day}`;
                 
                 contagemDias[dataStr] = 0;
                 ordemNomes.push(nomesDias[d.getDay()]);
             }
             
-            // Agrupar as visitas aos seus respetivos dias baseados no ano/mês/dia
+            // Agrupar as visitas
             visitas.forEach(v => {
-                const vDate = new Date(v.created_at); // Transforma em Data do Javascript
-                const vYear = vDate.getFullYear();
-                const vMonth = String(vDate.getMonth() + 1).padStart(2, '0');
-                const vDay = String(vDate.getDate()).padStart(2, '0');
-                const vDataStr = `${vYear}-${vMonth}-${vDay}`;
-                
-                if (contagemDias[vDataStr] !== undefined) {
-                    contagemDias[vDataStr]++;
+                const vDate = new Date(v.created_at); 
+                if(!isNaN(vDate)) {
+                    const vYear = vDate.getFullYear();
+                    const vMonth = String(vDate.getMonth() + 1).padStart(2, '0');
+                    const vDay = String(vDate.getDate()).padStart(2, '0');
+                    const vDataStr = `${vYear}-${vMonth}-${vDay}`;
+                    
+                    if (contagemDias[vDataStr] !== undefined) {
+                        contagemDias[vDataStr]++;
+                    }
                 }
             });
             
             const contagensArr = Object.values(contagemDias);
-            const hojeCount = contagensArr[contagensArr.length - 1]; // O último índice é "Hoje" obrigatoriamente
+            const hojeCount = contagensArr[contagensArr.length - 1]; 
             
-            // Popula os quadros centrais (0 visitas únicas hoje...)
+            console.log("Visitas processadas Mapeadas para HOJE:", hojeCount);
+            
             const textoHoje = document.getElementById('valor-atual-texto');
             if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
             
-            // Dispara a MÁGICA: Constrói e injeta o gráfico 
             atualizarGraficoDashboard(contagensArr, ordemNomes);
+        } else {
+            console.error("Erro RLS ao buscar histórico de visitas:", errVisitas);
         }
     } catch (e) {
         console.error("Algo correu mal ao renderizar gráfico tráfego:", e);
     }
 }
 
-// Constrói e dimensiona matematicamente o DOM das barras do gráfico
 function atualizarGraficoDashboard(contagens, ordemNomes) {
-    const maxVisitas = Math.max(...contagens, 1); // Previne falhas se as visitas forem tudo zeros
+    const maxVisitas = Math.max(...contagens, 1); 
     
-    // Identifica o contêiner mãe das barras (O Flex das barras)
-    const conteinerDasBarras = document.querySelector('.relative.z-10.w-full.h-\\[106px\\]');
-    if (!conteinerDasBarras) return;
+    // Conector 100% blindado para encontrar as barras no ecrã (ignora escapes de classes)
+    const conteiners = document.querySelectorAll('.flex.items-end.justify-between.gap-1');
+    let conteinerDasBarras = null;
+    conteinerDasBarras = conteiners.length > 0 ? conteiners[conteiners.length - 1] : document.querySelector('.relative.z-10.w-full.h-\\[106px\\]');
+    
+    if (!conteinerDasBarras) {
+        console.error("Não encontrei as barras do gráfico na UI!");
+        return;
+    }
     
     let htmlBarras = '';
-    
     contagens.forEach((qtd, index) => {
-        // Altura mínima visual de 15% mesmo para os dias zero
         const alturaPercentual = Math.max(15, Math.round((qtd / maxVisitas) * 100));
-        const eHoje = index === 6; // Posicionamento fixo!
+        const eHoje = index === 6; 
         const nomeDia = ordemNomes[index];
         
         if (eHoje) {

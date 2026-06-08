@@ -39,14 +39,15 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // 🚀 REGISTAR A VISITA DIRETA PARA O GRÁFICO (Sem bloqueios no browser para poderes testar!)
+        // 🚀 FORÇAR O REGISTO DA VISITA (Removido o sessionStorage para testares 100%)
+        console.log("A registar uma nova visita para a loja...");
         window.supabaseClient.from('visitas')
             .insert([{ loja_id: loja.id }])
             .then(({ error }) => {
                 if (error) {
-                    console.error("🚨 Erro RLS ou BD ao registar visita:", error.message);
+                    console.error("🚨 O Supabase bloqueou a visita (Verifica o RLS das Visitas):", error.message);
                 } else {
-                    console.log("✅ UMA VISITA FOI CONTADA COM SUCESSO! Abre o dashboard para ver.");
+                    console.log("✅ VISITA REGISTADA COM SUCESSO NA BD! Atualiza o dashboard.");
                 }
             });
         // ------------------------------------
@@ -63,31 +64,20 @@ async function inicializarLoja() {
             produtos = prods.map(p => {
                 let tamanhosArr = [];
                 let coresArr = [];
-                
                 if (p.variantes) {
                     if (p.variantes.tamanhos) tamanhosArr = p.variantes.tamanhos;
                     else if (p.variantes.numeracao) tamanhosArr = p.variantes.numeracao.map(n => String(n));
                     if (p.variantes.cores) coresArr = p.variantes.cores.map(c => ({nome: c, hex: "#94a3b8"})); 
                 }
-
                 return {
-                    id: p.id,
-                    nome: p.nome,
-                    preco: p.preco_promo && p.preco_promo > 0 ? p.preco_promo : p.preco,
-                    precoOriginal: p.preco,
-                    categoria: p.categoria || 'Moda',
-                    subcategoria: 'Destaques',
+                    id: p.id, nome: p.nome, preco: p.preco_promo && p.preco_promo > 0 ? p.preco_promo : p.preco,
+                    precoOriginal: p.preco, categoria: p.categoria || 'Moda', subcategoria: 'Destaques',
                     imagem: (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/400x500?text=Sem+Foto',
-                    imagens: p.fotos || [],
-                    desc: p.descricao || '',
-                    tamanhos: tamanhosArr,
-                    cores: coresArr
+                    imagens: p.fotos || [], desc: p.descricao || '', tamanhos: tamanhosArr, cores: coresArr
                 };
             });
-            
             document.getElementById('loader-global').classList.add('opacity-0', 'pointer-events-none');
             document.getElementById('bottom-nav').classList.remove('hidden');
-            
             navegarPara('home');
             atualizarBadge();
         } else {
