@@ -30,15 +30,15 @@ async function inicializarLoja() {
         }
 
         lojaAtual = loja;
-        numeroLojista = loja.whatsapp ? loja.whatsapp.replace(/\\D/g, '') : '';
+        numeroLojista = loja.whatsapp ? loja.whatsapp.replace(/\D/g, '') : '';
         
         document.title = loja.nome + " | Shopink";
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // REGISTAR A VISITA: Conta de forma limpa que houve um acesso à loja
+        // 👉 REGISTAR A VISITA SILENCIOSAMENTE NO SUPABASE
         window.supabaseClient.from('visitas').insert([{ loja_id: loja.id }]).then(({error})=> {
-            if(error) console.error("Erro a contabilizar visita:", error);
+            if(error) console.error("Aviso: Falha ao registar a visita.", error);
         });
 
         // Fetch produtos
