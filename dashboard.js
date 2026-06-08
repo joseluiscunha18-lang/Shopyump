@@ -97,38 +97,73 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </section>
 
-                <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-8">
+                <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden group/chart cursor-default">
+                    <div class="flex items-start justify-between mb-8">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
-                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Tráfego da Loja</h3>
+                                <span class="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-[8px] font-black uppercase tracking-widest text-emerald-600 rounded">HOJE</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <p id="valor-atual-texto" class="text-3xl font-bold text-slate-900 dark:text-white leading-none tracking-tight">0</p>
+                                <span class="text-[11px] font-bold text-emerald-500 flex items-center gap-0.5">Visitas únicas</span>
+                            </div>
                         </div>
-                        <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Tempo Real</span>
-                        </div>
-                    </div>
-                    <div class="chart-container mt-2">
-                        <div class="chart-view">
-                            <div class="grid-line border-t border-dashed border-slate-200 dark:border-slate-700 bg-transparent" style="top: 0;"></div>
-                            <div class="grid-line border-t border-dashed border-slate-200 dark:border-slate-700 bg-transparent" style="top: 75px;"></div>
-                            <div class="grid-line border-t border-solid border-slate-200 dark:border-slate-700 bg-transparent" style="top: 150px;"></div>
-                            <svg class="svg-chart" viewBox="0 0 300 150">
-                                <defs>
-                                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stop-color="#D4B5FD" stop-opacity="0.25"/>
-                                        <stop offset="100%" stop-color="#D4B5FD" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <path id="areaPath" fill="url(#chartGradient)" d="M0,150 L300,150 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,148 L300,148" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-                                <circle id="p-atual" cx="150" cy="148" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
-                                <text id="valor-atual" x="150" y="135" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="middle" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">0 Visitas</text>
-                            </svg>
+                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-xl flex items-center gap-1.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                            <span class="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">Tempo Real</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1"></span>
                         </div>
                     </div>
-                    <div class="flex justify-between mt-4 px-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>S?b</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
+                    
+                    <div class="relative h-[130px] mt-2 flex items-end justify-between px-1">
+                        <!-- Linhas de Fundo -->
+                        <div class="absolute inset-x-0 inset-y-0 flex flex-col justify-between pointer-events-none pb-6">
+                            <div class="w-full border-t border-dashed border-slate-200 dark:border-slate-800"></div>
+                            <div class="w-full border-t border-dashed border-slate-200 dark:border-slate-800"></div>
+                            <div class="w-full border-t border-solid border-slate-200 dark:border-slate-800"></div>
+                        </div>
+                        
+                        <!-- Barras Modernas dos dias -->
+                        <div class="relative z-10 w-full h-[106px] flex items-end justify-between gap-1 sm:gap-2">
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[25%] transition-all hover:h-[35%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Seg</span>
+                            </div>
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[40%] transition-all hover:h-[50%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Ter</span>
+                            </div>
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[30%] transition-all hover:h-[40%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Qua</span>
+                            </div>
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[55%] transition-all hover:h-[65%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Qui</span>
+                            </div>
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[45%] transition-all hover:h-[55%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Sex</span>
+                            </div>
+                            <!-- Barra inativa -->
+                            <div class="group relative w-full flex flex-col items-center h-[80%] transition-all hover:h-[90%]">
+                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Sáb</span>
+                            </div>
+                            <!-- BARRA DE HOJE (Destaque principal) -->
+                            <div class="group relative w-full flex flex-col items-center h-[100%] shadow-[0_0_15px_rgba(159,110,245,0.1)]">
+                                <!-- Tooltip em cima da barra ativa -->
+                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20 transition-transform">Hoje</div>
+                                <!-- Corpo da barra ativa com gradiente roxo premium -->
+                                <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
+                                <span class="text-[9px] font-black text-slate-900 dark:text-white mt-2 absolute -bottom-6 italic">Dom</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -205,9 +240,7 @@ let dashboardCarregado = false;
 let memDashboard = {
     loja: null,
     produtos: null,
-    pendentes: null,
-    historicoVisitas: null, // Nova gaveta de memória
-    totalVisitas: 0 // Nova gaveta de memória
+    pendentes: null
 };
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -222,11 +255,6 @@ document.addEventListener('spa:page-loaded', (e) => {
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
-            // REDESENHA O GRÁFICO INSTANTANEAMENTE 
-            if (memDashboard.historicoVisitas) {
-                if (document.getElementById('stat-visitas')) animarNumero('stat-visitas', memDashboard.totalVisitas);
-                desenharGrafico(memDashboard.historicoVisitas);
-            }
         }
     }
 });
@@ -260,9 +288,6 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
-                
-                // 👉 INICIA O GRÁFICO DE VISITAS AQUI
-                await carregarEstatisticasVisitasDashboard(loja.id);
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -554,156 +579,4 @@ function animarRemocaoPedidoEAtualizar(card) {
             // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
         }, 300);
     }, 150);
-}
-
-// ==========================================
-// MÓDULO DO GRÁFICO DE VISITAS (INTERATIVO E DINÂMICO)
-// ==========================================
-async function carregarEstatisticasVisitasDashboard(lojaId) {
-    try {
-        const seteDiasAtras = new Date();
-        seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
-        seteDiasAtras.setHours(0, 0, 0, 0);
-
-        const { data: visitas, error } = await window.supabaseClient
-            .from('visitas')
-            .select('created_at')
-            .eq('loja_id', lojaId)
-            .gte('created_at', seteDiasAtras.toISOString());
-
-        if (error) throw error;
-
-        if (document.getElementById('stat-visitas')) {
-            animarNumero('stat-visitas', visitas.length);
-        }
-
-        const diasSemanas = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        const historico7Dias = [];
-        
-        for(let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            historico7Dias.push({
-                diaStr: diasSemanas[d.getDay()],
-                dataKey: d.toDateString(), 
-                visitas: 0
-            });
-        }
-
-        visitas.forEach(v => {
-            const dataV = new Date(v.created_at);
-            const diaIndex = historico7Dias.findIndex(h => h.dataKey === dataV.toDateString());
-            if(diaIndex !== -1) {
-                historico7Dias[diaIndex].visitas++;
-            } else {
-                historico7Dias[6].visitas++; 
-            }
-        });
-
-        // 5. Clica para Desenhá-lo!
-        memDashboard.totalVisitas = visitas.length;
-        memDashboard.historicoVisitas = historico7Dias;
-        desenharGrafico(historico7Dias);
-
-    } catch (e) {
-        console.error("Erro no gráfico de visitas:", e);
-    }
-}
-
-// Guarda o índice para o dia atual fixo
-let graficoIndexSelecionado = 6; 
-
-function desenharGrafico(dados) {
-    const maxVisitas = Math.max(...dados.map(d => d.visitas), 5);
-    const width = 300;
-    const height = 150;
-    
-    // Calcular as posições da curva
-    const pontosx = dados.map((d, i) => (width / 6) * i);
-    const pontosy = dados.map((d) => height - (d.visitas / maxVisitas) * (height - 30) - 15);
-
-    // Corda Animada Curvada
-    let dPath = `M${pontosx[0]},${pontosy[0]}`;
-    for (let i = 1; i < pontosx.length; i++) {
-        const ctrl1X = pontosx[i - 1] + (pontosx[i] - pontosx[i - 1]) / 2;
-        dPath += ` C${ctrl1X},${pontosy[i-1]} ${ctrl1X},${pontosy[i]} ${pontosx[i]},${pontosy[i]}`;
-    }
-
-    const areaPathStr = `${dPath} L${width},${height} L0,${height} Z`;
-
-    const areaPath = document.getElementById('areaPath');
-    const cordaPath = document.getElementById('cordaPath');
-    const svgChart = document.querySelector('.svg-chart');
-    const pAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
-
-    // Restaurar a visibilidade do marcador que desliza
-    if(pAtual) pAtual.style.display = 'block';
-    if(valorAtual) valorAtual.style.display = 'block';
-
-    if (areaPath && cordaPath && svgChart) {
-        areaPath.setAttribute('d', areaPathStr);
-        cordaPath.setAttribute('d', dPath);
-
-        // Limpar pontos antigos que estavam a encavalar a tela
-        document.querySelectorAll('.ponto-grafico-interativo, .zona-clique').forEach(e => e.remove());
-
-        // Criar Zonas (Hitboxes Transparentes) que sentem o teu toque no ecrã e deslizam a bolinha
-        pontosx.forEach((px, i) => {
-            const hitArea = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            hitArea.setAttribute('x', px - (width / 12));
-            hitArea.setAttribute('y', 0);
-            hitArea.setAttribute('width', width / 6);
-            hitArea.setAttribute('height', height);
-            hitArea.setAttribute('fill', 'transparent');
-            hitArea.setAttribute('class', 'zona-clique');
-            hitArea.style.cursor = 'pointer';
-            
-            hitArea.onclick = () => interagirComGraficoPosicao(i, pontosx, pontosy, dados);
-            svgChart.appendChild(hitArea);
-        });
-
-        // Quando carrega, vai focar sempre automaticamente no dia de Hoje (índice 6)
-        interagirComGraficoPosicao(graficoIndexSelecionado, pontosx, pontosy, dados);
-    }
-}
-
-// Lógica mágica que desliza os valores suavemente com animação nativa
-function interagirComGraficoPosicao(index, pxs, pys, dados) {
-    graficoIndexSelecionado = index;
-    const pAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
-    
-    if(pAtual && valorAtual) {
-        // Move a bolinha
-        pAtual.setAttribute('cx', pxs[index]);
-        pAtual.setAttribute('cy', pys[index]);
-        
-        // Dá o texto atual correspondente e move também
-        valorAtual.textContent = `${dados[index].visitas} Visitas`;
-        valorAtual.setAttribute('x', pxs[index]);
-        valorAtual.setAttribute('y', pys[index] - 15);
-    }
-
-    // Atualizar os Textos dos Dias por Baixo Para Saber Qual Estás a Tocar
-    const elementoDias = document.querySelector('.chart-container').nextElementSibling;
-    if (elementoDias && (elementoDias.classList.contains('flex') || elementoDias.tagName.toLowerCase() === 'div')) {
-        elementoDias.innerHTML = dados.map((d, i) => {
-            const ehHoje = i === dados.length - 1;
-            const nomeDia = ehHoje ? 'Hoje' : d.diaStr;
-            const estilo = i === index 
-                ? 'text-[#9f6ef5] font-black scale-110 transition-transform' 
-                : 'text-slate-400 font-bold opacity-70 hover:opacity-100 transition-all';
-                
-            return `<span class="cursor-pointer ${estilo}" data-index-chart="${i}">${nomeDia}</span>`;
-        }).join('');
-        
-        // Também permitir clicar logo pelas letras de baixo
-        elementoDias.querySelectorAll('span').forEach(span => {
-            span.onclick = () => {
-                const cliqueIndex = parseInt(span.getAttribute('data-index-chart'));
-                interagirComGraficoPosicao(cliqueIndex, pxs, pys, dados);
-            };
-        });
-    }
 }
