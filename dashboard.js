@@ -253,7 +253,6 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
-                await carregarEstatisticasVisitasDashboard(loja.id); // 🟢 Isto liga o Gráfico de Visitas!
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -545,105 +544,4 @@ function animarRemocaoPedidoEAtualizar(card) {
             // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
         }, 300);
     }, 150);
-}
-
-// ==========================================
-// GRÁFICO E ESTATÍSTICAS DE VISITAS
-// ==========================================
-async function carregarEstatisticasVisitasDashboard(lojaId) {
-    try {
-        // 1. Definir os últimos 7 dias (Para a linha temporal)
-        const seteDiasAtras = new Date();
-        seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
-        seteDiasAtras.setHours(0, 0, 0, 0);
-
-        // 2. Buscar acessos diretamente do Supabase
-        const { data: visitas, error } = await window.supabaseClient
-            .from('visitas')
-            .select('created_at')
-            .eq('loja_id', lojaId)
-            .gte('created_at', seteDiasAtras.toISOString());
-
-        if (error) throw error;
-
-        // 3. Atualizar o Gigante Total
-        const statVisitas = document.getElementById('stat-visitas');
-        if (statVisitas) {
-            animarNumero('stat-visitas', visitas.length);
-        }
-
-        // 4. Mapear o Histórico
-        const diasSemanas = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-        const historico7Dias = [];
-        
-        for(let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            historico7Dias.push({
-                diaStr: diasSemanas[d.getDay()],
-                diaData: d.getDate(),
-                visitas: 0
-            });
-        }
-
-        visitas.forEach(v => {
-            const dataV = new Date(v.created_at);
-            const diaIndex = historico7Dias.findIndex(h => h.diaData === dataV.getDate());
-            if(diaIndex !== -1) {
-                historico7Dias[diaIndex].visitas++;
-            }
-        });
-
-        // Executar os cálculos SVG!
-        desenharGrafico(historico7Dias);
-
-    } catch (e) {
-        console.error("Erro ao carregar o gráfico de visitas:", e);
-    }
-}
-
-function desenharGrafico(dados) {
-    const maxVisitas = Math.max(...dados.map(d => d.visitas), 5); // Teto de segurança, nunca 0!
-    const width = 300;
-    const height = 150;
-    
-    const pontosx = dados.map((d, i) => (width / 6) * i);
-    const pontosy = dados.map((d) => height - (d.visitas / maxVisitas) * (height - 30) - 15);
-
-    let dPath = \`M\${pontosx[0]},\${pontosy[0]}\`;
-    for (let i = 1; i < pontosx.length; i++) {
-        const ctrl1X = pontosx[i - 1] + (pontosx[i] - pontosx[i - 1]) / 2;
-        dPath += \` C\${ctrl1X},\${pontosy[i-1]} \${ctrl1X},\${pontosy[i]} \${pontosx[i]},\${pontosy[i]}\`;
-    }
-
-    const areaPathStr = \`\${dPath} L\${width},\${height} L0,\${height} Z\`;
-
-    // Atualizar UI HTML
-    const areaPath = document.getElementById('areaPath');
-    const cordaPath = document.getElementById('cordaPath');
-    const pAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
-
-    if (areaPath && cordaPath && pAtual && valorAtual) {
-        areaPath.setAttribute('d', areaPathStr);
-        cordaPath.setAttribute('d', dPath);
-
-        const lastX = pontosx[pontosx.length - 1];
-        const lastY = pontosy[pontosy.length - 1];
-        
-        pAtual.setAttribute('cx', lastX);
-        pAtual.setAttribute('cy', lastY);
-        
-        valorAtual.setAttribute('x', lastX);
-        valorAtual.setAttribute('y', lastY - 15);
-        valorAtual.textContent = \`\${dados[dados.length - 1].visitas} Visitas\`;
-        
-        const containerDias = document.querySelector('.chart-container').nextElementSibling;
-        if (containerDias && containerDias.classList.contains('flex')) {
-            containerDias.innerHTML = dados.map((d, i) => {
-                if (i === dados.length - 1) return '<span class="text-slate-900 dark:text-white font-black italic">Hoje</span>';
-                return '<span>' + d.diaStr + '</span>';
-            }).join('');
-        }
-    }
 }
