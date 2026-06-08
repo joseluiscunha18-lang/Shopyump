@@ -36,6 +36,11 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
+        // REGISTAR A VISITA: Conta de forma limpa que houve um acesso à loja
+        window.supabaseClient.from('visitas').insert([{ loja_id: loja.id }]).then(({error})=> {
+            if(error) console.error("Erro a contabilizar visita:", error);
+        });
+
         // Fetch produtos
         const { data: prods, error: erroProdutos } = await window.supabaseClient
             .from('produtos')

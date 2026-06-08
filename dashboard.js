@@ -253,7 +253,7 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
-                await carregarTratamentoDeVisitas(loja.id); // 🔥 GRÁFICO E ESTATÍSTICA ATIVADOS = MAGIA!
+                await carregarEstatisticasVisitasDashboard(loja.id); // 🟢 Isto liga o Gráfico de Visitas!
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -547,84 +547,103 @@ function animarRemocaoPedidoEAtualizar(card) {
     }, 150);
 }
 
-/* =========================================================================
-   NOVO SISTEMA: GRÁFICO E VISITAS TOTAIS 
-   (Podes colar no final do teu dashboard.js)
-   ========================================================================= */
-
-// 1. LIGAÇÃO AO BANCO DE DADOS (SUPABASE) PARA BUSCAR AS VISITAS DA LOJA
-async function carregarTratamentoDeVisitas(lojaId) {
+// ==========================================
+// GRÁFICO E ESTATÍSTICAS DE VISITAS
+// ==========================================
+async function carregarEstatisticasVisitasDashboard(lojaId) {
     try {
-        // Vamos à nossa DB procurar a contagem da coluna "visitas" da loja
-        const { data: loja } = await window.supabaseClient
-            .from('lojas')
-            .select('visitas')
-            .eq('id', lojaId)
-            .maybeSingle();
+        // 1. Definir os últimos 7 dias (Para a linha temporal)
+        const seteDiasAtras = new Date();
+        seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
+        seteDiasAtras.setHours(0, 0, 0, 0);
 
-        // Se a coluna não existir ainda, ou estiver vazia, recuamos a zeros
-        const totalVisitas = (loja && loja.visitas) ? loja.visitas : 0;
+        // 2. Buscar acessos diretamente do Supabase
+        const { data: visitas, error } = await window.supabaseClient
+            .from('visitas')
+            .select('created_at')
+            .eq('loja_id', lojaId)
+            .gte('created_at', seteDiasAtras.toISOString());
+
+        if (error) throw error;
+
+        // 3. Atualizar o Gigante Total
+        const statVisitas = document.getElementById('stat-visitas');
+        if (statVisitas) {
+            animarNumero('stat-visitas', visitas.length);
+        }
+
+        // 4. Mapear o Histórico
+        const diasSemanas = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const historico7Dias = [];
         
-        // Atualiza a estatística global (cartão "Visitas" ao lado de "Confirmados")
-        animarNumero('stat-visitas', totalVisitas);
-        
-        // Desencadeia a animação mágica e dinâmica das ondas do SVG
-        setTimeout(() => animarGraficoDashboard(totalVisitas), 100);
+        for(let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            historico7Dias.push({
+                diaStr: diasSemanas[d.getDay()],
+                diaData: d.getDate(),
+                visitas: 0
+            });
+        }
+
+        visitas.forEach(v => {
+            const dataV = new Date(v.created_at);
+            const diaIndex = historico7Dias.findIndex(h => h.diaData === dataV.getDate());
+            if(diaIndex !== -1) {
+                historico7Dias[diaIndex].visitas++;
+            }
+        });
+
+        // Executar os cálculos SVG!
+        desenharGrafico(historico7Dias);
 
     } catch (e) {
         console.error("Erro ao carregar o gráfico de visitas:", e);
     }
 }
 
-// 2. DESIGN & ANIMAÇÃO FLUIDA DAS LINHAS DO GRÁFICO
-function animarGraficoDashboard(totalVisitas) {
-    const areaPath = document.getElementById('areaPath');
-    const cordaPath = document.getElementById('cordaPath');
-    const pontoAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
+function desenharGrafico(dados) {
+    const maxVisitas = Math.max(...dados.map(d => d.visitas), 5); // Teto de segurança, nunca 0!
+    const width = 300;
+    const height = 150;
+    
+    const pontosx = dados.map((d, i) => (width / 6) * i);
+    const pontosy = dados.map((d) => height - (d.visitas / maxVisitas) * (height - 30) - 15);
 
-    // Prevenção de quebras (se os elementos não existirem paramos)
-    if (!areaPath || !cordaPath || !pontoAtual || !valorAtual) return;
-
-    // Atualiza o texto elegante da ponta do gráfico
-    valorAtual.textContent = totalVisitas + ' Visitas';
-
-    if (totalVisitas === 0) {
-        return; // Mantém a reta plana na base (0) se a loja for virgem
+    let dPath = \`M\${pontosx[0]},\${pontosy[0]}\`;
+    for (let i = 1; i < pontosx.length; i++) {
+        const ctrl1X = pontosx[i - 1] + (pontosx[i] - pontosx[i - 1]) / 2;
+        dPath += \` C\${ctrl1X},\${pontosy[i-1]} \${ctrl1X},\${pontosy[i]} \${pontosx[i]},\${pontosy[i]}\`;
     }
 
-    // Criamos uma curva de vendas dinâmica e crescente simulando progresso.
-    // Base máx Y=150 (Chão). Mín Y=0 (Tecto máximo).
-    const pontos = [
-        { x: 0,   y: 130 },
-        { x: 50,  y: 110 },
-        { x: 100, y: 125 }, // Respira (Pequena quebra)
-        { x: 150, y: 75 },
-        { x: 200, y: 60 },
-        { x: 250, y: 40 },
-        { x: 300, y: 30 }   // Pico máximo do lado do presente
-    ];
+    const areaPathStr = \`\${dPath} L\${width},\${height} L0,\${height} Z\`;
 
-    // Constrói O Caminho da "Corda"
-    let dCorda = `M${pontos[0].x},${pontos[0].y}`;
-    pontos.slice(1).forEach(p => {
-        dCorda += ` L${p.x},${p.y}`;
-    });
+    // Atualizar UI HTML
+    const areaPath = document.getElementById('areaPath');
+    const cordaPath = document.getElementById('cordaPath');
+    const pAtual = document.getElementById('p-atual');
+    const valorAtual = document.getElementById('valor-atual');
 
-    // Constrói O Caminho da "Área Sombreada/Glow" (Fechando com a borda de baixo)
-    let dArea = dCorda + ` L300,150 L0,150 Z`;
+    if (areaPath && cordaPath && pAtual && valorAtual) {
+        areaPath.setAttribute('d', areaPathStr);
+        cordaPath.setAttribute('d', dPath);
 
-    // Aplica aos elementos reais para desencadear as animações CSS automáticas
-    areaPath.setAttribute('d', dArea);
-    cordaPath.setAttribute('d', dCorda);
-
-    // Mover o Círculo Luminoso ('p-atual') para as coordenadas do topo direito!
-    const ultimoPonto = pontos[pontos.length - 1];
-    pontoAtual.setAttribute('cx', ultimoPonto.x);
-    pontoAtual.setAttribute('cy', ultimoPonto.y);
-    
-    // Alinha a mensagem "Visitas" no topo e encostado à esquerda do ponto (para não desaparecer no mobile)
-    valorAtual.setAttribute('x', ultimoPonto.x - 10);
-    valorAtual.setAttribute('y', ultimoPonto.y - 12);
-    valorAtual.setAttribute('text-anchor', 'end'); 
+        const lastX = pontosx[pontosx.length - 1];
+        const lastY = pontosy[pontosy.length - 1];
+        
+        pAtual.setAttribute('cx', lastX);
+        pAtual.setAttribute('cy', lastY);
+        
+        valorAtual.setAttribute('x', lastX);
+        valorAtual.setAttribute('y', lastY - 15);
+        valorAtual.textContent = \`\${dados[dados.length - 1].visitas} Visitas\`;
+        
+        const containerDias = document.querySelector('.chart-container').nextElementSibling;
+        if (containerDias && containerDias.classList.contains('flex')) {
+            containerDias.innerHTML = dados.map((d, i) => {
+                if (i === dados.length - 1) return '<span class="text-slate-900 dark:text-white font-black italic">Hoje</span>';
+                return '<span>' + d.diaStr + '</span>';
+            }).join('');
+        }
+    }
 }
