@@ -16,10 +16,15 @@ function toggleSidebar() {
     const menu = document.getElementById('menuZ');
     const overlay = document.getElementById('overlay');
     if (!menu) return;
-    const isOpening = menu.classList.toggle('open');
-    if (overlay) overlay.classList.toggle('show');
-    // Trava a tela de fundo se o menu abrir, liberta se fechar
-    document.body.style.overflow = isOpening ? 'hidden' : '';
+    menu.classList.toggle('open');
+    overlay && overlay.classList.toggle('show');
+    
+    // Trava e destrava a tela debaixo do menu
+    if (menu.classList.contains('open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
 }
 
 // ─── Modo Novato ─────────────────────────────────────────────────────────────
@@ -63,8 +68,7 @@ function navegarAnimado(pagina) {
     const overlay = document.getElementById('overlay');
     if (menu) menu.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
-    // Liberta a tela de fundo ao trocar de página
-    document.body.style.overflow = '';
+    document.body.style.overflow = ''; // Garante que a tela fica destravada ao mudar de página
 
     // Animação de saída
     document.body.style.opacity = '0';
@@ -90,8 +94,7 @@ document.addEventListener('click', (e) => {
     if (overlay && overlay.classList.contains('show') && e.target === overlay) {
         menu.classList.remove('open');
         overlay.classList.remove('show');
-        // Liberta a tela de fundo
-        document.body.style.overflow = '';
+        document.body.style.overflow = ''; // Destrava a tela
     }
 });
 
