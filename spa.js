@@ -6,6 +6,9 @@ let carrinho = JSON.parse(localStorage.getItem('shopyump_spa')) || [];
 let numeroLojista = "";
 let lojaAtual = null;
 
+// ===========================================
+// BLOCO 1: SUBSTITUIR TODA A FUNÇÃO inicializarLoja
+// ===========================================
 async function inicializarLoja() {
     try {
         const pathSegments = window.location.pathname.split('/');
@@ -17,7 +20,7 @@ async function inicializarLoja() {
             return;
         }
 
-        // Fetch loja
+        // 1. Vai buscar a Loja
         const { data: loja, error: erroLoja } = await window.supabaseClient
             .from('lojas')
             .select('*')
@@ -36,27 +39,19 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // --- REGISTAR A VISITA DO CLIENTE ---
-        // Usamos uma nova chave limpa para evitar caches corrompidos de tentativas anteriores
-        const chaveVisitaAtiva = 'visited_str_' + loja.id;
-        if (!sessionStorage.getItem(chaveVisitaAtiva)) {
-            window.supabaseClient.from('visitas')
-                .insert([{ loja_id: loja.id }])
-                .then(({ error }) => {
-                    // CORREÇÃO: Se a BD tiver tido erro, o Supabase não ia para o catch.
-                    // Nós bloqueávamos a pessoa de tentar novamente assumindo que tinha dado certo!
-                    if (!error) {
-                        sessionStorage.setItem(chaveVisitaAtiva, 'true');
-                        console.log("Visita contada com sucesso para o dashboard!");
-                    } else {
-                        console.error("A BD recusou a visita (Erro):", error);
-                    }
-                })
-                .catch(e => console.error("Exceção ao registar visita:", e));
-        }
+        // 🚀 REGISTAR A VISITA DIRETA PARA O GRÁFICO (Sem bloqueios no browser para poderes testar!)
+        window.supabaseClient.from('visitas')
+            .insert([{ loja_id: loja.id }])
+            .then(({ error }) => {
+                if (error) {
+                    console.error("🚨 Erro RLS ou BD ao registar visita:", error.message);
+                } else {
+                    console.log("✅ UMA VISITA FOI CONTADA COM SUCESSO! Abre o dashboard para ver.");
+                }
+            });
         // ------------------------------------
 
-        // Fetch produtos
+        // 2. Vai buscar os Produtos
         const { data: prods, error: erroProdutos } = await window.supabaseClient
             .from('produtos')
             .select('*')
@@ -65,7 +60,6 @@ async function inicializarLoja() {
             .order('created_at', { ascending: false });
 
         if (prods && prods.length > 0) {
-            // Map Supabase products to match SPA expectations
             produtos = prods.map(p => {
                 let tamanhosArr = [];
                 let coresArr = [];
@@ -73,7 +67,6 @@ async function inicializarLoja() {
                 if (p.variantes) {
                     if (p.variantes.tamanhos) tamanhosArr = p.variantes.tamanhos;
                     else if (p.variantes.numeracao) tamanhosArr = p.variantes.numeracao.map(n => String(n));
-                    
                     if (p.variantes.cores) coresArr = p.variantes.cores.map(c => ({nome: c, hex: "#94a3b8"})); 
                 }
 

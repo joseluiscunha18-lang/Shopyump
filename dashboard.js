@@ -299,16 +299,21 @@ async function carregarDadosLojaDashboard() {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
     }
 }
+// ===========================================
+// BLOCO 2: APAGAR E SUBSTITUIR O CÓDIGO DO GRÁFICO (dashboard.js)
+// ===========================================
 
 async function carregarVisitasDashboard(lojaId) {
     try {
-        // 1. Conta as visitas totais (estatística numérica geral)
+        console.log("À procura de dados fantásticos de fluxo para a loja:", lojaId);
+        
+        // 1. Conta as visitas totais (Estatística Global Numérica)
         const { count: totalVisitas, error: errTotal } = await window.supabaseClient
             .from('visitas')
             .select('*', { count: 'exact', head: true })
             .eq('loja_id', lojaId);
             
-        // 2. Busca o Histórico de Visitas dos últimos 7 dias para desenhar o gráfico principal
+        // 2. Busca as Visitas Criadas na última semana para o Gráfico
         const seteDiasAtras = new Date();
         seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
         seteDiasAtras.setHours(0,0,0,0);
@@ -320,77 +325,88 @@ async function carregarVisitasDashboard(lojaId) {
             .gte('created_at', seteDiasAtras.toISOString());
             
         if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
-        
+
         if (!errVisitas && visitas) {
-            // Contabilizar visitas por cada dia focado no fuso horário
+            console.log("A BD encontrou este número de Visitas brutas (Semana):", visitas.length);
+            
+            // Criar uma contagem de dias com base no FUSO HORÁRIO LOCAL PERFEITO
             const contagemDias = {};
+            const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const ordemNomes = [];
+
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
-                const dataStr = d.toISOString().split('T')[0];
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const dataStr = `${year}-${month}-${day}`; // Usa data perfeitamente formatada
+                
                 contagemDias[dataStr] = 0;
+                ordemNomes.push(nomesDias[d.getDay()]);
             }
             
-            // Incrementa o sistema se o registo constar no formato ISO de cada dia correspondente
+            // Agrupar as visitas aos seus respetivos dias baseados no ano/mês/dia
             visitas.forEach(v => {
-                const dataStr = v.created_at.split('T')[0];
-                if (contagemDias[dataStr] !== undefined) {
-                    contagemDias[dataStr]++;
+                const vDate = new Date(v.created_at); // Transforma em Data do Javascript
+                const vYear = vDate.getFullYear();
+                const vMonth = String(vDate.getMonth() + 1).padStart(2, '0');
+                const vDay = String(vDate.getDate()).padStart(2, '0');
+                const vDataStr = `${vYear}-${vMonth}-${vDay}`;
+                
+                if (contagemDias[vDataStr] !== undefined) {
+                    contagemDias[vDataStr]++;
                 }
             });
             
             const contagensArr = Object.values(contagemDias);
-            const hojeCount = contagensArr[contagensArr.length - 1]; // O último é obrigatoriamente "Hoje"
+            const hojeCount = contagensArr[contagensArr.length - 1]; // O último índice é "Hoje" obrigatoriamente
             
-            // Popula os quadros centrais em números
-            animarNumero('valor-atual-texto', hojeCount);
+            // Popula os quadros centrais (0 visitas únicas hoje...)
+            const textoHoje = document.getElementById('valor-atual-texto');
+            if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
             
-            // Dispara a lógica de construir e animar o gráfico em blocos!
-            atualizarGraficoDashboard(contagensArr);
+            // Dispara a MÁGICA: Constrói e injeta o gráfico 
+            atualizarGraficoDashboard(contagensArr, ordemNomes);
         }
     } catch (e) {
-        console.error("Erro ao carregar visitas:", e);
+        console.error("Algo correu mal ao renderizar gráfico tráfego:", e);
     }
 }
 
-// Lógica de injeção das Barras no template ativo
-function atualizarGraficoDashboard(contagens) {
-    const maxVisitas = Math.max(...contagens, 1); // Previne divisão por zeros
+// Constrói e dimensiona matematicamente o DOM das barras do gráfico
+function atualizarGraficoDashboard(contagens, ordemNomes) {
+    const maxVisitas = Math.max(...contagens, 1); // Previne falhas se as visitas forem tudo zeros
     
-    const diasSemanaRecentes = [];
-    const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        diasSemanaRecentes.push(nomesDias[d.getDay()]);
-    }
-
-    // Identifica o contêiner mãe das barras (é o flex que fica ao lado das linhas de fundo)
-    // Opcionalmente podemos localizá-lo com segurança no app
+    // Identifica o contêiner mãe das barras (O Flex das barras)
     const conteinerDasBarras = document.querySelector('.relative.z-10.w-full.h-\\[106px\\]');
     if (!conteinerDasBarras) return;
     
     let htmlBarras = '';
     
     contagens.forEach((qtd, index) => {
-        // Garantimos um mínimo visual de 15% para as barras inativas (se qtd = 0) não pareçam cortadas
+        // Altura mínima visual de 15% mesmo para os dias zero
         const alturaPercentual = Math.max(15, Math.round((qtd / maxVisitas) * 100));
-        const eHoje = index === 6; // O índice 6 é sempre 'Hoje'
-        const nomeDia = diasSemanaRecentes[index];
+        const eHoje = index === 6; // Posicionamento fixo!
+        const nomeDia = ordemNomes[index];
         
         if (eHoje) {
             htmlBarras += `
-                <div class="group relative w-full flex flex-col items-center h-[${alturaPercentual}%] shadow-[0_0_15px_rgba(159,110,245,0.1)] transition-all duration-700" style="height: ${alturaPercentual}%;">
-                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20">${qtd} Hoje</div>
-                    <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
+                <div class="group relative w-full flex flex-col items-center h-[100%] shadow-[0_0_15px_rgba(159,110,245,0.1)] transition-all duration-700 pt-5">
+                    <div style="height: ${alturaPercentual}%;" class="w-full relative flex flex-col justify-end items-center mt-auto transition-all">
+                        <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20">${qtd} Hoje</div>
+                        <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
+                    </div>
                     <span class="text-[9px] font-black text-slate-900 dark:text-white mt-2 absolute -bottom-6 italic">${nomeDia}</span>
                 </div>
             `;
         } else {
             htmlBarras += `
-                <div class="group relative w-full flex flex-col items-center h-[${alturaPercentual}%] transition-all duration-700 hover:opacity-80" style="height: ${alturaPercentual}%;">
-                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-md whitespace-nowrap z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">${qtd}</div>
-                    <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                <div class="group relative w-full flex flex-col items-center h-[100%] transition-all duration-700 hover:opacity-80 pt-5">
+                    <div style="height: ${alturaPercentual}%;" class="w-full relative flex flex-col justify-end items-center mt-auto transition-all">
+                        <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-md whitespace-nowrap z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">${qtd}</div>
+                        <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                    </div>
                     <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">${nomeDia}</span>
                 </div>
             `;
