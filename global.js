@@ -16,8 +16,10 @@ function toggleSidebar() {
     const menu = document.getElementById('menuZ');
     const overlay = document.getElementById('overlay');
     if (!menu) return;
-    menu.classList.toggle('open');
-    overlay && overlay.classList.toggle('show');
+    const isOpening = menu.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('show');
+    // Trava a tela de fundo se o menu abrir, liberta se fechar
+    document.body.style.overflow = isOpening ? 'hidden' : '';
 }
 
 // ─── Modo Novato ─────────────────────────────────────────────────────────────
@@ -61,6 +63,8 @@ function navegarAnimado(pagina) {
     const overlay = document.getElementById('overlay');
     if (menu) menu.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
+    // Liberta a tela de fundo ao trocar de página
+    document.body.style.overflow = '';
 
     // Animação de saída
     document.body.style.opacity = '0';
@@ -86,6 +90,8 @@ document.addEventListener('click', (e) => {
     if (overlay && overlay.classList.contains('show') && e.target === overlay) {
         menu.classList.remove('open');
         overlay.classList.remove('show');
+        // Liberta a tela de fundo
+        document.body.style.overflow = '';
     }
 });
 
