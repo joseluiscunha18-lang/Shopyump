@@ -97,66 +97,38 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </section>
 
-                <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden group/chart cursor-default">
-                    <div class="flex items-start justify-between mb-8">
+                <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-8">
                         <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Tráfego da Loja</h3>
-                            <div class="flex items-baseline gap-2">
-                                <p id="valor-atual-texto" class="text-4xl font-bold text-slate-900 dark:text-white leading-none tracking-tight">0</p>
-                                <span class="text-[12px] font-medium text-slate-500 dark:text-slate-400">visitas únicas hoje</span>
-                            </div>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tr?fego da Loja</h3>
+                            <p class="text-xs font-bold text-navy-900 dark:text-white">Visitas Únicas</p>
+                        </div>
+                        <div class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100/50 dark:border-emerald-500/20 rounded-lg flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-[9px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Tempo Real</span>
                         </div>
                     </div>
-                    
-                    <div class="relative h-[130px] mt-2 flex items-end justify-between px-1">
-                        <!-- Linhas de Fundo -->
-                        <div class="absolute inset-x-0 inset-y-0 flex flex-col justify-between pointer-events-none pb-6">
-                            <div class="w-full border-t border-dashed border-slate-200 dark:border-slate-800"></div>
-                            <div class="w-full border-t border-dashed border-slate-200 dark:border-slate-800"></div>
-                            <div class="w-full border-t border-solid border-slate-200 dark:border-slate-800"></div>
+                    <div class="chart-container mt-2">
+                        <div class="chart-view">
+                            <div class="grid-line border-t border-dashed border-slate-200 dark:border-slate-700 bg-transparent" style="top: 0;"></div>
+                            <div class="grid-line border-t border-dashed border-slate-200 dark:border-slate-700 bg-transparent" style="top: 75px;"></div>
+                            <div class="grid-line border-t border-solid border-slate-200 dark:border-slate-700 bg-transparent" style="top: 150px;"></div>
+                            <svg class="svg-chart" viewBox="0 0 300 150">
+                                <defs>
+                                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#D4B5FD" stop-opacity="0.25"/>
+                                        <stop offset="100%" stop-color="#D4B5FD" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path id="areaPath" fill="url(#chartGradient)" d="M0,150 L300,150 L300,150 L0,150 Z" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <path id="cordaPath" class="corda stroke-[#9f6ef5]" d="M0,148 L300,148" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
+                                <circle id="p-atual" cx="150" cy="148" r="4.5" fill="#9f6ef5" stroke="#ffffff" stroke-width="2.5" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); filter: drop-shadow(0 4px 6px rgba(159, 110, 245, 0.3));"></circle>
+                                <text id="valor-atual" x="150" y="135" font-family="Inter" font-size="11" font-weight="800" fill="#9f6ef5" text-anchor="middle" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" paint-order="stroke" style="transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);">0 Visitas</text>
+                            </svg>
                         </div>
-                        
-                        <!-- Barras Modernas dos dias -->
-                        <div class="relative z-10 w-full h-[106px] flex items-end justify-between gap-1 sm:gap-2">
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[25%] transition-all hover:h-[35%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Seg</span>
-                            </div>
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[40%] transition-all hover:h-[50%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Ter</span>
-                            </div>
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[30%] transition-all hover:h-[40%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Qua</span>
-                            </div>
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[55%] transition-all hover:h-[65%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Qui</span>
-                            </div>
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[45%] transition-all hover:h-[55%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Sex</span>
-                            </div>
-                            <!-- Barra inativa -->
-                            <div class="group relative w-full flex flex-col items-center h-[80%] transition-all hover:h-[90%]">
-                                <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                                <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">Sáb</span>
-                            </div>
-                            <!-- BARRA DE HOJE (Destaque principal) -->
-                            <div class="group relative w-full flex flex-col items-center h-[100%] shadow-[0_0_15px_rgba(159,110,245,0.1)]">
-                                <!-- Tooltip em cima da barra ativa -->
-                                <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20 transition-transform">Hoje</div>
-                                <!-- Corpo da barra ativa com gradiente roxo premium -->
-                                <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
-                                <span class="text-[9px] font-black text-slate-900 dark:text-white mt-2 absolute -bottom-6 italic">Dom</span>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="flex justify-between mt-4 px-1 text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>S?b</span><span class="text-slate-900 dark:text-white font-black italic">Dom</span>
                     </div>
                 </section>
 
@@ -248,12 +220,6 @@ document.addEventListener('spa:page-loaded', (e) => {
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
-            
-            // CORREÇÃO: Garante que o Gráfico de Visitas é sempre forçado a carregar atualizações 
-            // da base de dados sempre que voltamos para o dashboard, sem usar dados velhos!
-            if (memDashboard.loja) {
-                carregarVisitasDashboard(memDashboard.loja.id);
-            }
         }
     }
 });
@@ -287,7 +253,6 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
-                await carregarVisitasDashboard(loja.id); // <-- Carrega as visitas para os gráficos
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -300,127 +265,6 @@ async function carregarDadosLojaDashboard() {
     }
 }
 
-// ===========================================
-// NOVA FUNÇÃO: carregarVisitasDashboard (Com Alertas de Erro)
-// ===========================================
-async function carregarVisitasDashboard(lojaId) {
-    try {
-        // 1. Conta as visitas totais (Estatística Global Numérica)
-        const { count: totalVisitas, error: errTotal } = await window.supabaseClient
-            .from('visitas')
-            .select('*', { count: 'exact', head: true })
-            .eq('loja_id', lojaId);
-            
-        if (errTotal) {
-            alert("ERRO AO LER TOTAL DE VISITAS DO DASHBOARD: " + errTotal.message);
-        }
-            
-        // 2. Busca as Visitas Criadas na última semana para o Gráfico
-        const seteDiasAtras = new Date();
-        seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
-        seteDiasAtras.setHours(0,0,0,0);
-        
-        const { data: visitas, error: errVisitas } = await window.supabaseClient
-            .from('visitas')
-            .select('created_at')
-            .eq('loja_id', lojaId)
-            .gte('created_at', seteDiasAtras.toISOString());
-            
-        if (errVisitas) {
-            alert("ERRO AO LER GRÁFICO DE VISITAS: " + errVisitas.message);
-        }
-            
-        if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
-
-        if (!errVisitas && visitas) {
-            const contagemDias = {};
-            const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            const ordemNomes = [];
-
-            for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const dataStr = `${year}-${month}-${day}`;
-                
-                contagemDias[dataStr] = 0;
-                ordemNomes.push(nomesDias[d.getDay()]);
-            }
-            
-            visitas.forEach(v => {
-                const vDate = new Date(v.created_at); 
-                if(!isNaN(vDate)) {
-                    const vYear = vDate.getFullYear();
-                    const vMonth = String(vDate.getMonth() + 1).padStart(2, '0');
-                    const vDay = String(vDate.getDate()).padStart(2, '0');
-                    const vDataStr = `${vYear}-${vMonth}-${vDay}`;
-                    
-                    if (contagemDias[vDataStr] !== undefined) {
-                        contagemDias[vDataStr]++;
-                    }
-                }
-            });
-            
-            const contagensArr = Object.values(contagemDias);
-            const hojeCount = contagensArr[contagensArr.length - 1]; 
-            
-            const textoHoje = document.getElementById('valor-atual-texto');
-            if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
-            
-            atualizarGraficoDashboard(contagensArr, ordemNomes);
-        }
-    } catch (e) {
-        console.error("Algo correu mal ao renderizar gráfico", e);
-    }
-}
-function atualizarGraficoDashboard(contagens, ordemNomes) {
-    const maxVisitas = Math.max(...contagens, 1); 
-    
-    // Conector 100% blindado para encontrar as barras no ecrã (ignora escapes de classes)
-    const conteiners = document.querySelectorAll('.flex.items-end.justify-between.gap-1');
-    let conteinerDasBarras = null;
-    conteinerDasBarras = conteiners.length > 0 ? conteiners[conteiners.length - 1] : document.querySelector('.relative.z-10.w-full.h-\\[106px\\]');
-    
-    if (!conteinerDasBarras) {
-        console.error("Não encontrei as barras do gráfico na UI!");
-        return;
-    }
-    
-    let htmlBarras = '';
-    contagens.forEach((qtd, index) => {
-        const alturaPercentual = Math.max(15, Math.round((qtd / maxVisitas) * 100));
-        const eHoje = index === 6; 
-        const nomeDia = ordemNomes[index];
-        
-        if (eHoje) {
-            htmlBarras += `
-                <div class="group relative w-full flex flex-col items-center h-[100%] shadow-[0_0_15px_rgba(159,110,245,0.1)] transition-all duration-700 pt-5">
-                    <div style="height: ${alturaPercentual}%;" class="w-full relative flex flex-col justify-end items-center mt-auto transition-all">
-                        <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20">${qtd} Hoje</div>
-                        <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
-                    </div>
-                    <span class="text-[9px] font-black text-slate-900 dark:text-white mt-2 absolute -bottom-6 italic">${nomeDia}</span>
-                </div>
-            `;
-        } else {
-            htmlBarras += `
-                <div class="group relative w-full flex flex-col items-center h-[100%] transition-all duration-700 hover:opacity-80 pt-5">
-                    <div style="height: ${alturaPercentual}%;" class="w-full relative flex flex-col justify-end items-center mt-auto transition-all">
-                        <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-md whitespace-nowrap z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">${qtd}</div>
-                        <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
-                    </div>
-                    <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">${nomeDia}</span>
-                </div>
-            `;
-        }
-    });
-
-    conteinerDasBarras.innerHTML = htmlBarras;
-}
-
-// === CÓDIGO NOVO (Com link dinâmico) ===
 function renderizarSaudacaoMemoria() {
     if (!memDashboard.loja) return;
     const loja = memDashboard.loja;
@@ -434,11 +278,8 @@ function renderizarSaudacaoMemoria() {
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
-    // A MÁGICA SALVA-VIDAS: Esta linha descobre automaticamente se estás no ambiente de testes ou no site real.
-    // Assim clicas no botão do painel, a visita é contabilizada no ambiente correto!
-    const urlLoja = `${window.location.origin}/loja/${loja.slug}`;
-    
     const btnVerLoja = document.getElementById('btn-ver-loja');
+    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
     if (btnVerLoja) btnVerLoja.href = urlLoja;
     
     const btnCopiar = document.getElementById('btn-copiar-loja');
