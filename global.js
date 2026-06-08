@@ -19,11 +19,18 @@ function toggleSidebar() {
     menu.classList.toggle('open');
     overlay && overlay.classList.toggle('show');
     
-    // Trava e destrava a tela debaixo do menu
+    // Trava e Destrava Absoluta para Dispositivos Móveis
     if (menu.classList.contains('open')) {
-        document.body.style.overflow = 'hidden';
+        document.body.dataset.scrollY = window.scrollY; // Guarda onde estavas
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.top = `-${window.scrollY}px`;
     } else {
-        document.body.style.overflow = '';
+        const voltaOndeEstavas = document.body.dataset.scrollY || '0';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        window.scrollTo(0, parseInt(voltaOndeEstavas));
     }
 }
 
@@ -68,7 +75,12 @@ function navegarAnimado(pagina) {
     const overlay = document.getElementById('overlay');
     if (menu) menu.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
-    document.body.style.overflow = ''; // Garante que a tela fica destravada ao mudar de página
+    
+    // Solta a armadilha do fundo caso se clique num link lá dentro
+    document.body.style.position = '';
+    document.body.style.width = '';
+    document.body.style.top = '';
+    document.body.style.overflow = '';
 
     // Animação de saída
     document.body.style.opacity = '0';

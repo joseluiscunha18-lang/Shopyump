@@ -95,13 +95,21 @@ body {
 /* SIDEBAR / MENU Z - EFEITO MOBILE FIRST */
 /* SIDEBAR ADAPTÁVEL */
 #menuZ {
-    position: fixed; top: 0; bottom: 0; left: 0;
+    position: fixed; top: 0; left: 0;
+    height: 100dvh; /* Força o menu a respeitar sempre a tela do mobile, impedindo-o de subir */
     width: 280px;
     background-color: var(--bg-creme); /* Fundo Creme para manter o padrão UX */
     z-index: 100;
     display: flex; flex-direction: column;
     border-right: 1px solid var(--border-color);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overscroll-behavior: contain; /* Evita que a força de deslizar vaze para debaixo do menu */
+}
+
+/* Aproveita e trava também o fundo preto */
+#overlay.show { 
+    display: block; 
+    touch-action: none; /* Ignora deslizes sobre a área escura */
 }
 
 /* Comportamento Mobile */
