@@ -296,28 +296,102 @@ async function carregarDadosLojaDashboard() {
 
 async function carregarVisitasDashboard(lojaId) {
     try {
-        const hoje = new Date();
-        hoje.setHours(0,0,0,0);
-        const dataInicioHoje = hoje.toISOString();
-        
-        // 1. Conta as visitas totais (para o card de "Visitas")
+        // 1. Conta as visitas totais (estatística numérica geral)
         const { count: totalVisitas, error: errTotal } = await window.supabaseClient
             .from('visitas')
             .select('*', { count: 'exact', head: true })
             .eq('loja_id', lojaId);
             
-        // 2. Conta as visitas apenas de hoje (para o gráfico principal de "visitas hoje")
-        const { count: visitasHoje, error: errHoje } = await window.supabaseClient
+        // 2. Busca o Histórico de Visitas dos últimos 7 dias para desenhar o gráfico principal
+        const seteDiasAtras = new Date();
+        seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
+        seteDiasAtras.setHours(0,0,0,0);
+        
+        const { data: visitas, error: errVisitas } = await window.supabaseClient
             .from('visitas')
-            .select('*', { count: 'exact', head: true })
+            .select('created_at')
             .eq('loja_id', lojaId)
-            .gte('created_at', dataInicioHoje);
+            .gte('created_at', seteDiasAtras.toISOString());
             
         if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
-        if (!errHoje) animarNumero('valor-atual-texto', visitasHoje || 0);
+        
+        if (!errVisitas && visitas) {
+            // Contabilizar visitas por cada dia focado no fuso horário
+            const contagemDias = {};
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const dataStr = d.toISOString().split('T')[0];
+                contagemDias[dataStr] = 0;
+            }
+            
+            // Incrementa o sistema se o registo constar no formato ISO de cada dia correspondente
+            visitas.forEach(v => {
+                const dataStr = v.created_at.split('T')[0];
+                if (contagemDias[dataStr] !== undefined) {
+                    contagemDias[dataStr]++;
+                }
+            });
+            
+            const contagensArr = Object.values(contagemDias);
+            const hojeCount = contagensArr[contagensArr.length - 1]; // O último é obrigatoriamente "Hoje"
+            
+            // Popula os quadros centrais em números
+            animarNumero('valor-atual-texto', hojeCount);
+            
+            // Dispara a lógica de construir e animar o gráfico em blocos!
+            atualizarGraficoDashboard(contagensArr);
+        }
     } catch (e) {
         console.error("Erro ao carregar visitas:", e);
     }
+}
+
+// Lógica de injeção das Barras no template ativo
+function atualizarGraficoDashboard(contagens) {
+    const maxVisitas = Math.max(...contagens, 1); // Previne divisão por zeros
+    
+    const diasSemanaRecentes = [];
+    const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        diasSemanaRecentes.push(nomesDias[d.getDay()]);
+    }
+
+    // Identifica o contêiner mãe das barras (é o flex que fica ao lado das linhas de fundo)
+    // Opcionalmente podemos localizá-lo com segurança no app
+    const conteinerDasBarras = document.querySelector('.relative.z-10.w-full.h-\\[106px\\]');
+    if (!conteinerDasBarras) return;
+    
+    let htmlBarras = '';
+    
+    contagens.forEach((qtd, index) => {
+        // Garantimos um mínimo visual de 15% para as barras inativas (se qtd = 0) não pareçam cortadas
+        const alturaPercentual = Math.max(15, Math.round((qtd / maxVisitas) * 100));
+        const eHoje = index === 6; // O índice 6 é sempre 'Hoje'
+        const nomeDia = diasSemanaRecentes[index];
+        
+        if (eHoje) {
+            htmlBarras += `
+                <div class="group relative w-full flex flex-col items-center h-[${alturaPercentual}%] shadow-[0_0_15px_rgba(159,110,245,0.1)] transition-all duration-700" style="height: ${alturaPercentual}%;">
+                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-lg whitespace-nowrap z-20">${qtd} Hoje</div>
+                    <div class="w-full max-w-[32px] bg-gradient-to-t from-[#9f6ef5]/80 to-[#9f6ef5] rounded-t-[8px] h-full border-t border-[#c6a8fb] shadow-sm transform transition-all cursor-pointer"></div>
+                    <span class="text-[9px] font-black text-slate-900 dark:text-white mt-2 absolute -bottom-6 italic">${nomeDia}</span>
+                </div>
+            `;
+        } else {
+            htmlBarras += `
+                <div class="group relative w-full flex flex-col items-center h-[${alturaPercentual}%] transition-all duration-700 hover:opacity-80" style="height: ${alturaPercentual}%;">
+                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-black px-2 py-1 rounded-[6px] text-center shadow-md whitespace-nowrap z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">${qtd}</div>
+                    <div class="w-full max-w-[32px] bg-slate-100 dark:bg-slate-800 rounded-t-[8px] h-full transition-colors cursor-pointer"></div>
+                    <span class="text-[9px] font-bold text-slate-400 mt-2 absolute -bottom-6">${nomeDia}</span>
+                </div>
+            `;
+        }
+    });
+
+    conteinerDasBarras.innerHTML = htmlBarras;
 }
 
 function renderizarSaudacaoMemoria() {
