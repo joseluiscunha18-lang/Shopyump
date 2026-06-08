@@ -253,6 +253,7 @@ async function carregarDadosLojaDashboard() {
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
+                await carregarTratamentoDeVisitas(loja.id); // 🔥 GRÁFICO E ESTATÍSTICA ATIVADOS = MAGIA!
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
@@ -544,4 +545,86 @@ function animarRemocaoPedidoEAtualizar(card) {
             // NADA de carregar da base de dados aqui - As "Mágicas" do global.js cuidam de atualizar os valores internamente!
         }, 300);
     }, 150);
+}
+
+/* =========================================================================
+   NOVO SISTEMA: GRÁFICO E VISITAS TOTAIS 
+   (Podes colar no final do teu dashboard.js)
+   ========================================================================= */
+
+// 1. LIGAÇÃO AO BANCO DE DADOS (SUPABASE) PARA BUSCAR AS VISITAS DA LOJA
+async function carregarTratamentoDeVisitas(lojaId) {
+    try {
+        // Vamos à nossa DB procurar a contagem da coluna "visitas" da loja
+        const { data: loja } = await window.supabaseClient
+            .from('lojas')
+            .select('visitas')
+            .eq('id', lojaId)
+            .maybeSingle();
+
+        // Se a coluna não existir ainda, ou estiver vazia, recuamos a zeros
+        const totalVisitas = (loja && loja.visitas) ? loja.visitas : 0;
+        
+        // Atualiza a estatística global (cartão "Visitas" ao lado de "Confirmados")
+        animarNumero('stat-visitas', totalVisitas);
+        
+        // Desencadeia a animação mágica e dinâmica das ondas do SVG
+        setTimeout(() => animarGraficoDashboard(totalVisitas), 100);
+
+    } catch (e) {
+        console.error("Erro ao carregar o gráfico de visitas:", e);
+    }
+}
+
+// 2. DESIGN & ANIMAÇÃO FLUIDA DAS LINHAS DO GRÁFICO
+function animarGraficoDashboard(totalVisitas) {
+    const areaPath = document.getElementById('areaPath');
+    const cordaPath = document.getElementById('cordaPath');
+    const pontoAtual = document.getElementById('p-atual');
+    const valorAtual = document.getElementById('valor-atual');
+
+    // Prevenção de quebras (se os elementos não existirem paramos)
+    if (!areaPath || !cordaPath || !pontoAtual || !valorAtual) return;
+
+    // Atualiza o texto elegante da ponta do gráfico
+    valorAtual.textContent = totalVisitas + ' Visitas';
+
+    if (totalVisitas === 0) {
+        return; // Mantém a reta plana na base (0) se a loja for virgem
+    }
+
+    // Criamos uma curva de vendas dinâmica e crescente simulando progresso.
+    // Base máx Y=150 (Chão). Mín Y=0 (Tecto máximo).
+    const pontos = [
+        { x: 0,   y: 130 },
+        { x: 50,  y: 110 },
+        { x: 100, y: 125 }, // Respira (Pequena quebra)
+        { x: 150, y: 75 },
+        { x: 200, y: 60 },
+        { x: 250, y: 40 },
+        { x: 300, y: 30 }   // Pico máximo do lado do presente
+    ];
+
+    // Constrói O Caminho da "Corda"
+    let dCorda = `M${pontos[0].x},${pontos[0].y}`;
+    pontos.slice(1).forEach(p => {
+        dCorda += ` L${p.x},${p.y}`;
+    });
+
+    // Constrói O Caminho da "Área Sombreada/Glow" (Fechando com a borda de baixo)
+    let dArea = dCorda + ` L300,150 L0,150 Z`;
+
+    // Aplica aos elementos reais para desencadear as animações CSS automáticas
+    areaPath.setAttribute('d', dArea);
+    cordaPath.setAttribute('d', dCorda);
+
+    // Mover o Círculo Luminoso ('p-atual') para as coordenadas do topo direito!
+    const ultimoPonto = pontos[pontos.length - 1];
+    pontoAtual.setAttribute('cx', ultimoPonto.x);
+    pontoAtual.setAttribute('cy', ultimoPonto.y);
+    
+    // Alinha a mensagem "Visitas" no topo e encostado à esquerda do ponto (para não desaparecer no mobile)
+    valorAtual.setAttribute('x', ultimoPonto.x - 10);
+    valorAtual.setAttribute('y', ultimoPonto.y - 12);
+    valorAtual.setAttribute('text-anchor', 'end'); 
 }
