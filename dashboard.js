@@ -299,18 +299,21 @@ async function carregarDadosLojaDashboard() {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
     }
 }
+
 // ===========================================
-// BLOCO 2: APAGAR E SUBSTITUIR O CÓDIGO DO GRÁFICO (dashboard.js)
+// NOVA FUNÇÃO: carregarVisitasDashboard (Com Alertas de Erro)
 // ===========================================
 async function carregarVisitasDashboard(lojaId) {
     try {
-        console.log("À procura de dados fantásticos de fluxo para a loja:", lojaId);
-        
-        // 1. Conta as visitas totais
+        // 1. Conta as visitas totais (Estatística Global Numérica)
         const { count: totalVisitas, error: errTotal } = await window.supabaseClient
             .from('visitas')
             .select('*', { count: 'exact', head: true })
             .eq('loja_id', lojaId);
+            
+        if (errTotal) {
+            alert("ERRO AO LER TOTAL DE VISITAS DO DASHBOARD: " + errTotal.message);
+        }
             
         // 2. Busca as Visitas Criadas na última semana para o Gráfico
         const seteDiasAtras = new Date();
@@ -323,11 +326,13 @@ async function carregarVisitasDashboard(lojaId) {
             .eq('loja_id', lojaId)
             .gte('created_at', seteDiasAtras.toISOString());
             
+        if (errVisitas) {
+            alert("ERRO AO LER GRÁFICO DE VISITAS: " + errVisitas.message);
+        }
+            
         if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
 
         if (!errVisitas && visitas) {
-            console.log("A BD encontrou este número de Visitas brutas (Semana):", visitas.length);
-            
             const contagemDias = {};
             const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const ordemNomes = [];
@@ -344,7 +349,6 @@ async function carregarVisitasDashboard(lojaId) {
                 ordemNomes.push(nomesDias[d.getDay()]);
             }
             
-            // Agrupar as visitas
             visitas.forEach(v => {
                 const vDate = new Date(v.created_at); 
                 if(!isNaN(vDate)) {
@@ -362,20 +366,15 @@ async function carregarVisitasDashboard(lojaId) {
             const contagensArr = Object.values(contagemDias);
             const hojeCount = contagensArr[contagensArr.length - 1]; 
             
-            console.log("Visitas processadas Mapeadas para HOJE:", hojeCount);
-            
             const textoHoje = document.getElementById('valor-atual-texto');
             if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
             
             atualizarGraficoDashboard(contagensArr, ordemNomes);
-        } else {
-            console.error("Erro RLS ao buscar histórico de visitas:", errVisitas);
         }
     } catch (e) {
-        console.error("Algo correu mal ao renderizar gráfico tráfego:", e);
+        console.error("Algo correu mal ao renderizar gráfico", e);
     }
 }
-
 function atualizarGraficoDashboard(contagens, ordemNomes) {
     const maxVisitas = Math.max(...contagens, 1); 
     
