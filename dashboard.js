@@ -421,6 +421,7 @@ function atualizarGraficoDashboard(contagens, ordemNomes) {
     conteinerDasBarras.innerHTML = htmlBarras;
 }
 
+// === CÓDIGO NOVO (Com link dinâmico) ===
 function renderizarSaudacaoMemoria() {
     if (!memDashboard.loja) return;
     const loja = memDashboard.loja;
@@ -434,8 +435,11 @@ function renderizarSaudacaoMemoria() {
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
+    // A MÁGICA SALVA-VIDAS: Esta linha descobre automaticamente se estás no ambiente de testes ou no site real.
+    // Assim clicas no botão do painel, a visita é contabilizada no ambiente correto!
+    const urlLoja = `${window.location.origin}/loja/${loja.slug}`;
+    
     const btnVerLoja = document.getElementById('btn-ver-loja');
-    const urlLoja = `https://shopyump.vercel.app/loja/${loja.slug}`;
     if (btnVerLoja) btnVerLoja.href = urlLoja;
     
     const btnCopiar = document.getElementById('btn-copiar-loja');
