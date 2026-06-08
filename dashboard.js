@@ -100,18 +100,11 @@ document.body.insertAdjacentHTML('beforeend', `
                 <section class="bg-white dark:bg-navy-900 p-6 rounded-[28px] shadow-[0_12px_40px_rgba(0,0,0,0.03)] border border-slate-100/50 dark:border-navy-800 relative overflow-hidden group/chart cursor-default">
                     <div class="flex items-start justify-between mb-8">
                         <div>
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Tráfego da Loja</h3>
-                                <span class="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-500/10 text-[8px] font-black uppercase tracking-widest text-emerald-600 rounded">HOJE</span>
-                            </div>
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Tráfego da Loja</h3>
                             <div class="flex items-baseline gap-2">
-                                <p id="valor-atual-texto" class="text-3xl font-bold text-slate-900 dark:text-white leading-none tracking-tight">0</p>
-                                <span class="text-[11px] font-bold text-emerald-500 flex items-center gap-0.5">Visitas únicas</span>
+                                <p id="valor-atual-texto" class="text-4xl font-bold text-slate-900 dark:text-white leading-none tracking-tight">0</p>
+                                <span class="text-[12px] font-medium text-slate-500 dark:text-slate-400">visitas únicas hoje</span>
                             </div>
-                        </div>
-                        <div class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-xl flex items-center gap-1.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                            <span class="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest">Tempo Real</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse ml-1"></span>
                         </div>
                     </div>
                     
