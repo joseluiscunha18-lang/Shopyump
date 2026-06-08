@@ -129,6 +129,8 @@
         </div>
         
         <script>
+            window.memUtilizador = window.memUtilizador || null;
+
             async function Sair() {
                 if(window.supabaseClient) {
                     await window.supabaseClient.auth.signOut();
@@ -137,17 +139,70 @@
                 window.location.href = '/index.html';
             }
 
-            // Busca os dados do usuário no Supabase e coloca no topo
+            // Centraliza os dados do usuário no Supabase e grava no cache global
             async function carregarDadosMenu() {
                 if(!window.supabaseClient) return;
+                
+                // Se já existir memória global, não faz nova requisição (Poupa recursos)
+                if (window.memUtilizador) {
+                    window.atualizarInterfaceMenu();
+                    return;
+                }
+
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (user) {
-                    const nome = user.user_metadata?.full_name || user.user_metadata?.nome || user.email.split('@')[0];
-                    document.getElementById('menu-user-nome').textContent = nome;
-                    document.getElementById('menu-user-email').textContent = user.email.toLowerCase();
-                    document.getElementById('menu-user-avatar').textContent = nome.charAt(0).toUpperCase();
+                    // Prepara os dados básicos
+                    let nome = user.user_metadata?.full_name || user.user_metadata?.nome || '';
+                    const foto = user.user_metadata?.avatar_url || '';
+                    const email = user.email || '';
+                    const isGoogle = user.app_metadata?.provider === 'google';
+
+                    // Vai buscar o nome da loja se não houver um definido na conta do perfil
+                    if (!nome || nome.trim() === '') {
+                        const { data: loja } = await window.supabaseClient
+                            .from('lojas')
+                            .select('vendedor_nome')
+                            .eq('perfil_id', user.id)
+                            .maybeSingle();
+                        if (loja && loja.vendedor_nome) {
+                            nome = loja.vendedor_nome;
+                        }
+                    }
+
+                    // 👉 GUARDA NA CACHE GERAL: O Perfil e a Segurança vão usar isto e abrir instantaneamente!
+                    window.memUtilizador = { user, nome, foto, email, isGoogle };
+                    
+                    window.atualizarInterfaceMenu();
                 }
             }
+
+            window.atualizarInterfaceMenu = function() {
+                if (!window.memUtilizador) return;
+                const { nome, email, foto } = window.memUtilizador;
+                const nomeFinal = nome || email.split('@')[0];
+                
+                const nomeEl = document.getElementById('menu-user-nome');
+                const emailEl = document.getElementById('menu-user-email');
+                const avatarEl = document.getElementById('menu-user-avatar');
+
+                if (nomeEl) nomeEl.textContent = nomeFinal;
+                if (emailEl) emailEl.textContent = email.toLowerCase();
+                
+                if (avatarEl) {
+                    if (foto) {
+                        avatarEl.style.backgroundImage = 'url(' + foto + ')';
+                        avatarEl.style.backgroundColor = 'transparent';
+                        avatarEl.style.backgroundSize = 'cover';
+                        avatarEl.style.backgroundPosition = 'center';
+                        avatarEl.textContent = '';
+                    } else {
+                        avatarEl.style.backgroundImage = 'none';
+                        avatarEl.style.backgroundColor = '';
+                        avatarEl.textContent = nomeFinal.charAt(0).toUpperCase();
+                    }
+                }
+            }
+            
             document.addEventListener('DOMContentLoaded', carregarDadosMenu);
         </script>
 

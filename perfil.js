@@ -223,6 +223,11 @@ async function salvarDados() {
             window.memUtilizador.nome = novoNome;
             if (novaFoto) window.memUtilizador.foto = novaFoto;
             else if (remover) window.memUtilizador.foto = null;
+            
+            // MÁGICA: Atualiza a foto e o nome no Menu Lateral instantaneamente!
+            if (typeof window.atualizarInterfaceMenu === 'function') {
+                window.atualizarInterfaceMenu();
+            }
         }
 
         // Sucesso visual
