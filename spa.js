@@ -20,7 +20,6 @@ async function inicializarLoja() {
             return;
         }
 
-        // 1. Vai buscar a Loja
         const { data: loja, error: erroLoja } = await window.supabaseClient
             .from('lojas')
             .select('*')
@@ -39,20 +38,18 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // 🚀 FORÇAR O REGISTO DA VISITA (Removido o sessionStorage para testares 100%)
-        console.log("A registar uma nova visita para a loja...");
-        window.supabaseClient.from('visitas')
-            .insert([{ loja_id: loja.id }])
-            .then(({ error }) => {
-                if (error) {
-                    console.error("🚨 O Supabase bloqueou a visita (Verifica o RLS das Visitas):", error.message);
-                } else {
-                    console.log("✅ VISITA REGISTADA COM SUCESSO NA BD! Atualiza o dashboard.");
+        // MÁGICA 1: Faz a inserção em background usando cache (Para não sobrecarregar a BD na mesma sessão)
+        const chaveVisiteiHoje = 'visitei_shopyump_' + loja.id;
+        if (!sessionStorage.getItem(chaveVisiteiHoje)) {
+            try {
+                const { error } = await window.supabaseClient.from('visitas').insert([{ loja_id: loja.id }]);
+                if (!error) {
+                     sessionStorage.setItem(chaveVisiteiHoje, 'sim');
+                     console.log("Visita visual registada com sucesso na máquina!");
                 }
-            });
-        // ------------------------------------
+            } catch(e) {}
+        }
 
-        // 2. Vai buscar os Produtos
         const { data: prods, error: erroProdutos } = await window.supabaseClient
             .from('produtos')
             .select('*')
