@@ -244,43 +244,6 @@
     <script src="/router.js"></script>
     <script src="/modals.js"></script>
 
-<script>
-    // Função atualizada para abrir/fechar o menu e travar o fundo
-    window.toggleSidebar = function() {
-        const menu = document.getElementById('menuZ');
-        const overlay = document.getElementById('overlay');
-        const body = document.body;
-        
-        // Verifica se o menu está fechado
-        const estaFechado = menu.classList.contains('-translate-x-full');
-        
-        if (estaFechado) {
-            // === ABRIR MENU ===
-            menu.classList.remove('-translate-x-full');
-            
-            // Mostrar fundo escuro com animação suave
-            overlay.classList.remove('hidden');
-            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            
-            // BLOQUEAR FUNDO (Travar a tela atrás)
-            body.style.overflow = 'hidden';
-            body.style.touchAction = 'none'; // Trava até os puxões no telemóvel (mobile)
-            
-        } else {
-            // === FECHAR MENU ===
-            menu.classList.add('-translate-x-full');
-            
-            // Esconder fundo escuro com animação suave
-            overlay.classList.add('opacity-0');
-            setTimeout(() => overlay.classList.add('hidden'), 300); // 300ms do tempo da transição
-            
-            // DESBLOQUEAR FUNDO (Voltar a mexer)
-            body.style.overflow = '';
-            body.style.touchAction = '';
-        }
-    };
-</script>
-
 
 </body>
 </html>
