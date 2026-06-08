@@ -205,7 +205,9 @@ let dashboardCarregado = false;
 let memDashboard = {
     loja: null,
     produtos: null,
-    pendentes: null
+    pendentes: null,
+    historicoVisitas: null, // Nova gaveta de memória
+    totalVisitas: 0 // Nova gaveta de memória
 };
 
 document.addEventListener('spa:page-loaded', (e) => {
@@ -220,6 +222,11 @@ document.addEventListener('spa:page-loaded', (e) => {
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
+            // REDESENHA O GRÁFICO INSTANTANEAMENTE 
+            if (memDashboard.historicoVisitas) {
+                if (document.getElementById('stat-visitas')) animarNumero('stat-visitas', memDashboard.totalVisitas);
+                desenharGrafico(memDashboard.historicoVisitas);
+            }
         }
     }
 });
@@ -595,7 +602,9 @@ async function carregarEstatisticasVisitasDashboard(lojaId) {
             }
         });
 
-        // 5. Acionar a animação SVG do Gráfico
+        // 5. Acionar a animação SVG do Gráfico e Guardar em Memória
+        memDashboard.totalVisitas = visitas.length;
+        memDashboard.historicoVisitas = historico7Dias;
         desenharGrafico(historico7Dias);
 
     } catch (e) {
