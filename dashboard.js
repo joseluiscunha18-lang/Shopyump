@@ -556,16 +556,16 @@ function animarRemocaoPedidoEAtualizar(card) {
     }, 150);
 }
 // ==========================================
-// MÓDULO DO GRÁFICO DE VISITAS
+// MÓDULO DO GRÁFICO DE VISITAS (ATUALIZADO E INTERATIVO)
 // ==========================================
 async function carregarEstatisticasVisitasDashboard(lojaId) {
     try {
-        // 1. Calcular os últimos 7 dias
+        // 1. Calcular os últimos 7 dias garantindo o rigor dos horários
         const seteDiasAtras = new Date();
         seteDiasAtras.setDate(seteDiasAtras.getDate() - 6);
         seteDiasAtras.setHours(0, 0, 0, 0);
 
-        // 2. Procurar visitas dessa loja no Supabase
+        // 2. Procurar visitas reais enviadas pela montra pública
         const { data: visitas, error } = await window.supabaseClient
             .from('visitas')
             .select('created_at')
@@ -574,12 +574,12 @@ async function carregarEstatisticasVisitasDashboard(lojaId) {
 
         if (error) throw error;
 
-        // 3. Atualizar o Card do Totais de Visitas
+        // 3. Atualizar o Card Inicial das Visitas
         if (document.getElementById('stat-visitas')) {
             animarNumero('stat-visitas', visitas.length);
         }
 
-        // 4. Preparar estrutura dos 7 dias para o gráfico
+        // 4. Mapear os dias perfeitamente
         const diasSemanas = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         const historico7Dias = [];
         
@@ -588,41 +588,42 @@ async function carregarEstatisticasVisitasDashboard(lojaId) {
             d.setDate(d.getDate() - i);
             historico7Dias.push({
                 diaStr: diasSemanas[d.getDay()],
-                diaData: d.getDate(),
+                dataKey: d.toDateString(), 
                 visitas: 0
             });
         }
 
-        // Preencher os dados agrupando os dias
+        // Distribuir exatamente pela Data!
         visitas.forEach(v => {
             const dataV = new Date(v.created_at);
-            const diaIndex = historico7Dias.findIndex(h => h.diaData === dataV.getDate());
+            const diaIndex = historico7Dias.findIndex(h => h.dataKey === dataV.toDateString());
             if(diaIndex !== -1) {
                 historico7Dias[diaIndex].visitas++;
+            } else {
+                historico7Dias[6].visitas++; // Ajuste p/ segurança se fuso mudar
             }
         });
 
-        // 5. Acionar a animação SVG do Gráfico e Guardar em Memória
+        // 5. Clica para Desenhá-lo!
         memDashboard.totalVisitas = visitas.length;
         memDashboard.historicoVisitas = historico7Dias;
         desenharGrafico(historico7Dias);
 
     } catch (e) {
-        console.error("Erro ao carregar o gráfico de visitas:", e);
+        console.error("Erro no gráfico de visitas:", e);
     }
 }
 
 function desenharGrafico(dados) {
-    // Escolhemos um max mínimo de 5 para que o SVG não colapse
+    // Escolhemos um minímo de 5 p/ altura. 
     const maxVisitas = Math.max(...dados.map(d => d.visitas), 5);
     const width = 300;
     const height = 150;
     
-    // Coordenadas calculadas
     const pontosx = dados.map((d, i) => (width / 6) * i);
     const pontosy = dados.map((d) => height - (d.visitas / maxVisitas) * (height - 30) - 15);
 
-    // Desenhar a curva inteligente e suave (Corda e Sombra)
+    // Corda Animada Curvada
     let dPath = `M${pontosx[0]},${pontosy[0]}`;
     for (let i = 1; i < pontosx.length; i++) {
         const ctrl1X = pontosx[i - 1] + (pontosx[i] - pontosx[i - 1]) / 2;
@@ -633,29 +634,55 @@ function desenharGrafico(dados) {
 
     const areaPath = document.getElementById('areaPath');
     const cordaPath = document.getElementById('cordaPath');
-    const pAtual = document.getElementById('p-atual');
-    const valorAtual = document.getElementById('valor-atual');
+    const svgChart = document.querySelector('.svg-chart');
 
-    // Substituir caminhos SVG nativos na tua estrutura actual
-    if (areaPath && cordaPath && pAtual && valorAtual) {
+    if (areaPath && cordaPath && svgChart) {
         areaPath.setAttribute('d', areaPathStr);
         cordaPath.setAttribute('d', dPath);
 
-        const lastX = pontosx[pontosx.length - 1];
-        const lastY = pontosy[pontosy.length - 1];
+        // Limpar pontos antigos para não encavalar
+        document.querySelectorAll('.ponto-grafico-interativo').forEach(e => e.remove());
         
-        pAtual.setAttribute('cx', lastX);
-        pAtual.setAttribute('cy', lastY);
+        // Esconder o placeholder fixo do HTML original
+        const pAtual = document.getElementById('p-atual');
+        const valorAtual = document.getElementById('valor-atual');
+        if(pAtual) pAtual.style.display = 'none';
+        if(valorAtual) valorAtual.style.display = 'none';
+
+        // DESENHAR 7 BOLINHAS E OS RESPECTIVOS NÚMEROS (Visual Profissional)
+        pontosx.forEach((px, i) => {
+            const py = pontosy[i];
+            
+            const textoNum = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textoNum.setAttribute('x', px);
+            textoNum.setAttribute('y', py - 10);
+            textoNum.setAttribute('class', 'ponto-grafico-interativo');
+            textoNum.textContent = dados[i].visitas;
+            textoNum.style.fill = '#9f6ef5';
+            textoNum.style.fontSize = '10px';
+            textoNum.style.fontWeight = '800';
+            textoNum.style.textAnchor = 'middle';
+            // Os números dos dias passados ficam mais opacos, o de hoje brilha!
+            textoNum.style.opacity = (i === dados.length - 1) ? '1' : '0.5';
+
+            const bolinha = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            bolinha.setAttribute('cx', px);
+            bolinha.setAttribute('cy', py);
+            bolinha.setAttribute('r', (i === dados.length - 1) ? '5' : '3.5');
+            bolinha.setAttribute('class', 'ponto-grafico-interativo');
+            bolinha.style.fill = (i === dados.length - 1) ? '#9f6ef5' : '#ffffff';
+            bolinha.style.stroke = '#9f6ef5';
+            bolinha.style.strokeWidth = '2';
+
+            svgChart.appendChild(bolinha);
+            svgChart.appendChild(textoNum);
+        });
         
-        valorAtual.setAttribute('x', lastX);
-        valorAtual.setAttribute('y', lastY - 15);
-        valorAtual.textContent = `${dados[dados.length - 1].visitas}`;
-        
-        // Colocar os textinhos dos dias abaixo do gráfico
-        const containerDias = document.querySelector('.chart-container').nextElementSibling;
-        if (containerDias && containerDias.classList.contains('flex')) {
-            containerDias.innerHTML = dados.map((d, i) => {
-                if (i === dados.length - 1) return `<span class="text-emerald-500 dark:text-emerald-400 font-black italic">Hoje</span>`;
+        // Atualizar textos do eixo X no HTML de baixo
+        const elementoDias = document.querySelector('.chart-container').nextElementSibling;
+        if (elementoDias && (elementoDias.classList.contains('flex') || elementoDias.tagName.toLowerCase() === 'div')) {
+            elementoDias.innerHTML = dados.map((d, i) => {
+                if (i === dados.length - 1) return `<span class="text-[#9f6ef5] font-black italic">Hoje</span>`;
                 return `<span>${d.diaStr}</span>`;
             }).join('');
         }
