@@ -37,15 +37,22 @@ async function inicializarLoja() {
         if (topName) topName.innerText = loja.nome;
 
         // --- REGISTAR A VISITA DO CLIENTE ---
-        // Nota: O sessionStorage previne contabilização dupla caso o utilizador 
-        // faça "refresh" contante na página, contando de forma mais real (1 vez por sessão).
-        const dataHojeStr = new Date().toISOString().split('T')[0];
-        const chaveVisita = 'visita_' + loja.id + '_' + dataHojeStr;
-        if (!sessionStorage.getItem(chaveVisita)) {
+        // Usamos uma nova chave limpa para evitar caches corrompidos de tentativas anteriores
+        const chaveVisitaAtiva = 'visited_str_' + loja.id;
+        if (!sessionStorage.getItem(chaveVisitaAtiva)) {
             window.supabaseClient.from('visitas')
                 .insert([{ loja_id: loja.id }])
-                .then(() => sessionStorage.setItem(chaveVisita, 'true'))
-                .catch(e => console.error("Erro ao registar visita:", e));
+                .then(({ error }) => {
+                    // CORREÇÃO: Se a BD tiver tido erro, o Supabase não ia para o catch.
+                    // Nós bloqueávamos a pessoa de tentar novamente assumindo que tinha dado certo!
+                    if (!error) {
+                        sessionStorage.setItem(chaveVisitaAtiva, 'true');
+                        console.log("Visita contada com sucesso para o dashboard!");
+                    } else {
+                        console.error("A BD recusou a visita (Erro):", error);
+                    }
+                })
+                .catch(e => console.error("Exceção ao registar visita:", e));
         }
         // ------------------------------------
 

@@ -248,6 +248,12 @@ document.addEventListener('spa:page-loaded', (e) => {
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
+            
+            // CORREÇÃO: Garante que o Gráfico de Visitas é sempre forçado a carregar atualizações 
+            // da base de dados sempre que voltamos para o dashboard, sem usar dados velhos!
+            if (memDashboard.loja) {
+                carregarVisitasDashboard(memDashboard.loja.id);
+            }
         }
     }
 });
