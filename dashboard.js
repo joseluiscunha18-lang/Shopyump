@@ -55,7 +55,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
-                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas</p>
+                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas Hoje</p>
                             </div>
                         </div>
                         <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
@@ -252,7 +252,7 @@ document.addEventListener('spa:page-loaded', (e) => {
             // O gráfico agora só é desenhado a partir da memória instantânea. 
             // Ele só voltará a puxar da base de dados se a magia do "Tempo Real" for ativada!
             if (memDashboard.visitasCache) {
-                animarNumero('stat-visitas', memDashboard.visitasCache.total);
+                animarNumero('stat-visitas', memDashboard.visitasCache.hoje); // Agora pega no valor de 'hoje'
                 animarNumero('valor-atual-texto', memDashboard.visitasCache.hoje);
                 atualizarGraficoDashboard(memDashboard.visitasCache.contagensArr, memDashboard.visitasCache.ordemNomes);
             }
@@ -350,7 +350,7 @@ async function carregarVisitasDashboard(lojaId) {
             alert("ERRO AO LER GRÁFICO DE VISITAS: " + errVisitas.message);
         }
             
-        if (!errTotal) animarNumero('stat-visitas', totalVisitas || 0);
+        // Retirámos a linha que puxava o total absoluto (totalVisitas)
 
         if (!errVisitas && visitas) {
             const contagemDias = {};
@@ -384,12 +384,16 @@ async function carregarVisitasDashboard(lojaId) {
             });
             
             const contagensArr = Object.values(contagemDias);
+            // Pega o último dia do array (que representa Hoje)
             const hojeCount = contagensArr[contagensArr.length - 1]; 
             
             const textoHoje = document.getElementById('valor-atual-texto');
             if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
             
-            // SALVA TUDO NA MEMÓRIA! Assim não gastamos internet quando o lojista voltar a esta página
+            // ---> ADICIONADO: Anima o contador principal agora apenas com o número de hoje 
+            animarNumero('stat-visitas', hojeCount);
+            
+            // SALVA TUDO NA MEMÓRIA
             memDashboard.visitasCache = {
                 total: totalVisitas || 0,
                 hoje: hojeCount,
