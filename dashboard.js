@@ -462,17 +462,19 @@ function renderizarSaudacaoMemoria() {
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
-    // A MÁGICA SALVA-VIDAS: Esta linha descobre automaticamente se estás no ambiente de testes ou no site real.
-    // Assim clicas no botão do painel, a visita é contabilizada no ambiente correto!
-    const urlLoja = `${window.location.origin}/loja/${loja.slug}`;
+    // A MÁGICA SALVA-VIDAS: URL normal (para partilhar com clientes) e URL Admin (para o botão Ver Loja)
+    const urlLojaNormal = `${window.location.origin}/loja/${loja.slug}`;
+    const urlLojaAdmin = `${window.location.origin}/loja/${loja.slug}?admin=true`;
     
+    // O botão de ver loja usa o link admin (não contabiliza visita)
     const btnVerLoja = document.getElementById('btn-ver-loja');
-    if (btnVerLoja) btnVerLoja.href = urlLoja;
+    if (btnVerLoja) btnVerLoja.href = urlLojaAdmin;
     
+    // O botão de copiar continua a copiar o link normal para os clientes!
     const btnCopiar = document.getElementById('btn-copiar-loja');
     if (btnCopiar) {
         btnCopiar.onclick = () => {
-            navigator.clipboard.writeText(urlLoja).then(() => {
+            navigator.clipboard.writeText(urlLojaNormal).then(() => {
                 const icone = document.getElementById('icone-copiar');
                 if (icone) {
                     icone.className = 'fa-solid fa-check text-[14px] text-emerald-500';

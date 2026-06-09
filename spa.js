@@ -9,6 +9,9 @@ let lojaAtual = null;
 // ===========================================
 // BLOCO 1: SUBSTITUIR TODA A FUNÇÃO inicializarLoja
 // ===========================================
+// ===========================================
+// NOVA FUNÇÃO: inicializarLoja (Com Alertas de Erro Visíveis)
+// ===========================================
 async function inicializarLoja() {
     try {
         const pathSegments = window.location.pathname.split('/');
@@ -38,16 +41,27 @@ async function inicializarLoja() {
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
-        // MÁGICA 1: Faz a inserção em background usando cache (Para não sobrecarregar a BD na mesma sessão)
+        // 🚀 TENTA REGISTAR A VISITA (Com bloqueio de visitas do próprio Lojista)
+        const searchParams = new URLSearchParams(window.location.search);
+        const isLojista = searchParams.get('admin') === 'true';
+        
         const chaveVisiteiHoje = 'visitei_shopyump_' + loja.id;
-        if (!sessionStorage.getItem(chaveVisiteiHoje)) {
-            try {
-                const { error } = await window.supabaseClient.from('visitas').insert([{ loja_id: loja.id }]);
-                if (!error) {
-                     sessionStorage.setItem(chaveVisiteiHoje, 'sim');
-                     console.log("Visita visual registada com sucesso na máquina!");
-                }
-            } catch(e) {}
+        
+        if (isLojista) {
+            // Se o URL tem ?admin=true, finge discretamente na sessão que já visitou, 
+            // sem NUNCA escrever na base de dados! (Não suja o gráfico)
+            sessionStorage.setItem(chaveVisiteiHoje, 'lojista');
+        } else if (!sessionStorage.getItem(chaveVisiteiHoje)) {
+            // Conta APENAS se for um cliente verdadeiro e se for a primeira entrada
+            window.supabaseClient.from('visitas')
+                .insert([{ loja_id: loja.id }])
+                .then(({ error }) => {
+                    if (error) {
+                        alert("ERRO AO REGISTAR VISITA: " + error.message);
+                    } else {
+                        sessionStorage.setItem(chaveVisiteiHoje, 'sim');
+                    }
+                });
         }
 
         const { data: prods, error: erroProdutos } = await window.supabaseClient
@@ -82,7 +96,6 @@ async function inicializarLoja() {
             mostrarEstadoVazioGlobal("Esta loja ainda não tem produtos", "Pede ao vendedor para atualizar o catálogo.");
         }
     } catch (e) {
-        console.error(e);
         mostrarEstadoVazioGlobal("Erro ao carregar a loja", "Tenta novamente mais tarde.");
     }
 }
