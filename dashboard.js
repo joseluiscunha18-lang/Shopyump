@@ -288,6 +288,24 @@ async function carregarDadosLojaDashboard() {
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
                 await carregarVisitasDashboard(loja.id); // <-- Carrega as visitas para os gráficos
+
+                // --- INÍCIO: NOVO CÓDIGO TEMPO REAL (Visitas) ---
+                if (!window.inscricaoRealtimeVisitas) {
+                    window.inscricaoRealtimeVisitas = window.supabaseClient
+                        .channel('realtime_visitas_dashboard')
+                        .on('postgres_changes', { 
+                            event: 'INSERT', 
+                            schema: 'public', 
+                            table: 'visitas', 
+                            filter: `loja_id=eq.${loja.id}` 
+                        }, (payload) => {
+                            // MAGIA: Quando alguém entra na loja ("INSERT" em 'visitas'), reanima o gráfico sozinho!
+                            carregarVisitasDashboard(loja.id);
+                        })
+                        .subscribe();
+                }
+                // --- FIM: NOVO CÓDIGO TEMPO REAL ---
+
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
