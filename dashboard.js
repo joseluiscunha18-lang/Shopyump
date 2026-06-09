@@ -233,26 +233,28 @@ let dashboardCarregado = false;
 let memDashboard = {
     loja: null,
     produtos: null,
-    pendentes: null
+    pendentes: null,
+    visitasCache: null // NOVO: Guarda os dados do gráfico
 };
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        // Se ainda não carregou do banco, buscamos a primeira vez
         if (!dashboardCarregado) {
             carregarDadosLojaDashboard().then(() => {
                 dashboardCarregado = true;
             });
         } else {
-            // SOLUÇÃO: Se já tínhamos o cache guardado, redesenhamos tudo instantaneamente!
+            // Redesenha instantaneamente da memória (Zero consumo de requisições ao mudar de página)
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
             
-            // CORREÇÃO: Garante que o Gráfico de Visitas é sempre forçado a carregar atualizações 
-            // da base de dados sempre que voltamos para o dashboard, sem usar dados velhos!
-            if (memDashboard.loja) {
-                carregarVisitasDashboard(memDashboard.loja.id);
+            // O gráfico agora só é desenhado a partir da memória instantânea. 
+            // Ele só voltará a puxar da base de dados se a magia do "Tempo Real" for ativada!
+            if (memDashboard.visitasCache) {
+                animarNumero('stat-visitas', memDashboard.visitasCache.total);
+                animarNumero('valor-atual-texto', memDashboard.visitasCache.hoje);
+                atualizarGraficoDashboard(memDashboard.visitasCache.contagensArr, memDashboard.visitasCache.ordemNomes);
             }
         }
     }
@@ -386,6 +388,14 @@ async function carregarVisitasDashboard(lojaId) {
             
             const textoHoje = document.getElementById('valor-atual-texto');
             if (textoHoje) animarNumero('valor-atual-texto', hojeCount);
+            
+            // SALVA TUDO NA MEMÓRIA! Assim não gastamos internet quando o lojista voltar a esta página
+            memDashboard.visitasCache = {
+                total: totalVisitas || 0,
+                hoje: hojeCount,
+                contagensArr: contagensArr,
+                ordemNomes: ordemNomes
+            };
             
             atualizarGraficoDashboard(contagensArr, ordemNomes);
         }
