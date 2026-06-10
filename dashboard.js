@@ -49,15 +49,24 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div onclick="navegarAnimado('produtos')" class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm cursor-pointer hover:bg-white/50 active:scale-95 transition-all">
-    <div class="text-slate-700 flex-shrink-0">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-    </div>
-    <div class="ml-4">
-        <h4 id="stat-produtos-ativos-card" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
-        <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Produtos Ativos</p>
-    </div>
-</div>
+                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
+                            <div class="text-slate-700 flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
+                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas Hoje</p>
+                            </div>
+                        </div>
+                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
+                            <div class="text-slate-700 flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 id="stat-produtos-ativos" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
+                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Produtos Ativos</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -503,10 +512,13 @@ async function carregarProdutosDashboard(lojaId) {
 function renderizarProdutosDashboard(produtos) {
     const containerProduto = document.getElementById('container-produtos');
     const badgeAtivos = document.getElementById('badge-produtos-ativos');
+    const statProdutosAtivos = document.getElementById('stat-produtos-ativos');
     if (!containerProduto) return;
 
     const ativosCount = produtos ? produtos.filter(p => p.ativo).length : 0;
+    
     if (badgeAtivos) badgeAtivos.innerText = `${ativosCount} ATIVOS`;
+    if (statProdutosAtivos) animarNumero('stat-produtos-ativos', ativosCount);
     
     if (produtos && produtos.length > 0) {
         containerProduto.className = "flex flex-col gap-3 mt-3 order-scroll-area max-h-[300px]";
