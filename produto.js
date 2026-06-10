@@ -22,6 +22,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <button onclick="filtrarProdutosGestao('todos', this)" class="flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold bg-[#0F172A] text-white shadow-md active:scale-95 transition-all filtro-prod-btn active">Todos</button>
                     <button onclick="filtrarProdutosGestao('ativos', this)" class="flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-prod-btn">Ativos</button>
                     <button onclick="filtrarProdutosGestao('rascunhos', this)" class="flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-prod-btn">Rascunhos</button>
+                    <button onclick="filtrarProdutosGestao('promocao', this)" class="flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold bg-white dark:bg-navy-900 border border-slate-200 dark:border-navy-700 text-slate-600 dark:text-slate-400 active:scale-95 transition-all filtro-prod-btn">Em Promoção</button>
                 </div>
                 
                 <div id="lista-produtos-page" class="space-y-3 pb-6">
@@ -49,12 +50,22 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
 
                     <div class="space-y-3">
+                        <button id="btn-acao-ver" class="w-full py-4 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-700 dark:text-slate-200 font-bold text-[13px] rounded-2xl active:scale-95 transition-all flex items-center justify-between px-5 shadow-sm">
+                            <div class="flex items-center gap-3"><i class="fas fa-external-link-alt text-slate-400"></i> Ver na Loja</div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
+
                         <button id="btn-acao-editar" class="w-full py-4 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-700 dark:text-slate-200 font-bold text-[13px] rounded-2xl active:scale-95 transition-all flex items-center justify-between px-5 shadow-sm">
                             <div class="flex items-center gap-3"><i class="fas fa-pen text-slate-400"></i> Editar Produto</div>
                             <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
                         </button>
+
+                        <button id="btn-acao-duplicar" class="w-full py-4 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-700 dark:text-slate-200 font-bold text-[13px] rounded-2xl active:scale-95 transition-all flex items-center justify-between px-5 shadow-sm">
+                            <div class="flex items-center gap-3"><i class="far fa-copy text-slate-400"></i> Duplicar Produto</div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+                        </button>
                         
-                        <button id="btn-acao-status" class="w-full py-4 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-700 dark:text-slate-200 font-bold text-[13px] rounded-2xl active:scale-95 transition-all flex items-center justify-between px-5 shadow-sm">
+                        <button id="btn-acao-status" class="w-full py-4 bg-white dark:bg-navy-800 border border-slate-200 dark:border-navy-700 text-slate-700 dark:text-slate-200 font-bold text-[13px] rounded-2xl active:scale-95 transition-all flex items-center justify-between px-5 shadow-sm border-t border-slate-50 dark:border-navy-800 mt-2">
                             <div class="flex items-center gap-3"><i id="icone-acao-status" class="far fa-eye-slash text-slate-400"></i> <span id="texto-acao-status">Ocultar da Loja</span></div>
                         </button>
 
@@ -155,6 +166,7 @@ function processarEExibirProdutos() {
 
     if (filtroProdutosAtual === 'ativos') filtrados = filtrados.filter(p => p.ativo);
     else if (filtroProdutosAtual === 'rascunhos') filtrados = filtrados.filter(p => !p.ativo);
+    else if (filtroProdutosAtual === 'promocao') filtrados = filtrados.filter(p => p.preco_promo && p.preco_promo > 0);
 
     if (termoPesquisaProdutos !== '') {
         filtrados = filtrados.filter(p => {
@@ -167,74 +179,76 @@ function processarEExibirProdutos() {
     renderizarProdutosLista(filtrados);
 }
 
-function renderizarProdutosLista(produtos) {
+function renderizarProdutosLista(produtosRender) {
     const container = document.getElementById('lista-produtos-page');
     const badgeCount = document.getElementById('produtos-count-page');
     if (!container) return;
 
     if (badgeCount) {
-        const ativosCount = produtos.filter(p => p.ativo).length;
-        badgeCount.innerText = `${ativosCount} produto${ativosCount !== 1 ? 's' : ''} ativo${ativosCount !== 1 ? 's' : ''}`;
+        const bdgBase = memProdutosPage || [];
+        const ativosCount = bdgBase.filter(p => p.ativo).length;
+        badgeCount.innerText = `${ativosCount} ativo${ativosCount !== 1 ? 's' : ''} de ${bdgBase.length}`;
     }
 
-    if (produtos.length === 0) {
+    if (!memProdutosPage || memProdutosPage.length === 0) {
         container.innerHTML = `
-            <div class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3 bg-white dark:bg-navy-900 rounded-[28px] shadow-sm border border-slate-100 dark:border-navy-800">
+            <div class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3 bg-white dark:bg-navy-900 rounded-[28px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800">
                 <div class="w-14 h-14 bg-emerald-50 dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-emerald-500 mb-2 shadow-sm">
                     <i class="fa-solid fa-box-open text-2xl"></i>
                 </div>
-                <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Gere o teu catálogo e stock</h4>
-                <button onclick="navegarAnimado('criar-produto')" class="w-full max-w-[200px] mt-2 bg-[#0F172A] text-white h-11 rounded-full text-xs font-black tracking-wider flex items-center justify-center shadow-md active:scale-95 transition-all">Adicionar Produto</button>
+                <div>
+                    <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Gere o teu stock e produtos</h4>
+                    <p class="text-[11px] text-slate-500 font-medium px-4 mt-1 leading-relaxed">Adiciona o teu primeiro produto para começar a vender online.</p>
+                </div>
+                <button onclick="navegarAnimado('criar-produto')" class="w-full max-w-[200px] mt-2 bg-[#0F172A] text-white h-12 rounded-full text-[11px] uppercase font-black tracking-wider flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all"><i class="fas fa-plus"></i> Adicionar Produto</button>
             </div>
         `;
         return;
     }
 
-    container.className = "space-y-3";
+    if (produtosRender.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full py-10 flex flex-col items-center justify-center text-center gap-3">
+                <div class="w-12 h-12 rounded-[20px] bg-slate-50 dark:bg-navy-800 border border-slate-100 dark:border-navy-700 flex items-center justify-center text-slate-300">
+                    <i class="fas fa-search text-lg"></i>
+                </div>
+                <h4 class="text-[13px] font-bold text-slate-900 dark:text-white mt-1">Nenhum produto encontrado</h4>
+            </div>
+        `;
+        return;
+    }
+
+    container.className = "space-y-3 pb-6";
     let html = '';
 
-    produtos.forEach(p => {
+    produtosRender.forEach(p => {
         const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
-        
-        // Verifica se há promoção (preco_promo > 0 e menor que o preco normal. Opcionalmente verifica se existe essa propriedade.)
-        const temPromo = (p.preco_promo && p.preco_promo > 0);
-        const precoDisplay = temPromo ? p.preco_promo : p.preco;
-        
         html += `
-            <div class="bg-white dark:bg-navy-900 p-4 rounded-[20px] shadow-[0_4px_15px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-navy-800 flex flex-col transition-all group relative overflow-hidden">
-                <div class="flex items-center justify-between cursor-pointer active:scale-[0.98] transition-transform z-10" onclick="navegarAnimado('editar-produto?id=${p.id}')">
-                    <div class="flex items-center gap-3.5 w-full">
-                        <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-700 shrink-0 shadow-inner relative">
-                            <img src="${fotoCapa}" class="w-full h-full object-cover">
+            <div onclick="abrirModalAcoesProduto('${p.id}')" class="bg-white dark:bg-navy-900 p-3.5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer group hover:border-slate-200 dark:hover:border-navy-700">
+                <div class="flex items-center gap-3.5 w-full pr-2">
+                    <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-700 shrink-0 relative">
+                        <img src="${fotoCapa}" class="w-full h-full object-cover">
+                        ${!p.ativo ? '<div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="far fa-eye-slash text-white opacity-80 text-xs"></i></div>' : ''}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate">${p.nome}</h4>
+                        <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                            ${p.preco_promo && p.preco_promo > 0 
+                              ? `<p class="text-[11px] font-black text-emerald-500">${p.preco_promo.toLocaleString('pt-MZ')} <span class="text-[9px] text-emerald-400">MT</span></p>
+                                 <p class="text-[9px] font-bold text-slate-400 line-through">${p.preco.toLocaleString('pt-MZ')} MT</p>`
+                              : `<p class="text-[11px] font-black text-slate-900 dark:text-white">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>`
+                            }
+                            ${p.estoque_qtd !== undefined && p.controlar_estoque ? `<p class="flex items-center gap-1 text-[9px] font-bold bg-slate-50 dark:bg-navy-800 px-1.5 py-0.5 border border-slate-100 dark:border-navy-700 rounded-md text-slate-500"><i class="fas fa-box text-[8px] text-slate-400"></i> ${p.estoque_qtd} uni</p>` : ''}
                         </div>
-                        <div class="flex flex-col items-start min-w-0 flex-1 pr-2">
-                            <p class="text-[14px] font-bold text-slate-900 dark:text-white line-clamp-1 w-full leading-tight mb-0.5">${p.nome}</p>
-                            
-                            <p class="text-[12px] font-black text-slate-900 dark:text-white mt-1">
-                                ${precoDisplay.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span>
-                                ${temPromo ? `<span class="text-[10px] text-slate-400 font-semibold line-through ml-1">${p.preco.toLocaleString('pt-MZ')} MT</span>` : ''}
-                            </p>
-                            
-                            <div class="flex flex-wrap gap-1.5 mt-1.5">
-                                <span class="text-[9px] font-black ${p.ativo ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' : 'text-slate-400 bg-slate-100 dark:bg-slate-800'} px-2 py-0.5 rounded-md inline-block uppercase tracking-widest">${p.ativo ? 'Ativo' : 'Rascunho'}</span>
-                                ${temPromo && p.ativo ? `<span class="text-[9px] font-black text-[#9f6ef5] bg-[#9f6ef5]/10 px-2 py-0.5 rounded-md inline-block uppercase tracking-widest">Promoção</span>` : ''}
-                            </div>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="text-[9px] font-black ${p.ativo ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' : 'text-orange-400 bg-orange-50 dark:bg-orange-500/10'} px-1.5 rounded uppercase tracking-widest">${p.ativo ? 'Publicado' : 'Rascunho'}</span>
+                            ${p.preco_promo && p.preco_promo > 0 ? `<span class="text-[9px] font-black text-blue-500 bg-blue-50 dark:bg-blue-500/10 px-1.5 rounded uppercase tracking-widest">Promoção</span>` : ''}
                         </div>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 dark:border-slate-700 dark:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-slate-900 transition-colors shrink-0">
-                        <i class="fas fa-chevron-right text-[11px]"></i>
-                    </div>
                 </div>
-                
-                <!-- Botões de Ação Rápida  -->
-                <div class="flex items-center gap-2 mt-4 pt-3 border-t border-slate-50 dark:border-navy-800/50 z-10">
-                    <button onclick="duplicarProduto('${p.id}');" class="flex-[0.8] bg-slate-50 dark:bg-navy-800 hover:bg-slate-100 dark:hover:bg-navy-700 text-slate-600 dark:text-slate-300 h-9 rounded-xl text-[10px] font-bold tracking-wider uppercase active:scale-95 transition-all text-center flex justify-center items-center gap-1.5 shadow-sm border border-slate-100">
-                        <i class="fa-regular fa-copy opacity-60"></i> Duplicar
-                    </button>
-                    <button onclick="verProdutoLoja('${p.id}');" class="flex-1 bg-[#0F172A] text-white hover:bg-slate-800 h-9 rounded-xl text-[10px] font-bold tracking-wider uppercase active:scale-95 transition-all text-center flex justify-center items-center gap-1.5 shadow-md">
-                        <i class="fa-solid fa-arrow-up-right-from-square opacity-70 mb-[1px]"></i> Ver Produto
-                    </button>
-                </div>
+                <button class="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 dark:border-slate-700 dark:bg-navy-800 flex items-center justify-center text-slate-400 group-hover:bg-[#0F172A] group-hover:text-white group-hover:border-[#0F172A] transition-colors shrink-0">
+                    <i class="fas fa-ellipsis-v text-xs"></i>
+                </button>
             </div>
         `;
     });
@@ -242,65 +256,179 @@ function renderizarProdutosLista(produtos) {
     container.innerHTML = html;
 }
 
-// ==========================================
-// FUNÇÕES AUXILIARES (Adicionar no fundo do ficheiro de produtos)
-// ==========================================
+window.abrirModalAcoesProduto = function(id) {
+    if (!memProdutosPage) return;
+    const p = memProdutosPage.find(p => p.id === id);
+    if (!p) return;
 
-window.duplicarProduto = async function(id) {
-    if (!window.supabaseClient) return;
-    try {
-        const btn = event.currentTarget;
-        const originalHtml = btn.innerHTML;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i>';
-        
-        // 1. Vai buscar os dados completos do produto
-        const { data: produtoOriginal, error } = await window.supabaseClient
-            .from('produtos')
-            .select('*')
-            .eq('id', id)
-            .single();
-            
-        if (error) throw error;
-        
-        // 2. Remove restrições e altera propriedades básicas para iniciar Clone Rascunho
-        const novoProduto = { ...produtoOriginal };
-        delete novoProduto.id;
-        delete novoProduto.created_at;
-        novoProduto.nome = novoProduto.nome + " (Cópia)";
-        novoProduto.ativo = false; // Começa oculto
-        
-        // 3. Salva a cópia
-        const { error: insertError } = await window.supabaseClient.from('produtos').insert([novoProduto]);
-        if (insertError) throw insertError;
-        
-        if (typeof mostrarNotificacao === 'function') mostrarNotificacao("✔ Produto duplicado (Rascunho)", null);
-        
-        // 4. Força atualização do Ecrã
-        if (typeof window.forcarAtualizacaoProdutos === 'function') {
-            window.forcarAtualizacaoProdutos();
+    produtoSelecionadoAcoes = p;
+
+    const imgModal = document.getElementById('acoes-prod-img');
+    const nomeModal = document.getElementById('acoes-prod-nome');
+    const precoModal = document.getElementById('acoes-prod-preco');
+    
+    if (imgModal) imgModal.src = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
+    if (nomeModal) nomeModal.innerText = p.nome;
+    if (precoModal) precoModal.innerHTML = `${p.preco.toLocaleString('pt-MZ')} <span class="font-normal text-[10px]">MT</span>`;
+
+    const btnStatus = document.getElementById('btn-acao-status');
+    const iconeStatus = document.getElementById('icone-acao-status');
+    const textoStatus = document.getElementById('texto-acao-status');
+
+    if (btnStatus) {
+        btnStatus.onclick = () => alternarStatusVisibilidade(p.id, !p.ativo);
+        if (p.ativo) {
+            iconeStatus.className = "far fa-eye-slash text-orange-500";
+            textoStatus.innerText = "Ocultar da Loja (Guardar Rascunho)";
+            textoStatus.className = "text-orange-500";
+        } else {
+            iconeStatus.className = "far fa-eye text-emerald-500";
+            textoStatus.innerText = "Publicar Produto na Loja";
+            textoStatus.className = "text-emerald-500";
         }
-        
-    } catch(e) {
-        console.error("Erro ao duplicar: ", e);
-        const btn = event.currentTarget;
-        btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Falhou';
-        setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy opacity-60"></i> Duplicar', 2000);
     }
+
+    const btnVer = document.getElementById('btn-acao-ver');
+    if (btnVer) {
+        btnVer.onclick = () => {
+            fecharModal('modal-acoes-produto');
+            if (typeof memDashboard !== 'undefined' && memDashboard.loja && memDashboard.loja.slug) {
+                window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}?produto=${p.id}`, '_blank');
+            } else {
+                if(typeof navegarPara === 'function') navegarPara('produto', p.id);
+            }
+        };
+    }
+
+    const btnDuplicar = document.getElementById('btn-acao-duplicar');
+    if (btnDuplicar) {
+        btnDuplicar.onclick = () => {
+            if (confirm(`Tens a certeza que queres duplicar "${p.nome}"?`)) {
+                duplicarProdutoDefinitivo(p);
+            }
+        };
+    }
+
+    const btnEditar = document.getElementById('btn-acao-editar');
+    if (btnEditar) {
+        btnEditar.onclick = () => {
+            fecharModal('modal-acoes-produto');
+            if(typeof mostrarNotificacao === "function") mostrarNotificacao('Reencaminhar para edição...');
+            navegarAnimado('criar-produto');
+        };
+    }
+
+    const btnEliminar = document.getElementById('btn-acao-eliminar');
+    if (btnEliminar) {
+        btnEliminar.onclick = () => {
+            if (confirm(`Tens a certeza que queres eliminar "${p.nome}"? Esta ação é definitiva e não pode ser revertida.`)) {
+                eliminarProdutoDefinitivo(p.id);
+            }
+        };
+    }
+
+    abrirModal('modal-acoes-produto');
 };
 
-window.verProdutoLoja = function(id) {
-    let slugLoja = '';
-    
-    // Procura o slug da loja na Cache local para guiar até o produto final no front-end de cliente
-    if (typeof memDashboard !== 'undefined' && memDashboard.loja && memDashboard.loja.slug) {
-        slugLoja = memDashboard.loja.slug;
+async function alternarStatusVisibilidade(id, novoStatusAtivo) {
+    try {
+        const { error } = await window.supabaseClient.from('produtos').update({ ativo: novoStatusAtivo }).eq('id', id);
+        if (error) throw error;
+
+        // Atualiza a cache inter-páginas magicamente
+        const idx = memProdutosPage.findIndex(p => p.id === id);
+        if (idx !== -1) memProdutosPage[idx].ativo = novoStatusAtivo;
+
+        if (typeof memDashboard !== 'undefined' && memDashboard.produtos) {
+            const idxDash = memDashboard.produtos.findIndex(p => p.id === id);
+            if (idxDash !== -1) memDashboard.produtos[idxDash].ativo = novoStatusAtivo;
+            if (typeof renderizarProdutosDashboard === 'function') renderizarProdutosDashboard(memDashboard.produtos);
+        }
+
+        fecharModal('modal-acoes-produto');
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao(novoStatusAtivo ? 'Produto publicado online!' : 'Produto agora está em rascunho.');
+        
+        processarEExibirProdutos();
+
+    } catch (e) {
+        console.error(e);
+        alert("Ocorreu um erro ao tentar alterar a visibilidade do produto.");
     }
-    
-    if (slugLoja) {
-        // Abre um novo separador já com o URL da loja a passar o Produto por filtro
-        // Altera aqui o routing final caso já estejas a usar rotas diferentes para a vitrine
-        window.open(window.location.origin + '/loja/' + slugLoja + '?p=' + id, '_blank');
-    } else {
-        alert("O teu link não carregou adequadamente, entra e volta no painel central ou refresca a página.");
+}
+
+async function eliminarProdutoDefinitivo(id) {
+    try {
+        const btnEliminar = document.getElementById('btn-acao-eliminar');
+        if (btnEliminar) {
+            btnEliminar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A remover definitivamente...';
+            btnEliminar.classList.add('pointer-events-none', 'opacity-50');
+        }
+
+        const { error } = await window.supabaseClient.from('produtos').delete().eq('id', id);
+        if (error) throw error;
+
+        // Limpa da Mémoria em todo o lado instantaneamente
+        memProdutosPage = memProdutosPage.filter(p => p.id !== id);
+        
+        if (typeof memDashboard !== 'undefined' && memDashboard.produtos) {
+            memDashboard.produtos = memDashboard.produtos.filter(p => p.id !== id);
+            if (typeof renderizarProdutosDashboard === 'function') renderizarProdutosDashboard(memDashboard.produtos);
+        }
+
+        fecharModal('modal-acoes-produto');
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Produto eliminado da loja.');
+
+        processarEExibirProdutos();
+
+    } catch (e) {
+        console.error(e);
+        alert("Ocorreu um erro ao eliminar o produto.");
+        fecharModal('modal-acoes-produto');
     }
-};
+}
+
+async function duplicarProdutoDefinitivo(p) {
+    try {
+        const btnDuplicar = document.getElementById('btn-acao-duplicar');
+        if (btnDuplicar) {
+            btnDuplicar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A duplicar...';
+            btnDuplicar.classList.add('pointer-events-none', 'opacity-50');
+        }
+
+        const produtoDuplicado = {
+            loja_id: p.loja_id,
+            nome: p.nome + ' (Cópia)',
+            categoria: p.categoria,
+            preco: p.preco,
+            preco_promo: p.preco_promo,
+            descricao: p.descricao,
+            controlar_estoque: p.controlar_estoque,
+            estoque_qtd: p.estoque_qtd,
+            variantes: p.variantes,
+            fotos: p.fotos,
+            ativo: false // Starts as Draft para o utilizador poder editar sem publicá-lo acidentalmente
+        };
+
+        const { data, error } = await window.supabaseClient.from('produtos').insert([produtoDuplicado]).select();
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+            if (memProdutosPage) memProdutosPage.unshift(data[0]);
+            
+            if (typeof memDashboard !== 'undefined' && memDashboard.produtos) {
+                memDashboard.produtos.unshift(data[0]);
+                if (typeof renderizarProdutosDashboard === 'function') renderizarProdutosDashboard(memDashboard.produtos);
+            }
+        }
+
+        fecharModal('modal-acoes-produto');
+        if (typeof mostrarNotificacao === 'function') mostrarNotificacao('Produto duplicado com sucesso!');
+
+        processarEExibirProdutos();
+
+    } catch (e) {
+        console.error(e);
+        alert("Ocorreu um erro ao duplicar o produto.");
+        fecharModal('modal-acoes-produto');
+    }
+}
