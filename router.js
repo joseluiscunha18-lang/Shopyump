@@ -13,7 +13,7 @@ const SPA = (() => {
         'seguranca':     { tpl: 'tpl-seguranca',     titulo: 'Segurança',  sub: 'Configurações',    voltar: true,  nav: false },
         'criar-produto': { tpl: 'tpl-criar-produto', titulo: 'Novo Produto', sub: 'Adicionar',      voltar: true,  nav: false },
         'produtos':      { tpl: 'tpl-produtos',      titulo: 'Produtos',   sub: 'Gestão',           voltar: false, nav: true  },
-        'vendas':        { tpl: 'tpl-vendas',        titulo: 'Vendas',     sub: 'Histórico',        voltar: false, nav: true  },
+        'vendas':        { tpl: 'tpl-vendas',        titulo: 'Pedidos',     sub: 'Histórico',        voltar: false, nav: true  },
         'editar-loja':   { tpl: 'tpl-editar-loja',  titulo: 'Editar Loja', sub: 'Configurações',   voltar: true,  nav: false },
     };
 
@@ -48,7 +48,7 @@ const SPA = (() => {
                 btn.classList.remove('text-slate-900', 'dark:text-white');
                 btn.classList.add('text-slate-400', 'dark:text-slate-500');
             });
-            const navMap = { 'dashboard': 'nav-inicio', 'produtos': 'nav-produtos', 'produtos': 'nav-vendas', 'editar-loja': 'nav-loja' };
+            const navMap = { 'dashboard': 'nav-inicio', 'produtos': 'nav-produtos', 'vendas': 'nav-vendas', 'editar-loja': 'nav-loja' };
             const navBtn = document.getElementById(navMap[pagina]);
             if (navBtn) {
                 navBtn.classList.add('text-slate-900', 'dark:text-white');
