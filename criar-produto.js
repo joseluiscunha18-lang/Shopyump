@@ -1477,13 +1477,20 @@ document.addEventListener('spa:page-loaded', (e) => {
 });
 
 function initCriarProdutoSPA() {
-    // Reset de estado
+    // Reset de estado base
     totalFotosSubmetidas = 0;
     substituindoFoto = false;
     fotoSelecionadaParaAcao = null;
     isEdited = false;
     selectedBgColor = '#F5F5F7';
     motorIniciado = false;
+
+    // Limpar galeria visual (caso tenha havido uploads antes)
+    const galeria = document.getElementById('media-gallery');
+    if (galeria) {
+        galeria.querySelectorAll('.photo-slot').forEach(el => el.remove());
+        if (typeof atualizarContador === 'function') atualizarContador();
+    }
 
     // Inicializa módulos
     renderizarCategorias();
@@ -1508,15 +1515,126 @@ function initCriarProdutoSPA() {
         });
     }
 
-    // Botão publicar/rascunho
+    // --- LÓGICA DE EDIÇÃO: RECUPERAR PRODUTO ---
+    const p = window.produtoEmEdicao;
+    const isEdicao = !!p;
+
+    if (isEdicao) {
+        const headerTitulo = document.getElementById('header-titulo');
+        const headerSubtitulo = document.getElementById('header-subtitulo');
+        if (headerTitulo) headerTitulo.textContent = 'Editar Produto';
+        if (headerSubtitulo) headerSubtitulo.textContent = 'Atualizar';
+
+        document.getElementById('prod-nome').value = p.nome || '';
+        document.getElementById('prod-preco').value = p.preco || '';
+        document.getElementById('prod-desc').value = p.descricao || '';
+        
+        if (p.categoria) {
+            document.getElementById('textoCategoria').innerText = p.categoria;
+            document.getElementById('prod-categoria').value = p.categoria;
+            document.getElementById('textoCategoria').classList.remove('text-slate-400');
+            document.getElementById('textoCategoria').classList.add('text-[#0F172A]');
+            if (typeof atualizarVariantesPorCategoria === 'function') {
+                atualizarVariantesPorCategoria(p.categoria);
+            }
+        }
+
+        if (p.preco_promo && p.preco_promo > 0) {
+            if (checkPromo) checkPromo.checked = true;
+            if (campoPromo) campoPromo.classList.remove('opacity-30', 'pointer-events-none');
+            const promoInput = document.querySelector('#campo-promo input[type="number"]');
+            if (promoInput) promoInput.value = p.preco_promo;
+        }
+
+        if (p.controlar_estoque) {
+            const toggleStockEl = document.getElementById('toggle-stock');
+            if (toggleStockEl) toggleStockEl.checked = true;
+            const areaQtd = document.getElementById('area-quantidade');
+            if (areaQtd) areaQtd.style.display = 'block';
+            document.getElementById('prod-stock-qtd').value = p.estoque_qtd || '';
+        }
+
+        // Recuperar Variantes (Cores, Tamanhos, Números)
+        ['container-cores', 'container-tamanhos', 'container-numeracao'].forEach(id => {
+            const c = document.getElementById(id);
+            if (c) c.querySelectorAll('button').forEach(b => b.classList.remove('chip-selected'));
+        });
+
+        if (p.variantes) {
+            const addVars = (containerId, lista) => {
+                const c = document.getElementById(containerId);
+                if (!c || !lista) return;
+                lista.forEach(val => {
+                    const existente = Array.from(c.querySelectorAll('button')).find(b => b.innerText.toUpperCase() === val.toUpperCase());
+                    if (existente) {
+                        existente.classList.add('chip-selected');
+                    } else {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = "h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition-all active:scale-95 shrink-0 animate-pop chip-selected";
+                        btn.innerText = val;
+                        btn.onclick = function() { toggleOption(this); };
+                        c.appendChild(btn);
+                    }
+                });
+            };
+            if (p.variantes.cores) addVars('container-cores', p.variantes.cores);
+            if (p.variantes.tamanhos) addVars('container-tamanhos', p.variantes.tamanhos);
+            if (p.variantes.numeracao) addVars('container-numeracao', p.variantes.numeracao);
+        }
+
+        // Recuperar Fotos (Renderiza na grelha sem as mandar duplicar no site)
+        if (p.fotos && p.fotos.length > 0) {
+            p.fotos.forEach(fotoUrl => {
+                if (typeof adicionarFotoGrelha === 'function') adicionarFotoGrelha(fotoUrl);
+            });
+            if (typeof atualizarSeloCapa === 'function') atualizarSeloCapa();
+        }
+        
+        const tglAtivo = document.getElementById('toggle-ativo');
+        if (tglAtivo) tglAtivo.checked = p.ativo;
+
+    } else {
+        // RESET TOTAL (Cenário Produto em Branco)
+        document.getElementById('prod-nome').value = '';
+        document.getElementById('prod-preco').value = '';
+        document.getElementById('prod-desc').value = '';
+        
+        const promoInput = document.querySelector('#campo-promo input[type="number"]');
+        if (promoInput) promoInput.value = '';
+        if (checkPromo) checkPromo.checked = false;
+        if (campoPromo) campoPromo.classList.add('opacity-30', 'pointer-events-none');
+        
+        document.getElementById('textoCategoria').innerText = 'Escolher categoria...';
+        document.getElementById('prod-categoria').value = '';
+        document.getElementById('textoCategoria').classList.add('text-slate-400');
+        document.getElementById('textoCategoria').classList.remove('text-[#0F172A]');
+        
+        const toggleStockEl = document.getElementById('toggle-stock');
+        if (toggleStockEl) toggleStockEl.checked = false;
+        const areaQtd = document.getElementById('area-quantidade');
+        if (areaQtd) areaQtd.style.display = 'none';
+        document.getElementById('prod-stock-qtd').value = '';
+        
+        const tglAtivo = document.getElementById('toggle-ativo');
+        if (tglAtivo) tglAtivo.checked = true;
+
+        ['container-cores', 'container-tamanhos', 'container-numeracao'].forEach(id => {
+            const c = document.getElementById(id);
+            if (c) c.querySelectorAll('button').forEach(b => b.classList.remove('chip-selected'));
+        });
+    }
+
+    // Botão publicar/rascunho (Adapta o nome se estiveres em edição!)
     const toggleAtivo = document.getElementById('toggle-ativo');
     const btnMain = document.getElementById('btn-main-action');
+    
     if (toggleAtivo && btnMain) {
-        toggleAtivo.addEventListener('change', function() {
+        const atualizarBotao = function() {
             const texto = btnMain.querySelector('span');
             const icone = btnMain.querySelector('i');
-            if (this.checked) {
-                texto.innerText = "Publicar Produto";
+            if (toggleAtivo.checked) {
+                texto.innerText = isEdicao ? "Guardar Alterações" : "Publicar Produto";
                 icone.className = "fas fa-check text-sm";
                 btnMain.classList.remove('bg-slate-500');
                 btnMain.classList.add('bg-[#0F172A]');
@@ -1526,6 +1644,8 @@ function initCriarProdutoSPA() {
                 btnMain.classList.remove('bg-[#0F172A]');
                 btnMain.classList.add('bg-slate-500');
             }
-        });
+        };
+        toggleAtivo.addEventListener('change', atualizarBotao);
+        atualizarBotao(); // Correr à entrada para acertar estado!
     }
 }

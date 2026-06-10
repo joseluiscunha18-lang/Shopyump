@@ -89,6 +89,8 @@ let produtoSelecionadoAcoes = null;
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'produtos') {
+        window.produtoEmEdicao = null; // Limpa para garantir que clicar em "Novo Produto" cria do zero
+        
         if (!memProdutosPage && typeof memDashboard !== 'undefined' && memDashboard.produtos) {
             memProdutosPage = memDashboard.produtos;
         }
@@ -312,8 +314,9 @@ window.abrirModalAcoesProduto = function(id) {
     const btnEditar = document.getElementById('btn-acao-editar');
     if (btnEditar) {
         btnEditar.onclick = () => {
+            window.produtoEmEdicao = p; // Guarda o produto na memória
             fecharModal('modal-acoes-produto');
-            if(typeof mostrarNotificacao === "function") mostrarNotificacao('Reencaminhar para edição...');
+            if(typeof mostrarNotificacao === "function") mostrarNotificacao('A preparar editor...');
             navegarAnimado('criar-produto');
         };
     }
