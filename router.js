@@ -48,7 +48,7 @@ const SPA = (() => {
                 btn.classList.remove('text-slate-900', 'dark:text-white');
                 btn.classList.add('text-slate-400', 'dark:text-slate-500');
             });
-            const navMap = { 'dashboard': 'nav-inicio', 'produtos': 'nav-produtos', 'vendas': 'nav-vendas', 'editar-loja': 'nav-loja' };
+            const navMap = { 'dashboard': 'nav-inicio', 'produtos': 'nav-produtos', 'produtos': 'nav-vendas', 'editar-loja': 'nav-loja' };
             const navBtn = document.getElementById(navMap[pagina]);
             if (navBtn) {
                 navBtn.classList.add('text-slate-900', 'dark:text-white');
