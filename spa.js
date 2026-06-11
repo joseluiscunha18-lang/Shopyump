@@ -89,7 +89,16 @@ async function inicializarLoja() {
             });
             document.getElementById('loader-global').classList.add('opacity-0', 'pointer-events-none');
             document.getElementById('bottom-nav').classList.remove('hidden');
-            navegarPara('home');
+            
+            const params = new URLSearchParams(window.location.search);
+            const produtoIdQuery = params.get('produto');
+            
+            if (produtoIdQuery) {
+                navegarPara('produto', produtoIdQuery);
+            } else {
+                navegarPara('home');
+            }
+            
             atualizarBadge();
         } else {
             document.getElementById('loader-global').classList.add('opacity-0', 'pointer-events-none');
