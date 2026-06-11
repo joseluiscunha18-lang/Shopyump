@@ -1437,9 +1437,28 @@ async function guardarProduto() {
             ativo: !isRascunho
         };
 
-        const { error: insertError } = await window.supabaseClient.from('produtos').insert([produtoData]);
+        let dbError;
         
-        if (insertError) throw insertError;
+        // Verifica se é uma edição ou um produto novo!
+        if (window.produtoEmEdicao && window.produtoEmEdicao.id) {
+            // Se estiver a editar, faz UPDATE (Atualiza) o produto existente
+            const { error } = await window.supabaseClient
+                .from('produtos')
+                .update(produtoData)
+                .eq('id', window.produtoEmEdicao.id);
+            dbError = error;
+        } else {
+            // Se for um produto novo, faz INSERT (Cria) na base de dados
+            const { error } = await window.supabaseClient
+                .from('produtos')
+                .insert([produtoData]);
+            dbError = error;
+        }
+        
+        if (dbError) throw dbError;
+
+        // Limpa o estado depois de guardar, para que os próximos produtos novos não deem erro
+        window.produtoEmEdicao = null;
 
         // ==========================================
         //  NOVO: FORÇA ATUALIZAÇÃO DA CACHE 
