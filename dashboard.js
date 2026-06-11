@@ -5,8 +5,8 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none flex items-center h-9">
-                            <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md"></div>
+                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-tight pr-4">
+                            <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md mt-1"></div>
                         </h2>
                         
                     </div>
@@ -482,7 +482,7 @@ function renderizarSaudacaoMemoria() {
             icone = '🌙'; // Lua
         }
 
-        h2Saudacao.innerHTML = `${saudacao}, ${nomeVendedor} <span class="text-3xl">${icone}</span>`;
+        h2Saudacao.innerHTML = `${saudacao}, ${nomeVendedor}&nbsp;<span class="inline-block align-baseline text-[28px]">${icone}</span>`;
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
