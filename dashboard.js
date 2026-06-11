@@ -610,7 +610,7 @@ function renderizarPendentesDashboard(pendentes) {
             const qtdItens = p.itens ? p.itens.length : 0;
             const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome : 'Sem itens';
             
-            // Busca a foto do primeiro item. Se não existir, usa um placeholder elegante.
+            // Busca a foto do primeiro item.
             const fotoProduto = (p.itens && p.itens[0] && (p.itens[0].foto || p.itens[0].imagem)) 
                                 ? (p.itens[0].foto || p.itens[0].imagem) 
                                 : 'https://placehold.co/150x150/f8fafc/94a3b8?text=Sem+Foto';
@@ -629,8 +629,8 @@ function renderizarPendentesDashboard(pendentes) {
                         </div>
                         
                         <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1">
-                            <span class="truncate pr-1">${descItens}</span>
-                            <span class="flex-shrink-0 text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-[6px] ml-1">${qtdItens} item(s)</span>
+                            <span class="truncate">${descItens}</span>
+                            <span class="ml-auto flex-shrink-0 text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full">${qtdItens} item(ns)</span>
                         </div>
                         
                         <div class="flex items-center justify-between">
