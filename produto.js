@@ -295,7 +295,7 @@ window.abrirModalAcoesProduto = function(id) {
         btnVer.onclick = () => {
             fecharModal('modal-acoes-produto');
             if (typeof memDashboard !== 'undefined' && memDashboard.loja && memDashboard.loja.slug) {
-                window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}?produto=${p.id}`, '_blank');
+                window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}?produto=${p.id}&admin=true`, '_blank');
             } else {
                 if(typeof navegarPara === 'function') navegarPara('produto', p.id);
             }
