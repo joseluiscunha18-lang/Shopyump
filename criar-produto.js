@@ -198,11 +198,15 @@ document.body.insertAdjacentHTML('beforeend', `
                 </section>
 
                 <!-- BOTÃO PUBLICAR -->
-                <div class="px-0 pt-2 pb-6">
-                    <button id="btn-main-action" onclick="guardarProduto()" class="w-full bg-[#0F172A] dark:bg-white text-white dark:text-slate-900 font-black py-5 rounded-2xl shadow-xl active:scale-[0.96] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-sm">
-                        <i class="fas fa-check"></i>
-                        <span>Publicar Produto</span>
-                    </button>
+                <div class="h-24 w-full shrink-0 pointer-events-none"></div>
+
+                <div class="fixed bottom-0 left-0 right-0 p-4 pb-6 bg-white/85 dark:bg-[#0b0f1a]/85 backdrop-blur-xl border-t border-slate-200/60 dark:border-slate-800/60 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+                    <div class="max-w-2xl mx-auto">
+                        <button id="btn-main-action" onclick="guardarProduto()" class="w-full bg-[#0F172A] dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.15)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:scale-[0.96] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
+                            <i class="fas fa-check"></i>
+                            <span>Publicar Produto</span>
+                        </button>
+                    </div>
                 </div>
 
             </main>
