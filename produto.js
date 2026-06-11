@@ -3,7 +3,7 @@ document.body.insertAdjacentHTML('beforeend', `
         <div class="pt-20 px-6 main-wrapper pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
             <div class="max-w-lg mx-auto space-y-5">
                 
-                <div class="px-2 pt-2 pb-1">
+                <div class="px-2 pt-2 pb-1 text-right">
                     <p id="produtos-count-page" class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">A carregar...</p>
                 </div>
                 
