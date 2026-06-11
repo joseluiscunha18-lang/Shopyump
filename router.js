@@ -37,17 +37,8 @@ const SPA = (() => {
             if (headerTitulo) headerTitulo.textContent = cfg.titulo;
             if (headerSubtitulo) headerSubtitulo.textContent = cfg.sub;
 
-            // Botão voltar com navegação inteligente
-            if (btnVoltar) {
-                btnVoltar.classList.toggle('hidden', !cfg.voltar);
-                btnVoltar.onclick = () => {
-                    if (pagina === 'criar-produto') {
-                        navegarAnimado('produtos');
-                    } else {
-                        navegarAnimado('dashboard'); // Volta para o início nos restantes
-                    }
-                };
-            }
+            // Botão voltar
+            if (btnVoltar) btnVoltar.classList.toggle('hidden', !cfg.voltar);
 
             // Bottom nav
             if (bottomNav) bottomNav.style.display = cfg.nav ? '' : 'none';
