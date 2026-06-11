@@ -311,7 +311,14 @@ async function carregarDadosLojaDashboard() {
             } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
-                if (h2Saudacao) h2Saudacao.innerHTML = 'Olá! <span class="text-3xl">👋</span>';
+                if (h2Saudacao) {
+        const horaAtual = new Date().getHours();
+        let saudacao = 'Boa noite';
+        if (horaAtual >= 6 && horaAtual < 12) saudacao = 'Bom dia';
+        else if (horaAtual >= 12 && horaAtual < 18) saudacao = 'Boa tarde';
+        
+        h2Saudacao.innerHTML = `${saudacao}! <span class="text-3xl">👋</span>`;
+    }
                 if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
         }
@@ -462,7 +469,18 @@ function renderizarSaudacaoMemoria() {
     
     if (h2Saudacao) {
         const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
-        h2Saudacao.innerHTML = `Olá, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+        
+        // Lógica de saudação por hora do dia
+        const horaAtual = new Date().getHours();
+        let saudacao = 'Boa noite'; // das 18h às 5h59
+        
+        if (horaAtual >= 6 && horaAtual < 12) {
+            saudacao = 'Bom dia'; // das 6h às 11h59
+        } else if (horaAtual >= 12 && horaAtual < 18) {
+            saudacao = 'Boa tarde'; // das 12h às 17h59
+        }
+        
+        h2Saudacao.innerHTML = `${saudacao}, ${nomeVendedor} <span class="text-3xl">👋</span>`;
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
