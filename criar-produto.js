@@ -57,9 +57,9 @@ document.body.insertAdjacentHTML('beforeend', `
                         <h2 class="text-[13px] font-black text-slate-900 dark:text-white">Preço</h2>
                         <label for="check-promo" class="flex items-center gap-2 cursor-pointer select-none py-1">
                             <span class="text-[11px] font-semibold text-[#4A5568] dark:text-slate-400">Promoção</span>
-                            <div class="relative inline-block w-7 h-4 align-middle">
-                                <input type="checkbox" id="check-promo" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 border-slate-200 appearance-none cursor-pointer z-10 top-0 left-0 transition-transform duration-300"/>
-                                <div class="toggle-label block overflow-hidden h-4 rounded-full bg-slate-200 transition-colors duration-300"></div>
+                            <div class="relative inline-flex items-center">
+                                <input type="checkbox" id="check-promo" class="sr-only peer"/>
+                                <div class="w-8 h-4 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[#0F172A] shadow-inner"></div>
                             </div>
                         </label>
                     </div>
@@ -113,10 +113,10 @@ document.body.insertAdjacentHTML('beforeend', `
                             <p class="text-[12px] font-bold text-slate-900 dark:text-white">Controlar Stock</p>
                             <p class="text-[11px] text-slate-500 font-medium tracking-tight">Gerir quantidades disponíveis</p>
                         </div>
-                        <div class="relative inline-block w-12 align-middle select-none">
-                            <input type="checkbox" id="toggle-stock" onchange="toggleStock()" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-slate-200 appearance-none cursor-pointer z-10 top-0 left-0"/>
-                            <label for="toggle-stock" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
-                        </div>
+                        <label for="toggle-stock" class="relative inline-flex items-center cursor-pointer select-none">
+                            <input type="checkbox" id="toggle-stock" onchange="toggleStock()" class="sr-only peer"/>
+                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F172A] shadow-inner"></div>
+                        </label>
                     </div>
                     <div id="area-quantidade" class="hidden animate-pop">
                         <label class="block text-[11px] font-semibold text-[#4A5568] mb-1.5 ml-1">Quantidade total</label>
@@ -190,10 +190,10 @@ document.body.insertAdjacentHTML('beforeend', `
                             <p class="text-[12px] font-bold text-slate-900 dark:text-white">Ativo na loja</p>
                             <p class="text-[11px] text-slate-500 font-medium">O produto ficará visível para os clientes</p>
                         </div>
-                        <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
-                            <input type="checkbox" id="toggle-ativo" checked class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-slate-200 appearance-none cursor-pointer z-10 top-0 left-0"/>
-                            <label for="toggle-ativo" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
-                        </div>
+                        <label for="toggle-ativo" class="relative inline-flex items-center cursor-pointer select-none">
+                            <input type="checkbox" id="toggle-ativo" checked class="sr-only peer"/>
+                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F172A] shadow-inner"></div>
+                        </label>
                     </div>
                 </section>
 
