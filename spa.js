@@ -51,6 +51,13 @@ async function inicializarLoja() {
             // Se o URL tem ?admin=true, finge discretamente na sessão que já visitou, 
             // sem NUNCA escrever na base de dados! (Não suja o gráfico)
             sessionStorage.setItem(chaveVisiteiHoje, 'lojista');
+            
+            // MÁGICA: Apaga o parâmetro 'admin' da barra de URL imediatamente!
+            // Assim o lojista vê e copia sempre o URL limpo (ex: sem o ?admin=true).
+            searchParams.delete('admin');
+            const novaQuery = searchParams.toString() ? '?' + searchParams.toString() : '';
+            window.history.replaceState({}, document.title, window.location.pathname + novaQuery);
+            
         } else if (!sessionStorage.getItem(chaveVisiteiHoje)) {
             // Conta APENAS se for um cliente verdadeiro e se for a primeira entrada
             window.supabaseClient.from('visitas')
