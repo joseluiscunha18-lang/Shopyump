@@ -1,6 +1,6 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-produtos">
-        <div class="pt-24 px-6 main-wrapper pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
+        <div class="pt-20 px-6 main-wrapper pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
             <div class="max-w-lg mx-auto space-y-5">
                 
                 <div class="px-2 pt-2 pb-1">
