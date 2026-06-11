@@ -16,21 +16,15 @@ function toggleSidebar() {
     const menu = document.getElementById('menuZ');
     const overlay = document.getElementById('overlay');
     if (!menu) return;
-    menu.classList.toggle('open');
-    overlay && overlay.classList.toggle('show');
     
-    // Trava e Destrava Absoluta para Dispositivos Móveis
+    menu.classList.toggle('open');
+    if (overlay) overlay.classList.toggle('show');
+    
+    // Simplesmente desativa o scroll do body sem alterar a posição para evitar saltos
     if (menu.classList.contains('open')) {
-        document.body.dataset.scrollY = window.scrollY; // Guarda onde estavas
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
+        document.body.style.overflow = 'hidden';
     } else {
-        const voltaOndeEstavas = document.body.dataset.scrollY || '0';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        window.scrollTo(0, parseInt(voltaOndeEstavas));
+        document.body.style.overflow = '';
     }
 }
 
