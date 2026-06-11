@@ -295,7 +295,14 @@ window.abrirModalAcoesProduto = function(id) {
         btnVer.onclick = () => {
             fecharModal('modal-acoes-produto');
             if (typeof memDashboard !== 'undefined' && memDashboard.loja && memDashboard.loja.slug) {
-                window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}?produto=${p.id}`, '_blank');
+                /*
+                 Altere o URL final conforme a rota exata da sua loja. 
+                 A maioria das lojas usa o formato: /loja/omeuslug/produto/id_do_produto
+                */
+                window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}/produto/${p.id}`, '_blank');
+                
+                // Se a sua loja funcionar com HASH (#) ou query alternativa, pode ser necessário algo como:
+                // window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}#produto=${p.id}`, '_blank');
             } else {
                 if(typeof navegarPara === 'function') navegarPara('produto', p.id);
             }
