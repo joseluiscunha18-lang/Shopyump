@@ -3,14 +3,8 @@ document.body.insertAdjacentHTML('beforeend', `
         <div class="pt-24 px-6 main-wrapper pb-24 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
             <div class="max-w-lg mx-auto space-y-5">
                 
-                <div class="flex justify-between items-center px-1">
-                    <div>
-                        <h2 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Meus Produtos</h2>
-                        <p id="produtos-count-page" class="text-[11px] font-bold text-slate-500 mt-0.5">A carregar...</p>
-                    </div>
-                    <button onclick="navegarAnimado('criar-produto')" class="text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/20 px-4 py-2 flex items-center gap-1.5 rounded-xl uppercase tracking-widest active:scale-95 transition-all shadow-sm">
-                        <i class="fas fa-plus"></i> Novo
-                    </button>
+                <div class="px-2 pt-2 pb-1">
+                    <p id="produtos-count-page" class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">A carregar...</p>
                 </div>
                 
                 <div class="relative group mt-2">
