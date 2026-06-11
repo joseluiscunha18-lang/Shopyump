@@ -16,21 +16,17 @@ function toggleSidebar() {
     const menu = document.getElementById('menuZ');
     const overlay = document.getElementById('overlay');
     if (!menu) return;
+    
     menu.classList.toggle('open');
     overlay && overlay.classList.toggle('show');
     
-    // Trava e Destrava Absoluta para Dispositivos Móveis
+    // Método aprimorado: bloqueia o scroll do fundo sem fazer a página saltar
     if (menu.classList.contains('open')) {
-        document.body.dataset.scrollY = window.scrollY; // Guarda onde estavas
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.top = `-${window.scrollY}px`;
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden'; // Extra segurança para Safari/iOS
     } else {
-        const voltaOndeEstavas = document.body.dataset.scrollY || '0';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        window.scrollTo(0, parseInt(voltaOndeEstavas));
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
     }
 }
 
