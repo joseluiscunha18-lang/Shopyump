@@ -8,13 +8,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-none flex items-center h-9">
                             <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md"></div>
                         </h2>
-                        <div class="flex items-center gap-1.5 mt-1.5 ml-1 opacity-80">
-                            <span class="relative flex h-1.5 w-1.5">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                            </span>
-                            <span class="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">Loja Online</span>
-                        </div>
+                        
                     </div>
                     <div class="flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm mt-1 p-1 gap-1">
                         <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
@@ -308,17 +302,23 @@ async function carregarDadosLojaDashboard() {
                 }
                 // --- FIM: NOVO CÓDIGO TEMPO REAL ---
 
-            } else {
+           } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
                 const headerTitulo = document.getElementById('header-titulo');
-                if (h2Saudacao) {
-        const horaAtual = new Date().getHours();
-        let saudacao = 'Boa noite';
-        if (horaAtual >= 6 && horaAtual < 12) saudacao = 'Bom dia';
-        else if (horaAtual >= 12 && horaAtual < 18) saudacao = 'Boa tarde';
-        
-        h2Saudacao.innerHTML = `${saudacao}! <span class="text-3xl">👋</span>`;
-    }
+                
+                const hora = new Date().getHours();
+                let saudacao = 'Bom dia';
+                let icone = '☀️';
+                
+                if (hora >= 12 && hora < 18) {
+                    saudacao = 'Boa tarde';
+                    icone = '☕';
+                } else if (hora >= 18 || hora < 6) {
+                    saudacao = 'Boa noite';
+                    icone = '🌙';
+                }
+
+                if (h2Saudacao) h2Saudacao.innerHTML = `${saudacao}! <span class="text-3xl">${icone}</span>`;
                 if (headerTitulo) headerTitulo.innerText = 'Painel';
             }
         }
@@ -470,17 +470,19 @@ function renderizarSaudacaoMemoria() {
     if (h2Saudacao) {
         const nomeVendedor = loja.vendedor_nome ? loja.vendedor_nome.split(' ')[0] : 'Lojista';
         
-        // Lógica de saudação por hora do dia
-        const horaAtual = new Date().getHours();
-        let saudacao = 'Boa noite'; // das 18h às 5h59
+        const hora = new Date().getHours();
+        let saudacao = 'Bom dia';
+        let icone = '☀️'; // Sol
         
-        if (horaAtual >= 6 && horaAtual < 12) {
-            saudacao = 'Bom dia'; // das 6h às 11h59
-        } else if (horaAtual >= 12 && horaAtual < 18) {
-            saudacao = 'Boa tarde'; // das 12h às 17h59
+        if (hora >= 12 && hora < 18) {
+            saudacao = 'Boa tarde';
+            icone = '☕'; // Café / Tarde
+        } else if (hora >= 18 || hora < 6) {
+            saudacao = 'Boa noite';
+            icone = '🌙'; // Lua
         }
-        
-        h2Saudacao.innerHTML = `${saudacao}, ${nomeVendedor} <span class="text-3xl">👋</span>`;
+
+        h2Saudacao.innerHTML = `${saudacao}, ${nomeVendedor} <span class="text-3xl">${icone}</span>`;
     }
     if (headerTitulo) headerTitulo.innerText = loja.nome || '';
     
