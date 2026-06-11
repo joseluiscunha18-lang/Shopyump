@@ -361,8 +361,6 @@ window.renderizarListaPedidos = function() {
                         </div>
                     </div>
                     <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1.5">
-                        <span class="truncate">${p.id.split('-')[0].toUpperCase()}</span>
-                        <span class="mx-1.5 opacity-30">•</span>
                         <span>${qtdItens} item(s)</span>
                     </div>
                     <div class="flex items-center justify-between">
