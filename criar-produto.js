@@ -567,9 +567,7 @@ let selectedBgColor = '#F5F5F7';
 // Esta função agora é chamada pelo Fetch no criar-produto.html
 window.inicializarEventosEditor = function() {
     const galeriaInput = document.getElementById('galeria-input');
-    const modal = document.getElementById('editor-modal');
-    const modalSheet = document.getElementById('editor-sheet');
-    const previewImg = document.getElementById('main-preview-img');
+    // Não precisamos de ligar o visual do Modal aqui, pois vamos inibi-lo por enquanto
     
     if (!galeriaInput) return;
 
@@ -579,31 +577,21 @@ window.inicializarEventosEditor = function() {
         
         const reader = new FileReader();
         reader.onload = function(event) {
-            previewImg.src = event.target.result;
+            
+            // --- INIBIÇÃO DO EDITOR: Em vez de abrir o modal, salta logo para o resultado ---
             isEdited = false;
             
-            document.getElementById('catalog-card').style.backgroundColor = '#ffffff';
-document.getElementById('catalog-card').classList.remove('expanded');
-document.getElementById('fake-bg-removed').classList.add('opacity-0');
-
-            document.getElementById('laser').classList.remove('animate-laser-rl');
-            previewImg.classList.remove('animate-wipe-rl');
+            if (substituindoFoto && fotoSelecionadaParaAcao) {
+                // Se estava a trocar a imagem
+                fotoSelecionadaParaAcao.querySelector('img').src = event.target.result;
+                fotoSelecionadaParaAcao.style.backgroundColor = '#ffffff';
+                substituindoFoto = false;
+            } else {
+                // Se estava apenas a adicionar uma imagem
+                adicionarFotoGrelha(event.target.result);
+            }
             
-            document.getElementById('catalogo-instrucoes').style.display = 'block';
-            document.getElementById('btn-trigger-color-modal').style.display = 'flex';
-            document.getElementById('btn-trocar-foto').style.display = 'flex';
-            
-            const btnConfirm = document.getElementById('btn-confirm-editor');
-            btnConfirm.style.display = 'block';
-            btnConfirm.innerText = 'Continuar com a Imagem Original';
-            btnConfirm.className = 'w-full py-3 bg-transparent text-slate-600 font-bold text-[14px] active:text-slate-900 active:scale-95 transition-all';
-            
-            // Bloqueia o scroll da página de baixo e abre o editor
-            document.body.style.overflow = 'hidden'; 
-            modal.classList.remove('pointer-events-none', 'opacity-0', 'invisible');
-            modalSheet.style.transform = 'translateY(0)';
-            
-            e.target.value = ''; // Permite selecionar a mesma foto novamente
+            e.target.value = ''; // Limpa o input para poder selecionar outra imagem depois
         };
         reader.readAsDataURL(file);
     });
