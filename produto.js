@@ -292,12 +292,35 @@ window.abrirModalAcoesProduto = function(id) {
 
     const btnVer = document.getElementById('btn-acao-ver');
     if (btnVer) {
-        btnVer.onclick = () => {
+        btnVer.onclick = async () => {
             fecharModal('modal-acoes-produto');
+            
+            // Verifica se temos o link da loja em cache ativo (quando navegado pelo Dashboard)
             if (typeof memDashboard !== 'undefined' && memDashboard.loja && memDashboard.loja.slug) {
                 window.open(`${window.location.origin}/loja/${memDashboard.loja.slug}?produto=${p.id}&admin=true`, '_blank');
             } else {
-                if(typeof navegarPara === 'function') navegarPara('produto', p.id);
+                // Se a página de produtos foi recarregada (F5), recuperamos o slug de forma segura antes de abrir!
+                try {
+                    const { data: sessionData } = await window.supabaseClient.auth.getSession();
+                    const userId = sessionData?.session?.user?.id;
+                    
+                    if (userId) {
+                        const { data: loja } = await window.supabaseClient
+                            .from('lojas')
+                            .select('slug')
+                            .eq('perfil_id', userId)
+                            .maybeSingle();
+                            
+                        if (loja && loja.slug) {
+                            window.open(`${window.location.origin}/loja/${loja.slug}?produto=${p.id}&admin=true`, '_blank');
+                            return; // Previne o código de avançar
+                        }
+                    }
+                    // Fallback extremo
+                    if (typeof navegarPara === 'function') navegarPara('produto', p.id);
+                } catch (e) {
+                    if (typeof navegarPara === 'function') navegarPara('produto', p.id);
+                }
             }
         };
     }
