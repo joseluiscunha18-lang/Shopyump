@@ -607,8 +607,8 @@ function renderizarPendentesDashboard(pendentes) {
         pendentes.slice(0, 3).forEach(p => {
             // Novo Design Premium - Cartão Limpo e Clicável
             const dataFormatada = new Date(p.created_at).toLocaleDateString('pt-MZ');
-            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome : 'Pedido sem itens';
-            const extraItens = p.itens && p.itens.length > 1 ? `<span class="text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-md ml-1">+${p.itens.length - 1}</span>` : '';
+            const qtdItens = p.itens ? p.itens.length : 0;
+            const descItens = p.itens && p.itens.length > 0 ? p.itens[0].nome : 'Sem itens';
             
             // Busca a foto do primeiro item. Se não existir, usa um placeholder elegante.
             const fotoProduto = (p.itens && p.itens[0] && (p.itens[0].foto || p.itens[0].imagem)) 
@@ -629,8 +629,8 @@ function renderizarPendentesDashboard(pendentes) {
                         </div>
                         
                         <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1">
-                            <span class="truncate">${descItens}</span>
-                            ${extraItens}
+                            <span class="truncate pr-1">${descItens}</span>
+                            <span class="flex-shrink-0 text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded-[6px] ml-1">${qtdItens} item(s)</span>
                         </div>
                         
                         <div class="flex items-center justify-between">
