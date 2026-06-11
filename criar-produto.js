@@ -198,11 +198,11 @@ document.body.insertAdjacentHTML('beforeend', `
                 </section>
 
                 <!-- BOTÃO PUBLICAR -->
-                <div class="h-24 w-full shrink-0 pointer-events-none"></div>
+                <div class="h-28 w-full shrink-0 pointer-events-none"></div>
 
-                <div class="fixed bottom-0 left-0 right-0 p-4 pb-6 bg-white/85 dark:bg-[#0b0f1a]/85 backdrop-blur-xl border-t border-slate-200/60 dark:border-slate-800/60 z-50 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-                    <div class="max-w-2xl mx-auto">
-                        <button id="btn-main-action" onclick="guardarProduto()" class="w-full bg-[#0F172A] dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_8px_30px_rgba(15,23,42,0.15)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)] active:scale-[0.96] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
+                <div class="fixed bottom-4 left-4 right-4 z-50 pointer-events-none">
+                    <div class="max-w-2xl mx-auto pointer-events-auto">
+                        <button id="btn-main-action" onclick="guardarProduto()" class="w-full bg-[#0F172A]/95 backdrop-blur-md dark:bg-white/95 text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] dark:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.3)] border border-slate-700/50 dark:border-white/20 active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
                             <i class="fas fa-check"></i>
                             <span>Publicar Produto</span>
                         </button>
