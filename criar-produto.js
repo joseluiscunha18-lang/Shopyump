@@ -1448,7 +1448,7 @@ function guardarProduto() {
             }
             
             if (typeof mostrarNotificacao === 'function') {
-                mostrarNotificacao(isRascunho ? "Guardado com sucesso! 📦" : "Produto já está disponível aos clientes. ✨");
+                mostrarNotificacao(isRascunho ? "Guardado com sucesso! 📦" : "Produto já está disponível na loja.");
             }
 
         } catch(err) {
