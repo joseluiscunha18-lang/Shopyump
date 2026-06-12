@@ -1,7 +1,7 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-criar-produto">
-        <div class="bg-[#F8FAFC] dark:bg-[#0b0f1a] min-h-screen pb-10">
-            <main class="max-w-2xl mx-auto p-4 pt-20 space-y-5">
+        <div class="bg-[#F8FAFC] dark:bg-[#0b0f1a] min-h-screen">
+            <main class="max-w-2xl mx-auto px-4 pt-20 pb-4 space-y-5">
                 
                 <!-- FOTOGRAFIAS -->
                 <section class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden">
