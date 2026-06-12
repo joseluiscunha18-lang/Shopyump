@@ -341,7 +341,6 @@ window.abrirModalAcoesProduto = function(id) {
         btnEditar.onclick = () => {
             window.produtoEmEdicao = p; // Guarda o produto na memória
             fecharModal('modal-acoes-produto');
-            if(typeof mostrarNotificacao === "function") mostrarNotificacao('A preparar editor...');
             navegarAnimado('criar-produto');
         };
     }
