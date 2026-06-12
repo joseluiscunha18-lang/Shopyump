@@ -841,11 +841,11 @@ window.selectColor = function(el, color) {
 
 const baseDeConhecimento = [
     { palavras: ["calca", "jeans", "camisa", "camiseta", "vestido", "roupa", "casaco"], caminho: "Moda > Roupas", icone: "fa-tshirt" },
-    { palavras: ["sapato", "tenis", "sandalia", "bota", "chinelo", "calcado"], caminho: "Moda > Cal\\u00e7ado", icone: "fa-shoe-prints" },
-    { palavras: ["bolsa", "mochila", "relogio", "oculos", "joia", "anel"], caminho: "Moda > Acess\\u00f3rios", icone: "fa-gem" },
-    { palavras: ["celular", "telemovel", "iphone", "samsung", "smartphone"], caminho: "Eletr\\u00f3nicos > Celulares", icone: "fa-mobile-alt" },
-    { palavras: ["carregador", "cabo", "fone", "headset", "pelicula"], caminho: "Eletr\\u00f3nicos > Acess\\u00f3rios", icone: "fa-headphones" },
-    { palavras: ["pc", "computador", "laptop", "macbook", "teclado", "mouse"], caminho: "Eletr\\u00f3nicos > Computadores", icone: "fa-laptop" }
+    { palavras: ["sapato", "tenis", "sandalia", "bota", "chinelo", "calcado"], caminho: "Moda > Calçados", icone: "fa-shoe-prints" },
+    { palavras: ["bolsa", "mochila", "relogio", "oculos", "joia", "anel"], caminho: "Moda > Acessórios", icone: "fa-gem" },
+    { palavras: ["celular", "telemovel", "iphone", "samsung", "smartphone"], caminho: "Eletrónicos > Celulares", icone: "fa-mobile-alt" },
+    { palavras: ["carregador", "cabo", "fone", "headset", "pelicula"], caminho: "Eletrónicos > Acessórios", icone: "fa-headphones" },
+    { palavras: ["pc", "computador", "laptop", "macbook", "teclado", "mouse"], caminho: "Eletrónicos > Computadores", icone: "fa-laptop" }
 ];
 
 const categoriasEstrutura = [
@@ -857,35 +857,35 @@ const categoriasEstrutura = [
             {
                 nome: 'Roupas',
                 icone: 'fa-tshirt',
-                itens: ['Camisetas', 'Camisas', 'Cal\\u00e7as', 'Vestidos', 'Saias', 'Casacos']
+                itens: ['Camisetas', 'Camisas', 'Calças', 'Vestidos', 'Saias', 'Casacos']
             },
             {
-                nome: 'Cal\\u00e7ados',
+                nome: 'Calçados',
                 icone: 'fa-shoe-prints',
-                itens: ['T\\u00e9nis', 'Sand\\u00e1lias', 'Botas']
+                itens: ['Ténis', 'Sandálias', 'Botas']
             },
             {
-                nome: 'Acess\\u00f3rios',
+                nome: 'Acessórios',
                 icone: 'fa-gem',
-                itens: ['Bolsas', 'Mochilas', '\\u00d3culos', 'Joias']
+                itens: ['Bolsas', 'Mochilas', 'Óculos', 'Joias']
             }
         ]
     },
     {
         id: 'cat-eletro',
-        nome: 'Eletr\\u00f3nicos',
+        nome: 'Eletrónicos',
         icone: 'fa-laptop',
         subcategorias: [
             { nome: 'Televisores', icone: 'fa-tv' },
             {
-                nome: 'Celulares e Acess\\u00f3rios',
+                nome: 'Celulares e Acessórios',
                 icone: 'fa-mobile-alt',
                 itens: ['Capas', 'Carregadores']
             },
             {
                 nome: 'Computadores',
                 icone: 'fa-laptop',
-                itens: ['Laptops', 'Desktops', 'Acess\\u00f3rios']
+                itens: ['Laptops', 'Desktops', 'Acessórios']
             },
             { nome: 'Consolas e Jogos', icone: 'fa-gamepad' },
             { nome: 'Som', icone: 'fa-headphones' }
@@ -907,19 +907,18 @@ const categoriasEstrutura = [
     },
     {
         id: 'cat-casa',
-        nome: 'Casa e Decora\\u00e7\\u00e3o',
+        nome: 'Casa e Decoração',
         icone: 'fa-home',
         subcategorias: [
             {
-                nome: 'M\\u00f3veis',
+                nome: 'Móveis',
                 icone: 'fa-chair',
-                itens: ['Sof\\u00e1s', 'Camas', 'Mesas']
+                itens: ['Sofás', 'Camas', 'Mesas']
             },
             { nome: 'Cozinha', icone: 'fa-utensils' }
         ]
     }
 ];
-
 
 
 // ══════════════════════════════════════════════════════════════
@@ -937,20 +936,20 @@ function atualizarVariantesPorCategoria(caminhoCategoria) {
     const secTamanhos = document.getElementById('sec-tamanhos');
     const secNumeros = document.getElementById('sec-numeros');
 
-    // 1. Normalizamos para a verificação de palavras-chave
-    const caminhoNormalizado = caminhoCategoria.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
+    // 1. Normalizamos (Filtro corrigido a usar apenas uma barra: \u0300-\u036f )
+    const caminhoNormalizado = caminhoCategoria.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     // Mostramos o container principal
     wrapper.classList.remove('hidden');
 
     // 2. Lógica de Decisão
-    if (caminhoNormalizado.includes('roupa') || caminhoNormalizado.includes('t-shirt')) {
+    if (caminhoNormalizado.includes('roupa') || caminhoNormalizado.includes('t-shirt') || caminhoNormalizado.includes('camis') || caminhoNormalizado.includes('vestido')) {
         // É Roupa: Mostra Cor + Tamanho
         secCores.style.display = 'block';
         secTamanhos.style.display = 'block';
         secNumeros.style.display = 'none';
     } 
-    else if (caminhoNormalizado.includes('calcado') || caminhoNormalizado.includes('sapato')) {
+    else if (caminhoNormalizado.includes('calcado') || caminhoNormalizado.includes('sapato') || caminhoNormalizado.includes('teni') || caminhoNormalizado.includes('bota')) {
         // É Calçado: Mostra Cor + Número
         secCores.style.display = 'block';
         secTamanhos.style.display = 'none';
@@ -958,14 +957,12 @@ function atualizarVariantesPorCategoria(caminhoCategoria) {
     } 
     else if (caminhoCategoria.includes(' > ')) {
         // É outra categoria da LISTA (Ex: Acessórios, Eletrónicos, Beleza)
-        // Por norma, estas categorias só precisam de COR
         secCores.style.display = 'block';
         secTamanhos.style.display = 'none';
         secNumeros.style.display = 'none';
     }
     else {
-        // É uma categoria MANUAL (O utilizador criou uma que não existe na lista)
-        // Mostramos TUDO para garantir que ele tem todas as opções
+        // É uma categoria MANUAL
         secCores.style.display = 'block';
         secTamanhos.style.display = 'block';
         secNumeros.style.display = 'block';
