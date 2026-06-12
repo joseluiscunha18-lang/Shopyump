@@ -338,7 +338,7 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
     imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-2"><img src="${img}" class="w-full object-contain max-h-full drop-shadow-xl rounded-xl"></div>`;
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center"><img src="${img}" class="w-full h-full object-cover"></div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/90 border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     });
 
