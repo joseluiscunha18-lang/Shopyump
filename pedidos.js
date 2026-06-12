@@ -501,14 +501,14 @@ window.abrirModalPedido = function(id) {
         </div>
 
         <div>
-            <h4 class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 px-1">Itens Adquiridos</h4>
+            <h4 class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2 px-1">Itens Selecionados</h4>
             <div class="bg-white dark:bg-navy-900 border border-slate-100 dark:border-navy-800 rounded-[20px] p-4 shadow-sm">
                 ${htmlItens}
             </div>
         </div>
 
         <div class="flex justify-between items-center p-5 bg-slate-900 dark:bg-slate-800 text-white rounded-[20px] shadow-lg mt-5 border border-slate-800 dark:border-slate-700">
-            <span class="text-[10px] font-black uppercase tracking-widest opacity-70">Total Pago</span>
+            <span class="text-[10px] font-black uppercase tracking-widest opacity-70">Total a Pagar</span>
             <span class="text-xl font-black">${parseFloat(pedido.total || 0).toLocaleString('pt-MZ')} <span class="text-[10px] uppercase tracking-widest opacity-70 ml-1">MT</span></span>
         </div>
 
