@@ -1290,9 +1290,7 @@ function toggleSize(btn) {
 // criar-produto.js - Módulo completo integrado no SPA do Dashboard
 // As correções abaixo incluem a atualização instantânea do dashboard e produtos!
 
-async function guardarProduto() {
-    const btnMain = document.getElementById('btn-main-action');
-    const originalText = btnMain.innerHTML;
+function guardarProduto() {
     const toggleAtivo = document.getElementById('toggle-ativo');
     const isRascunho = toggleAtivo ? !toggleAtivo.checked : false;
 
@@ -1308,7 +1306,7 @@ async function guardarProduto() {
     const estoque_qtd = document.getElementById('prod-stock-qtd') ? (parseInt(document.getElementById('prod-stock-qtd').value) || 0) : 0;
 
     if (!nome || !preco) {
-        alert("Preenche o nome e o preço do produto.");
+        alert("Por favor, preencha o nome e o preço do produto.");
         return;
     }
 
@@ -1323,131 +1321,144 @@ async function guardarProduto() {
     extractVariants('container-tamanhos', 'tamanhos');
     extractVariants('container-numeracao', 'numeracao');
 
-    btnMain.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>A guardar...</span>`;
-    btnMain.style.pointerEvents = 'none';
+    // MÁGICA 1: Capturar as fotografias base64/links ANTES de sairmos da página
+    const photoSlots = document.querySelectorAll('.photo-slot img');
+    const fotosCapturadas = [];
+    for(let i = 0; i < photoSlots.length; i++) {
+        fotosCapturadas.push(photoSlots[i].src);
+    }
+    
+    // Capturamos a id se estivermos em modo de edição
+    const produtoEditandoID = (window.produtoEmEdicao && window.produtoEmEdicao.id) ? window.produtoEmEdicao.id : null;
 
-    try {
-        const { data: sessionData } = await window.supabaseClient.auth.getSession();
-        const userId = sessionData?.session?.user?.id;
-        
-        if (!userId) {
-            throw new Error("Sessão expirada.");
-        }
+    // AÇÃO INSTANTÂNEA: Feedback Visual Imediato e Navegação Rápida Pára Tudo 🚀
+    if (typeof mostrarNotificacao === 'function') {
+        mostrarNotificacao(isRascunho ? 'A preparar rascunho...' : 'A publicar na loja...');
+    }
+    
+    // Libertar do estado de edição para os próximos artigos, caso o utilizador clique em novo produto rápido
+    window.produtoEmEdicao = null;
+    
+    // Saída fluente sem espera
+    navegarAnimado('produtos');
 
-        const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
-        if (!loja) throw new Error("Loja não encontrada para este perfil.");
+    // ==========================================
+    // MÁGICA 2: PROCESSAMENTO EM BACKGROUND (IIFE)
+    // ==========================================
+    // Esta função arranca silenciosamente e comunica com o Supabase nos bastidores!
+    (async () => {
+        try {
+            const { data: sessionData } = await window.supabaseClient.auth.getSession();
+            const userId = sessionData?.session?.user?.id;
+            
+            if (!userId) throw new Error("Sessão expirada.");
 
-        const lojaId = loja.id;
-        const photoSlots = document.querySelectorAll('.photo-slot img');
-        const urls = [];
+            const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', userId).maybeSingle();
+            if (!loja) throw new Error("Loja não encontrada para este perfil.");
 
-        for(let i = 0; i < photoSlots.length; i++) {
-            const src = photoSlots[i].src;
-            if (src) {
-                if (src.startsWith('data:')) {
-                    const img = new Image();
-                    img.src = src;
-                    await new Promise(res => img.onload = res);
-                    
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const max_size = 1000;
-                    
-                    if (width > height && width > max_size) {
-                        height *= max_size / width;
-                        width = max_size;
-                    } else if (height > max_size) {
-                        width *= max_size / height;
-                        height = max_size;
+            const lojaId = loja.id;
+            const urls = [];
+
+            // Trabalha as fotos capturadas
+            for(let i = 0; i < fotosCapturadas.length; i++) {
+                const src = fotosCapturadas[i];
+                if (src) {
+                    if (src.startsWith('data:')) {
+                        const img = new Image();
+                        img.src = src;
+                        await new Promise(res => img.onload = res);
+                        
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const max_size = 1000;
+                        
+                        if (width > height && width > max_size) {
+                            height *= max_size / width;
+                            width = max_size;
+                        } else if (height > max_size) {
+                            width *= max_size / height;
+                            height = max_size;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
+                        
+                        const fileName = `${lojaId}/${Date.now()}-${i}.jpg`;
+                        const { data, error } = await window.supabaseClient.storage
+                            .from('produtos')
+                            .upload(fileName, blob, { contentType: 'image/jpeg' });
+                        
+                        if (error) {
+                            console.error('Erro:', error);
+                            throw new Error("Erro ao fazer upload da imagem.");
+                        }
+
+                        const { data: pubData } = window.supabaseClient.storage.from('produtos').getPublicUrl(fileName);
+                        urls.push(pubData.publicUrl);
+                    } else {
+                        urls.push(src); // Preserva as antigas na edição
                     }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.8));
-                    
-                    const fileName = `${lojaId}/${Date.now()}-${i}.jpg`;
-                    const { data, error } = await window.supabaseClient.storage
-                        .from('produtos')
-                        .upload(fileName, blob, { contentType: 'image/jpeg' });
-                    
-                    if (error) {
-                        console.error('Erro:', error);
-                        throw new Error("Erro ao fazer upload da imagem.");
-                    }
-
-                    const { data: pubData } = window.supabaseClient.storage.from('produtos').getPublicUrl(fileName);
-                    urls.push(pubData.publicUrl);
-                } else {
-                    urls.push(src); 
                 }
             }
+
+            const produtoData = {
+                loja_id: lojaId,
+                nome,
+                categoria,
+                preco,
+                preco_promo,
+                descricao,
+                controlar_estoque,
+                estoque_qtd,
+                variantes,
+                fotos: urls,
+                ativo: !isRascunho
+            };
+
+            let dbError;
+            
+            // Background Update / Insert
+            if (produtoEditandoID) {
+                const { error } = await window.supabaseClient
+                    .from('produtos')
+                    .update(produtoData)
+                    .eq('id', produtoEditandoID);
+                dbError = error;
+            } else {
+                const { error } = await window.supabaseClient
+                    .from('produtos')
+                    .insert([produtoData]);
+                dbError = error;
+            }
+            
+            if (dbError) throw dbError;
+
+            // Sucesso Silencioso no Background -> Refrescamos magicamente a Lista de Produtos no Ecrã!
+            if (typeof window.forcarAtualizacaoDashboard === 'function') {
+                window.forcarAtualizacaoDashboard(); 
+            }
+            if (typeof window.forcarAtualizacaoProdutos === 'function') {
+                // Ao forçar atualização os produtos recarregam na tela
+                window.forcarAtualizacaoProdutos();
+            }
+            
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao(isRascunho ? "Guardado com sucesso! 📦" : "Produto já está disponível aos clientes. ✨");
+            }
+
+        } catch(err) {
+            console.error("Erro no background:", err.message);
+            if (typeof mostrarNotificacao === 'function') {
+                mostrarNotificacao("Erro ao gravar produto: " + err.message, "error");
+            }
         }
-
-        const produtoData = {
-            loja_id: lojaId,
-            nome,
-            categoria,
-            preco,
-            preco_promo,
-            descricao,
-            controlar_estoque,
-            estoque_qtd,
-            variantes,
-            fotos: urls,
-            ativo: !isRascunho
-        };
-
-        let dbError;
-        
-        // Verifica se é uma edição ou um produto novo!
-        if (window.produtoEmEdicao && window.produtoEmEdicao.id) {
-            // Se estiver a editar, faz UPDATE (Atualiza) o produto existente
-            const { error } = await window.supabaseClient
-                .from('produtos')
-                .update(produtoData)
-                .eq('id', window.produtoEmEdicao.id);
-            dbError = error;
-        } else {
-            // Se for um produto novo, faz INSERT (Cria) na base de dados
-            const { error } = await window.supabaseClient
-                .from('produtos')
-                .insert([produtoData]);
-            dbError = error;
-        }
-        
-        if (dbError) throw dbError;
-
-        // Limpa o estado depois de guardar, para que os próximos produtos novos não deem erro
-        window.produtoEmEdicao = null;
-
-        // ==========================================
-        //  NOVO: FORÇA ATUALIZAÇÃO DA CACHE 
-        // ==========================================
-        // Limpa a cache de produtos para que o Dashboard e a página de Produtos busquem os dados reais novos!
-        if (typeof window.forcarAtualizacaoDashboard === 'function') {
-            window.forcarAtualizacaoDashboard(); 
-        }
-        if (typeof window.forcarAtualizacaoProdutos === 'function') {
-            window.forcarAtualizacaoProdutos();
-        }
-        
-        if (typeof mostrarNotificacao === 'function') {
-            mostrarNotificacao(isRascunho ? 'Rascunho guardado!' : 'Produto publicado com sucesso!');
-        }
-
-        setTimeout(() => navegarAnimado('produtos'), 800);
-
-    } catch(err) {
-        alert("Erro ao guardar o produto: " + err.message);
-        btnMain.innerHTML = originalText;
-        btnMain.style.pointerEvents = 'auto';
-    }
+    })();
 }
-
 
 // ══════════════════════════════════════════════════════════════
 // 8. INTEGRAÇÃO SPA - inicializa tudo quando a página carrega
