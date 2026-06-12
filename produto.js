@@ -384,8 +384,8 @@ async function alternarStatusVisibilidade(id, novoStatusAtivo) {
 }
 
 async function eliminarProdutoDefinitivo(id) {
+    const btnEliminar = document.getElementById('btn-acao-eliminar');
     try {
-        const btnEliminar = document.getElementById('btn-acao-eliminar');
         if (btnEliminar) {
             btnEliminar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A remover definitivamente...';
             btnEliminar.classList.add('pointer-events-none', 'opacity-50');
@@ -411,14 +411,17 @@ async function eliminarProdutoDefinitivo(id) {
         console.error(e);
         alert("Ocorreu um erro ao eliminar o produto.");
         fecharModal('modal-acoes-produto');
+    } finally {
+        // [NOVO] Garante que o botão de Eliminar volta sempre ao estado original!
+        if (btnEliminar) {
+            btnEliminar.classList.remove('pointer-events-none', 'opacity-50');
+            btnEliminar.innerHTML = '<i class="far fa-trash-alt"></i> Eliminar Definitivamente';
+        }
     }
 }
 
 async function duplicarProdutoDefinitivo(p) {
     const btnDuplicar = document.getElementById('btn-acao-duplicar');
-    // Guardamos o HTML original do botão para poder voltar ao normal no final
-    const conteudoOriginal = '<div class="flex items-center gap-3"><i class="far fa-copy text-slate-400"></i> Duplicar Produto</div><i class="fas fa-chevron-right text-[10px] text-slate-300"></i>';
-
     try {
         if (btnDuplicar) {
             btnDuplicar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A duplicar...';
@@ -436,22 +439,17 @@ async function duplicarProdutoDefinitivo(p) {
             estoque_qtd: p.estoque_qtd,
             variantes: p.variantes,
             fotos: p.fotos,
-            ativo: false // Starts as Draft
+            ativo: false 
         };
 
         const { data, error } = await window.supabaseClient.from('produtos').insert([produtoDuplicado]).select();
         if (error) throw error;
 
         if (data && data.length > 0) {
-            if (memProdutosPage) {
-                memProdutosPage.unshift(data[0]);
-            }
+            if (memProdutosPage) memProdutosPage.unshift(data[0]);
             
             if (typeof memDashboard !== 'undefined' && memDashboard.produtos) {
-                // AQUI ESTÁ A CORREÇÃO DA DUPLICAÇÃO DA LISTA: Só adiciona se a memória não for a mesma
-                if (memDashboard.produtos !== memProdutosPage) {
-                    memDashboard.produtos.unshift(data[0]);
-                }
+                memDashboard.produtos.unshift(data[0]);
                 if (typeof renderizarProdutosDashboard === 'function') renderizarProdutosDashboard(memDashboard.produtos);
             }
         }
@@ -466,10 +464,13 @@ async function duplicarProdutoDefinitivo(p) {
         alert("Ocorreu um erro ao duplicar o produto.");
         fecharModal('modal-acoes-produto');
     } finally {
-        // AQUI ESTÁ A CORREÇÃO DO BOTÃO: Restaura sempre para o visual original (Quer dê certo ou erro)
+        // [NOVO] Garante que o botão de Duplicar volta sempre ao estado original!
         if (btnDuplicar) {
-            btnDuplicar.innerHTML = conteudoOriginal;
             btnDuplicar.classList.remove('pointer-events-none', 'opacity-50');
+            btnDuplicar.innerHTML = `
+                <div class="flex items-center gap-3"><i class="far fa-copy text-slate-400"></i> Duplicar Produto</div>
+                <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+            `;
         }
     }
 }
