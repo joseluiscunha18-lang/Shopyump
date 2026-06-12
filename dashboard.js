@@ -3,14 +3,14 @@ document.body.insertAdjacentHTML('beforeend', `
         <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
             <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
-                <div class="flex justify-between items-start mb-8 w-full gap-4">
+                <div class="flex justify-between items-center mb-8 w-full gap-2">
                     <div class="flex-1 min-w-0">
-                        <h2 id="dash-saudacao" class="text-3xl font-medium text-slate-900 tracking-tight leading-tight truncate">
+                        <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 tracking-tight leading-tight truncate">
                             <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md mt-1"></div>
                         </h2>
                         
                     </div>
-                    <div class="flex-shrink-0 flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm mt-1 p-1 gap-1">
+                    <div class="flex-shrink-0 flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm p-1 gap-1">
                         <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
                             <i class="fa-regular fa-copy text-[14px]" id="icone-copiar"></i>
                         </button>
