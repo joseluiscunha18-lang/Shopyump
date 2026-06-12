@@ -1303,7 +1303,26 @@ function guardarProduto() {
     const estoque_qtd = document.getElementById('prod-stock-qtd') ? (parseInt(document.getElementById('prod-stock-qtd').value) || 0) : 0;
 
     if (!nome || !preco) {
-        alert("Por favor, preencha o nome e o preço do produto.");
+        // Mostra notificação se a função existir, se não usa alert
+        if (typeof mostrarNotificacao === 'function') {
+            mostrarNotificacao("Preencha o nome e o preço do produto, por favor.", "error");
+        } else {
+            alert("Preencha o nome e o preço do produto, por favor.");
+        }
+        
+        // Destacar os campos em falta com uma borda vermelha suave e focar
+        const inputNome = document.getElementById('prod-nome');
+        const inputPreco = document.getElementById('prod-preco');
+        
+        if (!nome) {
+            inputNome.classList.add('border-red-400', 'ring-red-50');
+            inputNome.focus();
+            setTimeout(() => inputNome.classList.remove('border-red-400', 'ring-red-50'), 3000);
+        } else if (!preco) {
+            inputPreco.classList.add('border-red-400', 'ring-red-50');
+            inputPreco.focus();
+            setTimeout(() => inputPreco.classList.remove('border-red-400', 'ring-red-50'), 3000);
+        }
         return;
     }
 
@@ -1633,7 +1652,6 @@ function initCriarProdutoSPA() {
         const texto = btnMain.querySelector('span');
         const icone = btnMain.querySelector('i');
         
-        // Define os textos base
         if (isAtivo) {
             texto.innerText = isEdicao ? "Guardar Alterações" : "Publicar Produto";
             icone.className = "fas fa-check text-sm";
@@ -1642,18 +1660,18 @@ function initCriarProdutoSPA() {
             icone.className = "fas fa-archive text-sm";
         }
         
-        if (nome.length > 2 && preco > 0) {
-            btnMain.disabled = false;
-            // Estado Ativado e Válido harmonioso
+        // IMPORTANTE: Garantimos que nunca está 'disabled', para poder mostrar o erro ao clicar.
+        btnMain.disabled = false;
+        
+        if (nome.length > 0 && preco > 0) {
             if (isAtivo) {
                 btnMain.className = "w-full bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             } else {
                 btnMain.className = "w-full bg-slate-500 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             }
         } else {
-            // Estado Bloqueado mais limpo
-            btnMain.disabled = true;
-            btnMain.className = "w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-xl pointer-events-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
+            // Estado visualmente "apagado", mas reage ao clique graças a não ter o 'pointer-events-none'
+            btnMain.className = "w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px] active:scale-[0.98]";
         }
     };
 
