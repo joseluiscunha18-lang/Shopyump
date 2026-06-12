@@ -347,7 +347,7 @@ function viewProduto(id) {
             
             <div class="relative flex-1 bg-slate-50/50 overflow-hidden">
                 <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
-                <button onclick="event.stopPropagation(); partilharProduto('${p.id}', '${p.nome.replace(/'/g, "\\'")}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-700"><i class="fas fa-share-nodes text-sm"></i></button>
+                <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
                 
                 <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar" onscroll="atualizarDotsProduto(this)">${carrosselHtml}</div>
                 ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
@@ -355,14 +355,23 @@ function viewProduto(id) {
 
             <div class="bg-white rounded-t-3xl -mt-5 relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col flex-1">
                         <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">${p.categoria}</span>
-                        <h1 class="text-base font-black text-slate-900 leading-tight line-clamp-2">${p.nome}</h1>
+                        <h1 class="text-base font-black text-slate-900 leading-tight">${p.nome}</h1>
                     </div>
-                    <div class="text-xl font-black text-slate-900 text-right whitespace-nowrap pt-1 flex flex-col items-end">
-                        ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[9px] text-slate-400 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
-                        <div>${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] font-bold text-slate-400">MT</span></div>
+                    <div class="text-xl font-black text-slate-900 text-right whitespace-nowrap flex flex-col items-end">
+                        ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-400 line-through mb-0.5">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
+                        <div class="leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] font-bold text-slate-400">MT</span></div>
                     </div>
+                </div>
+
+                <!-- Barra de Favoritos Isolda -->
+                <div class="flex justify-between items-center bg-slate-50 px-3 py-2.5 rounded-2xl border border-slate-100">
+                    <span class="text-[11px] font-bold text-slate-500 pl-1">Tens interesse neste artigo?</span>
+                    <button onclick="event.stopPropagation(); toggleFavoritoProduto('${p.id}', this)" class="px-5 py-2 flex items-center gap-2 rounded-xl bg-white shadow-sm border border-slate-200 active:scale-95 transition-all ${isFav ? 'text-red-500 border-red-100' : 'text-slate-500'}">
+                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-[13px] pointer-events-none"></i> 
+                        <span class="text-[11px] font-bold pointer-events-none">${isFav ? 'Guardado' : 'Guardar'}</span>
+                    </button>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mt-1">
@@ -416,14 +425,11 @@ function viewProduto(id) {
                     </div>
                 </div>
 
-                <div class="flex gap-2 mt-1">
-                    <button onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)" class="w-12 h-12 flex-shrink-0 bg-white border border-slate-200 rounded-full active:bg-slate-50 transition-all flex items-center justify-center shadow-sm ${isFav ? 'text-red-500 border-red-200 bg-red-50' : 'text-slate-400'}">
-                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-[15px]"></i>
+                <div class="flex gap-2.5 mt-1">
+                    <button onclick="addCarrinho('${p.id}')" class="flex-1 h-12 bg-white border border-slate-200 text-slate-900 rounded-full font-black text-[11px] uppercase tracking-wide active:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fas fa-shopping-cart text-[10px]"></i> Adicionar
                     </button>
-                    <button onclick="addCarrinho('${p.id}')" class="flex-1 h-12 bg-white border border-slate-200 text-slate-900 rounded-full font-black text-[10px] uppercase tracking-wide active:bg-slate-50 transition-colors flex items-center justify-center gap-1 shadow-sm px-1">
-                        <i class="fas fa-shopping-cart text-[10px]"></i> <span class="hidden sm:inline">Adicionar</span><span class="sm:hidden">Add</span>
-                    </button>
-                    <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.3] h-12 bg-[#0F172A] text-white rounded-full font-black text-[10px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
+                    <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.5] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
                         Comprar Agora
                     </button>
                 </div>
@@ -1005,20 +1011,43 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarLoja();
 });
 
+// Função para Partilhar Produto (nativo no telemóvel ou copia o link no PC)
 function partilharProduto(id, nome) {
-    const url = window.location.origin + window.location.pathname + "?produto=" + id;
-    
-    // Tenta usar a Janela de Partilha nativa do telemóvel (WhatsApp, Insta, etc)
+    const url = window.location.origin + window.location.pathname + '?produto=' + id;
     if (navigator.share) {
         navigator.share({
             title: nome,
-            text: 'Dá uma vista de olhos neste produto incrível!',
-            url: url
-        }).catch(err => console.log('Erro ao partilhar', err));
+            text: 'Olha o que encontrei na loja!',
+            url: url,
+        }).catch(err => console.log('Partilha cancelada', err));
     } else {
-        // Fallback: se estiver num PC antigo copia o link e mostra aviso
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Link do produto copiado com sucesso!');
-        });
+        // Se o telemovel não tiver share nativo, copia ao menos para a área de transferência
+        navigator.clipboard.writeText(url);
+        mostrarErroPremium("Link copiado!", "Podes agora colar e enviar aos teus amigos."); // usamos a tua funcao de erro como popup
     }
+}
+
+// Função Avançada do Coração (Atualiza Ícone + Texto do Botão Grande)
+function toggleFavoritoProduto(id, btn) {
+    let favoritos = JSON.parse(localStorage.getItem('shopyump_favs')) || [];
+    const index = favoritos.indexOf(id);
+    const icone = btn.querySelector('i');
+    const texto = btn.querySelector('span');
+    
+    if (index > -1) { 
+        // Remove dos favoritos
+        favoritos.splice(index, 1); 
+        icone.className = 'far fa-heart text-[13px] pointer-events-none'; 
+        btn.classList.replace('text-red-500', 'text-slate-500');
+        btn.classList.remove('border-red-100');
+        if(texto) texto.innerText = 'Guardar';
+    } else { 
+        // Adiciona aos favoritos
+        favoritos.push(id); 
+        icone.className = 'fas fa-heart text-[13px] pointer-events-none'; 
+        btn.classList.replace('text-slate-500', 'text-red-500');
+        btn.classList.add('border-red-100');
+        if(texto) texto.innerText = 'Guardado';
+    }
+    localStorage.setItem('shopyump_favs', JSON.stringify(favoritos));
 }
