@@ -1,7 +1,10 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
-        <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
-            <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
+        <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px] bg-[#f6f6f7] dark:bg-[#0b0f1a]">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
+                <div class="absolute -top-20 -left-20 w-64 h-64 bg-[#9f6ef5]/10 dark:bg-[#9f6ef5]/15 rounded-full blur-[80px]"></div>
+                <div class="absolute top-10 -right-20 w-72 h-72 bg-blue-400/5 dark:bg-blue-400/10 rounded-full blur-[80px]"></div>
+            </div>
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-start mb-8">
                     <div>
@@ -70,12 +73,9 @@ document.body.insertAdjacentHTML('beforeend', `
             <div class="w-full max-w-md space-y-8">
 
                 <section class="space-y-4 pt-2" id="area-validacao">
-                    <div class="flex justify-between items-end px-1">
-                        <div>
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Validar Encomendas</h3>
-                            <p class="text-xs font-bold text-slate-900 dark:text-white">Ações Pendentes</p>
-                        </div>
-                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-md uppercase tracking-widest">0 Pendentes</span>
+                    <div class="flex justify-between items-center px-1 mb-2">
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Ações Necessárias</h3>
+                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-[#9f6ef5] bg-[#9f6ef5]/10 px-2.5 py-1 rounded-lg uppercase tracking-widest border border-[#9f6ef5]/20">0 Pendentes</span>
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
