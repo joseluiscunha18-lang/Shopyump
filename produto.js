@@ -230,15 +230,23 @@ function renderizarProdutosLista(produtosRender) {
                         <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate">${p.nome}</h4>
                         <div class="flex items-center gap-2 mt-0.5 flex-wrap">
                             ${p.preco_promo && p.preco_promo > 0 
-                              ? `<p class="text-[11px] font-black text-emerald-500">${p.preco_promo.toLocaleString('pt-MZ')} <span class="text-[9px] text-emerald-400">MT</span></p>
+                              ? `<p class="text-[11px] font-black text-slate-900 dark:text-white">${p.preco_promo.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-500">MT</span></p>
                                  <p class="text-[9px] font-bold text-slate-400 line-through">${p.preco.toLocaleString('pt-MZ')} MT</p>`
-                              : `<p class="text-[11px] font-black text-slate-900 dark:text-white">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400">MT</span></p>`
+                              : `<p class="text-[11px] font-black text-slate-900 dark:text-white">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-500">MT</span></p>`
                             }
-                            ${p.estoque_qtd !== undefined && p.controlar_estoque ? `<p class="flex items-center gap-1 text-[9px] font-bold bg-slate-50 dark:bg-navy-800 px-1.5 py-0.5 border border-slate-100 dark:border-navy-700 rounded-md text-slate-500"><i class="fas fa-box text-[8px] text-slate-400"></i> ${p.estoque_qtd} uni</p>` : ''}
+                            ${p.estoque_qtd !== undefined && p.controlar_estoque ? `<p class="flex items-center gap-1 text-[9px] font-bold bg-transparent px-0 text-slate-400"><i class="fas fa-box text-[8px] text-slate-300"></i> ${p.estoque_qtd} uni</p>` : ''}
                         </div>
-                        <div class="flex items-center gap-1.5 mt-1">
-                            <span class="text-[9px] font-black ${p.ativo ? 'text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10' : 'text-orange-400 bg-orange-50 dark:bg-orange-500/10'} px-1.5 rounded uppercase tracking-widest">${p.ativo ? 'Publicado' : 'Rascunho'}</span>
-                            ${p.preco_promo && p.preco_promo > 0 ? `<span class="text-[9px] font-black text-blue-500 bg-blue-50 dark:bg-blue-500/10 px-1.5 rounded uppercase tracking-widest">Promoção</span>` : ''}
+                        <div class="flex items-center gap-1.5 mt-1.5">
+                            <div class="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] ${p.ativo ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20' : 'bg-slate-50 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'}">
+                                <div class="w-1.5 h-1.5 rounded-full ${p.ativo ? 'bg-emerald-500' : 'bg-slate-400'}"></div>
+                                <span class="text-[8.5px] font-black uppercase tracking-widest">${p.ativo ? 'Publicado' : 'Rascunho'}</span>
+                            </div>
+                            ${p.preco_promo && p.preco_promo > 0 ? `
+                                <div class="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20">
+                                    <i class="fas fa-tag text-[8px]"></i>
+                                    <span class="text-[8.5px] font-black uppercase tracking-widest">Promoção</span>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
