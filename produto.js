@@ -415,8 +415,11 @@ async function eliminarProdutoDefinitivo(id) {
 }
 
 async function duplicarProdutoDefinitivo(p) {
+    const btnDuplicar = document.getElementById('btn-acao-duplicar');
+    // Guardamos o HTML original do botão para poder voltar ao normal no final
+    const conteudoOriginal = '<div class="flex items-center gap-3"><i class="far fa-copy text-slate-400"></i> Duplicar Produto</div><i class="fas fa-chevron-right text-[10px] text-slate-300"></i>';
+
     try {
-        const btnDuplicar = document.getElementById('btn-acao-duplicar');
         if (btnDuplicar) {
             btnDuplicar.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> A duplicar...';
             btnDuplicar.classList.add('pointer-events-none', 'opacity-50');
@@ -433,17 +436,22 @@ async function duplicarProdutoDefinitivo(p) {
             estoque_qtd: p.estoque_qtd,
             variantes: p.variantes,
             fotos: p.fotos,
-            ativo: false // Starts as Draft para o utilizador poder editar sem publicá-lo acidentalmente
+            ativo: false // Starts as Draft
         };
 
         const { data, error } = await window.supabaseClient.from('produtos').insert([produtoDuplicado]).select();
         if (error) throw error;
 
         if (data && data.length > 0) {
-            if (memProdutosPage) memProdutosPage.unshift(data[0]);
+            if (memProdutosPage) {
+                memProdutosPage.unshift(data[0]);
+            }
             
             if (typeof memDashboard !== 'undefined' && memDashboard.produtos) {
-                memDashboard.produtos.unshift(data[0]);
+                // AQUI ESTÁ A CORREÇÃO DA DUPLICAÇÃO DA LISTA: Só adiciona se a memória não for a mesma
+                if (memDashboard.produtos !== memProdutosPage) {
+                    memDashboard.produtos.unshift(data[0]);
+                }
                 if (typeof renderizarProdutosDashboard === 'function') renderizarProdutosDashboard(memDashboard.produtos);
             }
         }
@@ -457,5 +465,11 @@ async function duplicarProdutoDefinitivo(p) {
         console.error(e);
         alert("Ocorreu um erro ao duplicar o produto.");
         fecharModal('modal-acoes-produto');
+    } finally {
+        // AQUI ESTÁ A CORREÇÃO DO BOTÃO: Restaura sempre para o visual original (Quer dê certo ou erro)
+        if (btnDuplicar) {
+            btnDuplicar.innerHTML = conteudoOriginal;
+            btnDuplicar.classList.remove('pointer-events-none', 'opacity-50');
+        }
     }
 }
