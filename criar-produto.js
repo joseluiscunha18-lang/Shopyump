@@ -31,7 +31,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     <h2 class="text-[13px] font-black text-slate-900 dark:text-white">Informação Básica</h2>
                     <div>
                         <label class="block text-[11px] font-semibold text-[#4A5568] dark:text-slate-400 mb-1.5 ml-1">Nome do produto</label>
-                        <input type="text" id="prod-nome" placeholder="Ex: T-shirt oversized" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-14 px-5 text-[12px] font-black text-slate-900 dark:text-white outline-none focus:border-[#0F172A] focus:ring-4 focus:ring-slate-50 transition-all shadow-sm placeholder:font-medium placeholder:text-slate-400">
+                        <input type="text" id="prod-nome" placeholder="Ex: T-shirt oversized" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-14 px-5 text-[13px] font-semibold text-slate-900 dark:text-white outline-none focus:border-[#0F172A] focus:ring-4 focus:ring-slate-50 transition-all shadow-sm placeholder:font-medium placeholder:text-slate-400">
                     </div>
                     <div>
                         <button type="button" onclick="abrirGavetaCategorias()" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl p-3.5 flex items-center justify-between group active:scale-[0.98] transition-all shadow-sm hover:border-slate-300">
@@ -68,14 +68,14 @@ document.body.insertAdjacentHTML('beforeend', `
                             <span class="text-[11px] font-semibold text-[#4A5568] dark:text-slate-400 ml-1">Preço normal</span>
                             <div class="relative flex items-center">
                                 <span class="absolute right-4 text-slate-400 font-black text-[10px] tracking-tighter">MZN</span>
-                                <input type="number" id="prod-preco" placeholder="0.00" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-11 pl-5 pr-14 text-sm font-black text-[#0F172A] dark:text-white outline-none focus:border-[#0F172A] focus:ring-4 focus:ring-slate-50 transition-all shadow-sm">
+                                <input type="number" id="prod-preco" placeholder="0.00" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-11 pl-5 pr-14 text-sm font-semibold text-[#0F172A] dark:text-white outline-none focus:border-[#0F172A] focus:ring-4 focus:ring-slate-50 transition-all shadow-sm">
                             </div>
                         </div>
                         <div id="campo-promo" class="space-y-1.5 opacity-30 pointer-events-none transition-all duration-300">
                             <span class="text-[11px] font-semibold text-[#4A5568] dark:text-slate-400 ml-1">Preço promo</span>
                             <div class="relative flex items-center">
                                 <span class="absolute right-4 text-slate-400 font-black text-[10px] tracking-tighter">MZN</span>
-                                <input type="number" placeholder="0.00" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-11 pl-5 pr-14 text-sm font-black text-[#0F172A] dark:text-white outline-none focus:border-[#0F172A] shadow-sm">
+                                <input type="number" placeholder="0.00" class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl h-11 pl-5 pr-14 text-sm font-semibold text-[#0F172A] dark:text-white outline-none focus:border-[#0F172A] shadow-sm">
                             </div>
                             <button type="button" id="btn-agendar" onclick="toggleDatasPromo()" class="text-[10px] font-bold text-slate-400 mt-2 ml-1 flex items-center gap-1">
                                 <i class="far fa-calendar-alt"></i> <span>Agendar período</span>
