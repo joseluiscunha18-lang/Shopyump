@@ -365,14 +365,7 @@ function viewProduto(id) {
                     </div>
                 </div>
 
-                <!-- Barra de Favoritos Isolda -->
-                <div class="flex justify-between items-center bg-slate-50 px-3 py-2.5 rounded-2xl border border-slate-100">
-                    <span class="text-[11px] font-bold text-slate-500 pl-1">Tens interesse neste artigo?</span>
-                    <button onclick="event.stopPropagation(); toggleFavoritoProduto('${p.id}', this)" class="px-5 py-2 flex items-center gap-2 rounded-xl bg-white shadow-sm border border-slate-200 active:scale-95 transition-all ${isFav ? 'text-red-500 border-red-100' : 'text-slate-500'}">
-                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-[13px] pointer-events-none"></i> 
-                        <span class="text-[11px] font-bold pointer-events-none">${isFav ? 'Guardado' : 'Guardar'}</span>
-                    </button>
-                </div>
+               
 
                 <div class="grid grid-cols-2 gap-4 mt-1">
                     <div class="flex flex-col gap-2">
@@ -426,11 +419,14 @@ function viewProduto(id) {
                 </div>
 
                 <div class="flex gap-2.5 mt-1">
+                    <button onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)" class="w-12 h-12 flex-shrink-0 bg-white border border-slate-200 rounded-full flex items-center justify-center active:bg-slate-50 transition-colors shadow-sm ${isFav ? 'text-red-500' : 'text-slate-400'}">
+                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-base pointer-events-none"></i>
+                    </button>
                     <button onclick="addCarrinho('${p.id}')" class="flex-1 h-12 bg-white border border-slate-200 text-slate-900 rounded-full font-black text-[11px] uppercase tracking-wide active:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
                         <i class="fas fa-shopping-cart text-[10px]"></i> Adicionar
                     </button>
-                    <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.5] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
-                        Comprar Agora
+                    <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.2] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
+                        Comprar
                     </button>
                 </div>
             </div>
