@@ -1302,82 +1302,10 @@ function guardarProduto() {
     const controlar_estoque = document.getElementById('toggle-stock') ? document.getElementById('toggle-stock').checked : false;
     const estoque_qtd = document.getElementById('prod-stock-qtd') ? (parseInt(document.getElementById('prod-stock-qtd').value) || 0) : 0;
 
-    // --- INÍCIO: SISTEMA DE NOTIFICAÇÃO NÃO AGRESSIVA (UX E UI) ---
-    function mostrarAvisoSuave(msg, isErro = false) {
-        const existente = document.getElementById('notificacao-suave');
-        if (existente) existente.remove();
-
-        const toast = document.createElement('div');
-        toast.id = 'notificacao-suave';
-        // Estilo limpo e flutuante
-        toast.className = `fixed top-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-sm flex items-center gap-3.5 px-4 py-3 rounded-2xl shadow-[0_15px_40px_-5px_rgba(0,0,0,0.15)] transition-all duration-500 transform -translate-y-12 opacity-0 border ${isErro ? 'bg-white border-red-100 text-red-500' : 'bg-[#0F172A] border-slate-800 text-white'}`;
-        
-        toast.innerHTML = `
-            <div class="flex items-center justify-center w-8 h-8 rounded-full shrink-0 ${isErro ? 'bg-red-50 text-red-500' : 'bg-slate-800 text-amber-300'}">
-                <i class="${isErro ? 'fas fa-exclamation' : 'fas fa-lightbulb'} text-[13px]"></i>
-            </div>
-            <div>
-                <span class="text-[12.5px] font-medium tracking-tight leading-snug">${msg}</span>
-            </div>
-        `;
-        
-        document.body.appendChild(toast);
-        // Animação de Entrada
-        requestAnimationFrame(() => toast.classList.remove('-translate-y-12', 'opacity-0'));
-
-        // Animação de Saída
-        setTimeout(() => {
-            toast.classList.add('-translate-y-12', 'opacity-0');
-            setTimeout(() => toast.remove(), 500);
-        }, 5500); // Dá tempo para ler a dica
-    }
-
-    // 1. Validar Campos Obrigatórios Fortes (Nome e Preço)
     if (!nome || !preco) {
-        mostrarAvisoSuave("Adiciona um nome e preço para criares o produto.", true);
-        
-        // UX: Destacar subtilmente na interface o que falta
-        const inputNome = document.getElementById('prod-nome');
-        const inputPreco = document.getElementById('prod-preco');
-        
-        if(!nome && inputNome) { inputNome.classList.add('border-red-400', 'bg-red-50/30'); inputNome.focus(); }
-        if(!preco && inputPreco) { inputPreco.classList.add('border-red-400', 'bg-red-50/30'); if(nome) inputPreco.focus(); }
-        
-        setTimeout(() => {
-            if(inputNome) inputNome.classList.remove('border-red-400', 'bg-red-50/30');
-            if(inputPreco) inputPreco.classList.remove('border-red-400', 'bg-red-50/30');
-        }, 3000);
+        alert("Por favor, preencha o nome e o preço do produto.");
         return;
     }
-
-    // 2. Avisos Estruturais Sugeridos (Categoria, Fotos, Descrição e Variantes)
-    let avisosFalta = [];
-    if (!categoria) avisosFalta.push("<b>categoria</b>");
-    if (fotosCapturadas.length === 0) avisosFalta.push("<b>fotos</b>");
-    if (!descricao) avisosFalta.push("<b>descrição</b>");
-    if (Object.keys(variantes).length === 0) avisosFalta.push("<b>variantes</b>");
-
-    // "Pisa no freio" mas não bloqueia a porta
-    if (avisosFalta.length > 0 && !window.cienteDaFaltaDeDados) {
-        // Mostrar apenas os dois primeiros itens a faltar para não gerar ruído visual excessivo
-        let faltasTexto = avisosFalta.slice(0, 2).join(' e ');
-        
-        mostrarAvisoSuave(`A estrutura da loja fica melhor se adicionares ${faltasTexto}.<br><span class="inline-block mt-1 text-[11px] text-slate-400 font-normal">Clica em Publicar outra vez se quiseres ignorar.</span>`, false);
-        
-        // UI Extra: Se faltar categoria, dá um leve destaque ao botão
-        if (!categoria) {
-            const btnCat = document.querySelector('button[onclick="abrirGavetaCategorias()"]');
-            if(btnCat) {
-                btnCat.classList.add('border-slate-800', 'shadow-sm');
-                setTimeout(() => btnCat.classList.remove('border-slate-800', 'shadow-sm'), 4000);
-            }
-        }
-
-        window.cienteDaFaltaDeDados = true; // Na segunda tentativa seguida ele avança.
-        return;
-    }
-    window.cienteDaFaltaDeDados = false; // Reset da memória de publicação
-    // --- FIM: SISTEMA DE NOTIFICAÇÃO NÃO AGRESSIVA ---
 
     const variantes = {};
     const extractVariants = (containerId, key) => {
@@ -1714,19 +1642,18 @@ function initCriarProdutoSPA() {
             icone.className = "fas fa-archive text-sm";
         }
         
-        // Mantém-se sempre clicável para garantir feedback pela nossa UI (UX suave)
-        btnMain.disabled = false; 
-
         if (nome.length > 2 && preco > 0) {
-            // Look Premium de "Tudo Pronto"
+            btnMain.disabled = false;
+            // Estado Ativado e Válido harmonioso
             if (isAtivo) {
-                btnMain.className = "w-full bg-[#0F172A] dark:bg-slate-100 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
+                btnMain.className = "w-full bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             } else {
-                btnMain.className = "w-full bg-slate-500 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
+                btnMain.className = "w-full bg-slate-500 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             }
         } else {
-            // Look de "Falta Preencher", mas agora tem hover e permite clique para gerar o aviso estrutural!
-            btnMain.className = "w-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
+            // Estado Bloqueado mais limpo
+            btnMain.disabled = true;
+            btnMain.className = "w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-xl pointer-events-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
         }
     };
 
