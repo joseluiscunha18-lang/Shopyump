@@ -184,19 +184,19 @@ document.body.insertAdjacentHTML('beforeend', `
                 </section>
 
                 <!-- VISIBILIDADE & BOTÃO PUBLICAR (Secção Unificada) -->
-                <section class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center justify-between mb-6">
+                <section class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
                         <div>
                             <p class="text-[12px] font-bold text-slate-900 dark:text-white">Ativo na loja</p>
-                            <p class="text-[11px] text-slate-500 font-medium">O produto ficará visível para os clientes</p>
+                            <p class="text-[10px] text-slate-500 font-medium">O produto ficará visível para os clientes</p>
                         </div>
                         <label for="toggle-ativo" class="relative inline-flex items-center cursor-pointer select-none">
                             <input type="checkbox" id="toggle-ativo" checked class="sr-only peer"/>
-                            <div class="w-11 h-6 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F172A] shadow-inner"></div>
+                            <div class="w-10 h-5 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-800 shadow-inner"></div>
                         </label>
                     </div>
                     
-                    <button id="btn-main-action" onclick="guardarProduto()" disabled class="w-full bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-black py-4 rounded-2xl border border-transparent pointer-events-none transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
+                    <button id="btn-main-action" onclick="guardarProduto()" disabled class="w-full bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-bold py-3.5 rounded-xl pointer-events-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]">
                         <i class="fas fa-check"></i>
                         <span>Publicar Produto</span>
                     </button>
@@ -1634,19 +1634,18 @@ function initCriarProdutoSPA() {
             icone.className = "fas fa-archive text-sm";
         }
         
-        // Validação (Obrigatório Nome com mais de 2 letras e Preço maior que 0)
         if (nome.length > 2 && preco > 0) {
             btnMain.disabled = false;
-            // Estado Ativado e Válido = Preto Premium, ou Rascunho Válido = Cinza escuro
+            // Estado Ativado e Válido harmonioso
             if (isAtivo) {
-                btnMain.className = "w-full bg-[#0F172A] dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] dark:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.3)] active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
+                btnMain.className = "w-full bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             } else {
-                btnMain.className = "w-full bg-slate-500 text-white font-black py-4 rounded-2xl shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
+                btnMain.className = "w-full bg-slate-500 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
             }
         } else {
-            // Estado Inválido = Cinzento / Bloqueado
+            // Estado Bloqueado mais limpo
             btnMain.disabled = true;
-            btnMain.className = "w-full bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-black py-4 rounded-2xl border border-transparent pointer-events-none transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
+            btnMain.className = "w-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-xl pointer-events-none transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-[12px]";
         }
     };
 
