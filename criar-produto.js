@@ -183,9 +183,9 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </section>
 
-                <!-- VISIBILIDADE -->
+                <!-- VISIBILIDADE & BOTÃO PUBLICAR (Secção Unificada) -->
                 <section class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between mb-6">
                         <div>
                             <p class="text-[12px] font-bold text-slate-900 dark:text-white">Ativo na loja</p>
                             <p class="text-[11px] text-slate-500 font-medium">O produto ficará visível para os clientes</p>
@@ -195,19 +195,12 @@ document.body.insertAdjacentHTML('beforeend', `
                             <div class="w-11 h-6 bg-slate-200 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0F172A] shadow-inner"></div>
                         </label>
                     </div>
+                    
+                    <button id="btn-main-action" onclick="guardarProduto()" disabled class="w-full bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-black py-4 rounded-2xl border border-transparent pointer-events-none transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
+                        <i class="fas fa-check"></i>
+                        <span>Publicar Produto</span>
+                    </button>
                 </section>
-
-                <!-- BOTÃO PUBLICAR -->
-                <div class="h-28 w-full shrink-0 pointer-events-none"></div>
-
-                <div class="fixed bottom-4 left-4 right-4 z-50 pointer-events-none">
-                    <div class="max-w-2xl mx-auto pointer-events-auto">
-                        <button id="btn-main-action" onclick="guardarProduto()" class="w-full bg-[#0F172A]/95 backdrop-blur-md dark:bg-white/95 text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] dark:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.3)] border border-slate-700/50 dark:border-white/20 active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]">
-                            <i class="fas fa-check"></i>
-                            <span>Publicar Produto</span>
-                        </button>
-                    </div>
-                </div>
 
             </main>
 
@@ -1291,28 +1284,7 @@ function toggleSize(btn) {
     btn.classList.toggle('text-white');
 }
 
-// ==========================================
-// 3. PUBLICAÇÃO VS RASCUNHO
-// ==========================================
-const toggleAtivo = document.getElementById('toggle-ativo');
-const btnMainActionWrapper = document.getElementById('btn-main-action');
 
-if (toggleAtivo && btnMainActionWrapper) {
-    toggleAtivo.addEventListener('change', function() {
-        const texto = btnMainActionWrapper.querySelector('span');
-        const icone = btnMainActionWrapper.querySelector('i');
-        
-        if (this.checked) {
-            texto.innerText = "Publicar Produto";
-            icone.className = "fas fa-check text-sm";
-            btnMainActionWrapper.classList.replace('bg-slate-500', 'bg-[#0F172A]');
-        } else {
-            texto.innerText = "Guardar Rascunho";
-            icone.className = "fas fa-archive text-sm";
-            btnMainActionWrapper.classList.replace('bg-[#0F172A]', 'bg-slate-500');
-        }
-    });
-}
 
 // Salvar produto real no Supabase
 // criar-produto.js - Módulo completo integrado no SPA do Dashboard
@@ -1636,27 +1608,54 @@ function initCriarProdutoSPA() {
         });
     }
 
-    // Botão publicar/rascunho (Adapta o nome se estiveres em edição!)
+    // ==========================================
+    // NOVA VALIDAÇÃO DO BOTÃO "PUBLICAR" E ESTADO
+    // ==========================================
     const toggleAtivo = document.getElementById('toggle-ativo');
     const btnMain = document.getElementById('btn-main-action');
+    const nomeInput = document.getElementById('prod-nome');
+    const precoInput = document.getElementById('prod-preco');
     
-    if (toggleAtivo && btnMain) {
-        const atualizarBotao = function() {
-            const texto = btnMain.querySelector('span');
-            const icone = btnMain.querySelector('i');
-            if (toggleAtivo.checked) {
-                texto.innerText = isEdicao ? "Guardar Alterações" : "Publicar Produto";
-                icone.className = "fas fa-check text-sm";
-                btnMain.classList.remove('bg-slate-500');
-                btnMain.classList.add('bg-[#0F172A]');
+    window.validarFormularioProduto = function() {
+        if (!btnMain) return;
+        const nome = document.getElementById('prod-nome')?.value.trim() || '';
+        const preco = parseFloat(document.getElementById('prod-preco')?.value) || 0;
+        const isAtivo = toggleAtivo ? toggleAtivo.checked : true;
+        
+        const texto = btnMain.querySelector('span');
+        const icone = btnMain.querySelector('i');
+        
+        // Define os textos base
+        if (isAtivo) {
+            texto.innerText = isEdicao ? "Guardar Alterações" : "Publicar Produto";
+            icone.className = "fas fa-check text-sm";
+        } else {
+            texto.innerText = "Guardar Rascunho";
+            icone.className = "fas fa-archive text-sm";
+        }
+        
+        // Validação (Obrigatório Nome com mais de 2 letras e Preço maior que 0)
+        if (nome.length > 2 && preco > 0) {
+            btnMain.disabled = false;
+            // Estado Ativado e Válido = Preto Premium, ou Rascunho Válido = Cinza escuro
+            if (isAtivo) {
+                btnMain.className = "w-full bg-[#0F172A] dark:bg-white text-white dark:text-slate-900 font-black py-4 rounded-2xl shadow-[0_10px_40px_-10px_rgba(15,23,42,0.5)] dark:shadow-[0_10px_40px_-10px_rgba(255,255,255,0.3)] active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
             } else {
-                texto.innerText = "Guardar Rascunho";
-                icone.className = "fas fa-archive text-sm";
-                btnMain.classList.remove('bg-[#0F172A]');
-                btnMain.classList.add('bg-slate-500');
+                btnMain.className = "w-full bg-slate-500 text-white font-black py-4 rounded-2xl shadow-md active:scale-[0.97] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
             }
-        };
-        toggleAtivo.addEventListener('change', atualizarBotao);
-        atualizarBotao(); // Correr à entrada para acertar estado!
+        } else {
+            // Estado Inválido = Cinzento / Bloqueado
+            btnMain.disabled = true;
+            btnMain.className = "w-full bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 font-black py-4 rounded-2xl border border-transparent pointer-events-none transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-[13px]";
+        }
+    };
+
+    if (toggleAtivo && btnMain) {
+        toggleAtivo.addEventListener('change', window.validarFormularioProduto);
     }
+    if (nomeInput) nomeInput.addEventListener('input', window.validarFormularioProduto);
+    if (precoInput) precoInput.addEventListener('input', window.validarFormularioProduto);
+    
+    // Correr verificação inicial para acertar estilo apagado no início (ou ativo dependendo da edição)
+    window.validarFormularioProduto();
 }
