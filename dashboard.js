@@ -36,7 +36,9 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg"></span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <h3 id="stat-pedidos" class="text-[13px] font-medium text-slate-500 tracking-tight leading-snug">Ainda não recebeu pedidos</h3>
+                                <h3 id="stat-pedidos">
+    <div class="h-10 w-24 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-[10px]"></div>
+</h3>
                                 <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80">no total</span>
                             </div>
                         </div>
@@ -48,7 +50,9 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-visitas" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Compartilhe sua loja para receber visitas</h4>
+                                <h4 id="stat-visitas" class="mb-1">
+    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
+</h4>
                                 <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
                             </div>
                         </div>
@@ -57,7 +61,9 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-produtos-ativos" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Adicione seu primeiro produto</h4>
+                                <h4 id="stat-produtos-ativos" class="mb-1">
+    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
+</h4>
                                 <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
                             </div>
                         </div>
