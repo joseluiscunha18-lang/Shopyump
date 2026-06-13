@@ -251,23 +251,24 @@ function viewHome() {
     let html = `
         <div class="h-[85px]"></div> 
         
-        <div class="px-5 mb-9">
-            <div class="relative h-[280px] rounded-[32px] overflow-hidden shadow-xl shadow-black/5 active:scale-[0.98] transition-all group cursor-pointer border border-slate-100" onclick="window.scrollBy({ top: 400, behavior: 'smooth' })">
+        <div class="w-full mb-9">
+            <!-- Nota o w-full, aspect-[3/1] e apenas arredondado em baixo (rounded-b-[32px]) para encaixar perfeito! -->
+            <div class="relative w-full aspect-[3/1] rounded-b-[32px] overflow-hidden shadow-xl shadow-black/5 border-b border-slate-100 group cursor-pointer active:scale-[0.99] transition-transform" onclick="window.scrollBy({ top: 400, behavior: 'smooth' })">
                 
                 <!-- Imagem do Banner -->
                 <img src="${imgBannerUrl}" alt="Banner da Loja" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 
                 <!-- Filtro Escuro por Cima -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 z-10"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10"></div>
                 
                 <!-- Textos e Botão -->
-                <div class="absolute bottom-6 left-6 right-6 text-white z-20 flex flex-col items-start">
-                    <span class="px-2.5 py-1 rounded-lg bg-white/20 backdrop-blur-md text-[9px] font-black tracking-widest text-white uppercase mb-2.5">Bem-vindo(a)</span>
+                <div class="absolute bottom-5 left-5 right-5 text-white z-20 flex flex-col items-start">
+                    <span class="px-2 py-1 rounded-lg bg-white/20 backdrop-blur-md text-[9px] font-black tracking-widest text-white uppercase mb-2">Bem-vindo(a)</span>
                     
-                    <h1 class="text-[22px] font-black tracking-tight mb-1 leading-tight line-clamp-2">${lojaDisplayTitle}</h1>
-                    <p class="text-[12px] font-medium text-slate-300 leading-relaxed max-w-[260px] line-clamp-2 mb-4">${descricaoLoja}</p>
+                    <h1 class="text-xl font-black tracking-tight mb-1 leading-tight line-clamp-1">${lojaDisplayTitle}</h1>
+                    <p class="text-[11px] font-medium text-slate-300 leading-snug max-w-[280px] line-clamp-2 mb-3">${descricaoLoja}</p>
                     
-                    <button class="bg-white text-slate-900 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg active:scale-95 transition-transform flex items-center gap-2">
+                    <button class="bg-white text-slate-900 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform flex items-center gap-1.5">
                         ${textoBotaoBanner} <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
