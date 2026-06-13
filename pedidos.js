@@ -495,7 +495,7 @@ window.abrirModalPedido = function(id) {
             </div>
 
             <div class="text-[11px] text-slate-600 dark:text-slate-400 space-y-1.5 font-medium">
-                <p class="flex gap-2"><span class="w-4 text-center opacity-50"><i class="fas fa-map-marker-alt"></i></span> <span>${pedido.cliente_morada || 'Não informada'}</span></p>
+                <p class="flex gap-2"><span class="w-4 text-center opacity-50"><i class="fas fa-map-marker-alt"></i></span> <span>${pedido.cliente_endereco || 'Não informada'}</span></p>
                 <p class="flex gap-2"><span class="w-4 text-center opacity-50"><i class="fas fa-calendar-alt"></i></span> <span>${dataFormatada} - ${horaFormatada}</span></p>
             </div>
         </div>
