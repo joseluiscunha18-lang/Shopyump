@@ -241,42 +241,43 @@ function viewHome() {
         produtosExibicao = produtos.filter(p => p.subcategoria === filtroAtual.valor);
     }
 
-    let lojaDisplayTitle = lojaAtual ? lojaAtual.nome : "LOJA";
+    let lojaDisplayTitle = lojaAtual ? lojaAtual.nome.toUpperCase() : "LOJA";
     
+    // Variáveis para o Banner com fallback (segurança)
     let imgBannerUrl = (lojaAtual && lojaAtual.banner_url) ? lojaAtual.banner_url : (produtos.length > 0 ? produtos[0].imagem : 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1000&q=80');
     let textoBotaoBanner = (lojaAtual && lojaAtual.banner_botao) ? lojaAtual.banner_botao : 'Ver Coleção';
     let descricaoLoja = (lojaAtual && lojaAtual.descricao) ? lojaAtual.descricao : 'Descobre os nossos produtos e novidades exclusivas.';
 
     let html = `
-        <div class="h-[80px]"></div> 
+        <div class="h-[85px]"></div> 
         
-        <!-- 1. Banner Ultra-Wide Limpo (Sem conflitos de texto) -->
-        <div class="w-full bg-slate-100 relative group cursor-pointer" onclick="window.scrollBy({ top: 320, behavior: 'smooth' })">
-            
-            <!-- aspect-[21/9] cria a proporção horizontal moderna (quase 3:1) mas com espaço de respiro no telemóvel -->
-            <div class="w-full aspect-[21/9] md:aspect-[3/1] relative overflow-hidden">
+        <!-- Adicionada margem nas laterais (px-5) para voltar a ter espaço nas bordas -->
+        <div class="px-5 mb-9">
+            <div class="relative w-full aspect-[2.5/1] sm:aspect-[3/1] rounded-3xl overflow-hidden shadow-2xl shadow-black/10 active:scale-[0.98] transition-all group cursor-pointer border border-slate-200/50" onclick="window.scrollBy({ top: 400, behavior: 'smooth' })">
+                
+                <!-- Imagem do Banner -->
                 <img src="${imgBannerUrl}" alt="Banner da Loja" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                 
-                <!-- Pequeno gradiente em baixo apenas para o botão flutuar -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none"></div>
+                <!-- Filtro Escuro por Cima (Sombra garantida lá no fundo em baixo para leitura do texto) -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/10 z-10"></div>
                 
-                <div class="absolute bottom-4 right-4 z-20">
-                    <button class="bg-white/90 backdrop-blur-md text-slate-900 border border-white/50 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform flex items-center gap-1.5">
-                        ${textoBotaoBanner} <i class="fas fa-arrow-down text-[10px]"></i>
+                <!-- Textos e Botão -->
+                <div class="absolute bottom-5 left-5 right-5 text-white z-20 flex flex-col items-start w-[85%]">
+                    <span class="px-2 py-1 rounded-lg bg-white/20 backdrop-blur-md text-[9px] font-black tracking-widest text-white uppercase mb-2">Bem-vindo(a)</span>
+                    
+                    <h1 class="text-xl font-black tracking-tight mb-1 leading-tight line-clamp-1">${lojaDisplayTitle}</h1>
+                    <p class="text-[11px] font-medium text-slate-300 leading-snug line-clamp-2 mb-3">${descricaoLoja}</p>
+                    
+                    <button class="bg-white text-slate-900 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform flex items-center gap-1.5">
+                        ${textoBotaoBanner} <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Informações da Loja Organizadas (Fora do banner) -->
-        <div class="px-5 py-6">
-            <h1 class="text-[22px] font-black tracking-tight text-slate-900 leading-tight mb-1.5">${lojaDisplayTitle.toUpperCase()}</h1>
-            <p class="text-[12px] font-medium text-slate-500 max-w-[90%] leading-relaxed">${descricaoLoja}</p>
-        </div>
-
         ${renderizarNavegacao()}
 
-        <main class="py-4 space-y-10">
+        <main class="py-8 space-y-10">
             <section>
                 <div class="flex items-end justify-between px-5 mb-4">
                     <h2 class="text-lg font-black tracking-tight text-slate-900">Novidades</h2>
