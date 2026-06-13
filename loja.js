@@ -52,13 +52,37 @@ document.body.insertAdjacentHTML('beforeend', `
 
 // ─── LÓGICA DE DADOS (Junta automaticamente logo a seguir ao template) ───
 
+let memoriaEditarLoja = null;
+let bannerUploadAtivo = null;
+
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'editar-loja') {
-        carregarDadosEditarLoja();
+        // Se ainda não carregou, vai à base de dados. Se já carregou, usa a memória rápida.
+        if (!memoriaEditarLoja) {
+            carregarDadosEditarLoja();
+        } else {
+            preencherFormularioEditarLoja(memoriaEditarLoja);
+        }
+        
+        // MÁGICA: Guarda os dados temporários na memória enquanto escreves, para nunca perderes o teu progresso
+        setTimeout(() => {
+            const idsInputs = ['input-loja-nome', 'input-loja-desc', 'input-loja-whatsapp', 'input-banner-botao'];
+            idsInputs.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    elemento.addEventListener('input', (event) => {
+                        if (memoriaEditarLoja) {
+                            if (id === 'input-loja-nome') memoriaEditarLoja.nome = event.target.value;
+                            if (id === 'input-loja-desc') memoriaEditarLoja.descricao = event.target.value;
+                            if (id === 'input-loja-whatsapp') memoriaEditarLoja.whatsapp = event.target.value;
+                            if (id === 'input-banner-botao') memoriaEditarLoja.banner_botao = event.target.value;
+                        }
+                    });
+                }
+            });
+        }, 100);
     }
 });
-
-let bannerUploadAtivo = null;
 
 async function carregarDadosEditarLoja() {
     try {
@@ -73,29 +97,38 @@ async function carregarDadosEditarLoja() {
                 .single();
                 
             if (loja) {
-                // Preencher com os dados da Base de Dados
-                document.getElementById('input-loja-nome').value = loja.nome || '';
-                document.getElementById('input-loja-desc').value = loja.descricao || '';
-                document.getElementById('input-loja-whatsapp').value = loja.whatsapp || '';
-                
-                if (loja.banner_url) {
-                    const preview = document.getElementById('banner-preview');
-                    const placeholder = document.getElementById('banner-placeholder');
-                    const hover = document.getElementById('banner-hover');
-                    
-                    preview.src = loja.banner_url;
-                    preview.classList.remove('hidden');
-                    placeholder.classList.add('hidden');
-                    hover.classList.remove('hidden');
-                }
-                
-                if (loja.banner_botao) {
-                    document.getElementById('input-banner-botao').value = loja.banner_botao;
-                }
+                memoriaEditarLoja = loja;
+                preencherFormularioEditarLoja(loja);
             }
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja:", e);
+    }
+}
+
+function preencherFormularioEditarLoja(loja) {
+    const nomeEl = document.getElementById('input-loja-nome');
+    const descEl = document.getElementById('input-loja-desc');
+    const zapEl = document.getElementById('input-loja-whatsapp');
+    const btnEl = document.getElementById('input-banner-botao');
+    
+    if (nomeEl) nomeEl.value = loja.nome || '';
+    if (descEl) descEl.value = loja.descricao || '';
+    if (zapEl) zapEl.value = loja.whatsapp || '';
+    if (btnEl) btnEl.value = loja.banner_botao || '';
+    
+    const preview = document.getElementById('banner-preview');
+    const placeholder = document.getElementById('banner-placeholder');
+    const hover = document.getElementById('banner-hover');
+    
+    // Se trocaste o banner e voltaste antes de salvar, ele mostra a imagem do teu rascunho
+    const bannerMostrar = bannerUploadAtivo || loja.banner_url;
+    
+    if (bannerMostrar && preview) {
+        preview.src = bannerMostrar;
+        preview.classList.remove('hidden');
+        if (placeholder) placeholder.classList.add('hidden');
+        if (hover) hover.classList.remove('hidden');
     }
 }
 
