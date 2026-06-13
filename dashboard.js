@@ -29,7 +29,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                         <div class="ml-7 flex-1">
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-1.5">
+                                <div id="label-pedidos-pendentes" class="hidden items-center gap-1.5">
                                     <div class="w-1.5 h-1.5 rounded-full bg-[#9f6ef5] animate-pulse"></div>
                                     <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
                                 </div>
@@ -49,7 +49,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-visitas" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Compartilhe sua loja para receber visitas</h4>
-                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
+                                <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
                             </div>
                         </div>
                         <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
@@ -58,7 +58,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-produtos-ativos" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Adicione seu primeiro produto</h4>
-                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
+                                <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
                             </div>
                         </div>
                     </div>
@@ -193,22 +193,56 @@ function animarNumero(id, valorFinal) {
     
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
     
-    // Restaurar as classes de texto gigante se o valor for MAIOR que zero (0)
+    // Se o valor for MAIOR QUE ZERO, metemos a fonte gigante em todos e atívamos as "labels" de legenda
     if (!isNaN(valorAlvo) && valorAlvo > 0) {
         if (id === 'stat-pedidos') {
             elemento.className = "text-[52px] font-medium text-slate-900 tracking-tighter leading-none";
             const labelTotal = document.getElementById('label-pedidos-total');
-            if (labelTotal) labelTotal.classList.remove('hidden'); // Volta a mostrar a palavra "no total"
-        } else if (id === 'stat-visitas' || id === 'stat-produtos-ativos') {
+            if (labelTotal) labelTotal.classList.remove('hidden'); 
+            
+            const labelPendentes = document.getElementById('label-pedidos-pendentes');
+            if (labelPendentes) {
+                labelPendentes.classList.remove('hidden');
+                labelPendentes.classList.add('flex');
+            }
+        } else if (id === 'stat-visitas') {
             elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
+            const labelVisitas = document.getElementById('label-visitas-hoje');
+            if (labelVisitas) labelVisitas.classList.remove('hidden');
+        } else if (id === 'stat-produtos-ativos') {
+            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
+            const labelProdutos = document.getElementById('label-produtos-ativos');
+            if (labelProdutos) labelProdutos.classList.remove('hidden');
         }
     }
     
-    // Se o valor for exatamente 0 ou menor, paramos para não subscrever as frases em texto originais
+    // Se o valor for ZERO, removemos as labels e reescremos nativamente o texto que tem de ficar no estado vazio!
     if (!isNaN(valorAlvo) && valorAlvo <= 0) {
+        if (id === 'stat-pedidos') {
+            elemento.className = "text-[13px] font-medium text-slate-500 tracking-tight leading-snug";
+            elemento.textContent = "Ainda não recebeu pedidos";
+            const labelTotal = document.getElementById('label-pedidos-total');
+            if (labelTotal) labelTotal.classList.add('hidden');
+            const labelPendentes = document.getElementById('label-pedidos-pendentes');
+            if (labelPendentes) {
+                labelPendentes.classList.add('hidden');
+                labelPendentes.classList.remove('flex');
+            }
+        } else if (id === 'stat-visitas') {
+            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
+            elemento.textContent = "Compartilhe sua loja para receber visitas";
+            const labelVisitas = document.getElementById('label-visitas-hoje');
+            if (labelVisitas) labelVisitas.classList.add('hidden');
+        } else if (id === 'stat-produtos-ativos') {
+            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
+            elemento.textContent = "Adicione seu primeiro produto";
+            const labelProdutos = document.getElementById('label-produtos-ativos');
+            if (labelProdutos) labelProdutos.classList.add('hidden');
+        }
         return; 
     }
 
+    // Aplica o valor de target normal (só atinge esta linha para valores > 0)
     if (isNaN(valorAlvo)) { 
         elemento.textContent = valorFinal; 
     } else {
