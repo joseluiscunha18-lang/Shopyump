@@ -72,10 +72,10 @@ document.body.insertAdjacentHTML('beforeend', `
             </div>
         </div>
 
-        <main class="w-full bg-[#F9F7F5] dark:bg-[#020617] rounded-t-[40px] -mt-10 relative z-20 px-6 pt-10 pb-32 min-h-[50vh] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col items-center">
+        <main class="w-full bg-[#F9F7F5] dark:bg-[#020617] rounded-t-[40px] -mt-10 relative z-20 px-6 pt-5 pb-32 min-h-[50vh] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col items-center">
             <div class="w-full max-w-md space-y-8">
 
-                <section class="space-y-4 pt-2" id="area-validacao">
+                <section class="space-y-4 pt-0" id="area-validacao">
                     <div class="flex justify-between items-center px-1 mb-2">
                         <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Ações Necessárias</h3>
                         <span id="badge-acoes-pendentes" class="text-[9px] font-black text-orange-500 bg-orange-500/10 px-2.5 py-1 rounded-lg uppercase tracking-widest border border-orange-500/20">0 Pendentes</span>
