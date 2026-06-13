@@ -713,16 +713,16 @@ async function checkoutProgresso() {
 
         let primeiroNomeCliente = nome.trim().split(' ')[0];
 
-        // Construir a mensagem com o formato exato solicitado
-        let msg = `Olá!\nGostaria de finalizar a minha encomenda na loja ${lojaAtual.nome}.\n`;
+        // Construir a mensagem com o formato exato com mais espaçamento
+        let msg = `Olá!\nGostaria de finalizar a minha encomenda na loja ${lojaAtual.nome}.\n\n`;
         msg += `📦 Pedido\n`;
-        msg += `${itensFormatados}\n`;
-        msg += `💰 Total: ${total.toLocaleString('pt-MZ')} MT\n`;
+        msg += `${itensFormatados}\n\n`;
+        msg += `💰 Total: ${total.toLocaleString('pt-MZ')} MT\n\n`;
         msg += `👤 Entrega\n`;
         msg += `• Nome: ${primeiroNomeCliente}\n`;
         msg += `• Contacto: ${tel}\n`;
         if (end) msg += `• Endereço: ${end}\n`;
-        msg += `🔗 Link da loja: ${urlLoja}\n\n`;
+        msg += `\n🔗 Link da loja: ${urlLoja}\n\n`;
         msg += `Obrigado!`;
 
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
