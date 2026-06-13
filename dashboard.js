@@ -184,6 +184,35 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
             </div>
         </main>
+
+        <!-- Pop-up de Boas-vindas (Fica oculto por defeito) -->
+        <div id="modal-boas-vindas" class="fixed inset-0 z-[200] hidden items-center justify-center">
+            <!-- Fundo Escuro com desfoque -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="backdrop-boas-vindas" onclick="fecharModalBoasVindas()"></div>
+            
+            <!-- Janela do Pop-up (Estética Onboarding) -->
+            <div class="bg-white dark:bg-navy-900 w-full max-w-[340px] mx-4 rounded-[36px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.15)] relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-out flex flex-col items-center text-center border border-slate-100 dark:border-navy-800" id="content-boas-vindas">
+                
+                <!-- Ícone Divertido (Foguete) -->
+                <div class="w-20 h-20 bg-gradient-to-br from-[#D4B5FD] to-[#9f6ef5] rounded-[24px] flex items-center justify-center mb-6 shadow-lg shadow-[#9f6ef5]/20 rotate-3">
+                    <span class="text-4xl drop-shadow-md">🚀</span>
+                </div>
+                
+                <h3 class="text-[22px] font-bold text-slate-900 dark:text-white leading-tight mb-2 tracking-tight">A sua loja está online!</h3>
+                <p class="text-[13px] text-slate-500 font-medium leading-relaxed mb-8 px-2">
+                    O painel de gestão está pronto. Adicione o seu primeiro produto e comece a vender.
+                </p>
+                
+                <div class="w-full space-y-3">
+                    <button onclick="fecharModalECriarProduto()" class="w-full bg-[#0F172A] dark:bg-white dark:text-slate-900 text-white h-14 rounded-full text-[12px] font-black uppercase tracking-wider shadow-xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Adicionar Produto
+                    </button>
+                    <button onclick="fecharModalBoasVindas()" class="w-full bg-white dark:bg-navy-800 text-slate-600 dark:text-slate-300 h-14 rounded-full text-[11px] font-black uppercase tracking-wider border-2 border-slate-100 dark:border-navy-700 active:scale-95 transition-all">
+                        Explorar Painel
+                    </button>
+                </div>
+            </div>
+        </div>
     </template>
 `);
 
@@ -286,6 +315,11 @@ document.addEventListener('spa:page-loaded', (e) => {
         if (!dashboardCarregado) {
             carregarDadosLojaDashboard().then(() => {
                 dashboardCarregado = true;
+                
+                // MÁGICA: Verificar se é a primeira vez que o novato entra e disparar o pop-up
+                if (!localStorage.getItem('boas_vindas_visto')) {
+                    setTimeout(() => abrirModalBoasVindas(), 600); // 600ms garante que o layout carregou primeiro
+                }
             });
         } else {
             // Redesenha instantaneamente da memória (Zero consumo de requisições ao mudar de página)
@@ -813,3 +847,59 @@ function animarRemocaoPedidoEAtualizar(card) {
         }, 300);
     }, 150);
 }
+
+// ==========================================
+// LÓGICA DO POP-UP DE BOAS VINDAS
+// ==========================================
+
+function abrirModalBoasVindas() {
+    const modal = document.getElementById('modal-boas-vindas');
+    const backdrop = document.getElementById('backdrop-boas-vindas');
+    const content = document.getElementById('content-boas-vindas');
+    
+    if (!modal || !backdrop || !content) return;
+    
+    // Remove o hidden primeiro para renderizar no DOM
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    // Delay de 10ms força o navegador a aplicar a animação fluida das propriedades Scale e Opacity
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+    
+    // Marca na memória local para não incomodar mais o utilizador nos próximos logins
+    localStorage.setItem('boas_vindas_visto', 'true');
+}
+
+window.fecharModalBoasVindas = function() {
+    const modal = document.getElementById('modal-boas-vindas');
+    const backdrop = document.getElementById('backdrop-boas-vindas');
+    const content = document.getElementById('content-boas-vindas');
+    
+    if (!modal || !backdrop || !content) return;
+    
+    // Anima o desaparecimento
+    backdrop.classList.remove('opacity-100');
+    backdrop.classList.add('opacity-0');
+    
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    // Quando a transição acabar de sumir, aplico o display: hidden
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 400); 
+};
+
+window.fecharModalECriarProduto = function() {
+    fecharModalBoasVindas(); // Esconde fluídamente
+    setTimeout(() => {
+        navegarAnimado('criar-produto'); // Navega pelo router de uma maneira moderna!
+    }, 300); // 300ms garante que bate com a animação de desaparecer do modal antes de transitar os ecrãs
+};
