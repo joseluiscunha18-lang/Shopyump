@@ -193,9 +193,17 @@ document.body.insertAdjacentHTML('beforeend', `
             <!-- Janela do Pop-up (Estética Onboarding) -->
             <div class="bg-white dark:bg-navy-900 w-full max-w-[340px] mx-4 rounded-[36px] p-8 shadow-[0_20px_60px_rgba(0,0,0,0.15)] relative z-10 transform scale-95 opacity-0 transition-all duration-400 ease-out flex flex-col items-center text-center border border-slate-100 dark:border-navy-800" id="content-boas-vindas">
                 
-                <!-- Ícone Divertido (Foguete) -->
-                <div class="w-20 h-20 bg-gradient-to-br from-[#D4B5FD] to-[#9f6ef5] rounded-[24px] flex items-center justify-center mb-6 shadow-lg shadow-[#9f6ef5]/20 rotate-3">
-                    <span class="text-4xl drop-shadow-md">🚀</span>
+                <!-- Ícone Profissional (Loja Premium) -->
+                <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
+                    <!-- Efeito de brilho suave ao fundo -->
+                    <div class="absolute inset-0 bg-[#9f6ef5] blur-xl opacity-20 rounded-full"></div>
+                    <!-- Cartão principal -->
+                    <div class="relative w-full h-full bg-white dark:bg-navy-800 border border-slate-100 dark:border-navy-700 rounded-[24px] flex items-center justify-center shadow-lg shadow-slate-200/50 dark:shadow-none">
+                        <!-- Moldura interior do ícone -->
+                        <div class="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-[14px] flex items-center justify-center border border-slate-100/50 dark:border-navy-700">
+                            <i class="fa-solid fa-store text-[20px] text-[#9f6ef5]"></i>
+                        </div>
+                    </div>
                 </div>
                 
                 <h3 class="text-[22px] font-bold text-slate-900 dark:text-white leading-tight mb-2 tracking-tight">A sua loja está online!</h3>
