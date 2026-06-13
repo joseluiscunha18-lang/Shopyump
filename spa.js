@@ -652,9 +652,8 @@ async function checkoutProgresso() {
         return mostrarErroPremium("Dados Incompletos", "Por favor, preenche o teu nome e telefone.");
     }
 
-    // --- NOVA VERIFICAÇÃO DE SEGURANÇA ---
+    // --- VERIFICAÇÃO DE SEGURANÇA E SESSÃO ---
     if (!lojaAtual || !lojaAtual.id) {
-        // Tenta recuperar o slug da URL e buscar os dados da loja novamente
         const pathSegments = window.location.pathname.split('/');
         const slugIndex = pathSegments.indexOf('loja');
         const slug = slugIndex !== -1 ? pathSegments[slugIndex + 1] : null;
@@ -665,9 +664,8 @@ async function checkoutProgresso() {
         }
     }
 
-    // Se ainda assim for nulo, paramos aqui
     if (!lojaAtual || !lojaAtual.id) {
-        return mostrarErroPremium("Erro de Sessão", "A loja não carregou. Atualiza a página e tenta novamente.");
+        return mostrarErroPremium("Erro de Sessão", "A loja não carregou corretamente. Atualiza a página e tenta novamente.");
     }
     // ------------------------------------
 
@@ -677,7 +675,6 @@ async function checkoutProgresso() {
         btn.classList.add('pointer-events-none', 'opacity-80');
     }
 
-    // Restante da lógica...
     let itensPedido = produtoCompraDireta ? [produtoCompraDireta] : [...carrinho];
     let total = itensPedido.reduce((acc, i) => acc + (i.preco * i.quantidade), 0);
 
@@ -695,17 +692,59 @@ async function checkoutProgresso() {
         const { error } = await window.supabaseClient.from('pedidos').insert([novoPedido]);
         if (error) throw error;
 
-        // Limpeza e Redirecionamento
+        // Limpeza de Carrinho
         if (produtoCompraDireta) produtoCompraDireta = null;
         else { carrinho = []; localStorage.removeItem('shopyump_spa'); }
 
-        let msg = `Olá *${lojaAtual.nome}*, fiz uma encomenda! Total: ${total} MT.`;
+        // ==========================================
+        // CONFIGURAÇÃO DA MENSAGEM DO WHATSAPP
+        // ==========================================
+        let urlLoja = window.location.origin + window.location.pathname;
+
+        // 1. Organizar visualmente os itens do carrinho na mensagem
+        let itensFormatados = itensPedido.map((i, index) => {
+            let detalhes = [];
+            if (i.corSelecionada) detalhes.push(`Cor: ${i.corSelecionada}`);
+            if (i.tamanhoSelecionado) detalhes.push(`Tam: ${i.tamanhoSelecionado}`);
+            let detStr = detalhes.length > 0 ? ` [${detalhes.join(' | ')}]` : '';
+            
+            return `▫️ *${i.quantidade}x* ${i.nome} ${detStr}\n     ↳ ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
+        }).join('\n\n');
+
+        // 2. Construir o Layout Profissional da mensagem
+        let msg = `🛍️ *NOVA ENCOMENDA* 🛍️\nOlá *${lojaAtual.nome}*, fiz um pedido através da vossa loja online.\n\n`;
+        
+        msg += `🛒 *RESUMO DO PEDIDO:*\n${itensFormatados}\n\n`;
+        msg += `💰 *TOTAL DO PEDIDO:* ${total.toLocaleString('pt-MZ')} MT\n\n`;
+        msg += `──────────────\n`;
+        
+        msg += `👤 *DADOS DO CLIENTE:*\n`;
+        msg += `▪️ *Nome:* ${nome}\n`;
+        msg += `▪️ *Telefone:* ${tel}\n`;
+        if (end) msg += `▪️ *Endereço:* ${end}\n`;
+        
+        msg += `──────────────\n\n`;
+        msg += `🔗 *Acessar a loja:* ${urlLoja}\n`;
+
+        // 3. Adicionar imagem para formar a miniatura do WhatsApp
+        // Substituímos os espaços por '+' e as quebras por '%0A' - O fundo é Dark Brown (#3B271F)
+        let textoImagem = `Encomenda Confirmada | Shopyump`;
+        let urlImagemWhatsApp = `https://dummyimage.com/1200x630/3b271f/ffffff.png&text=${encodeURIComponent(textoImagem)}`;
+        msg += `🖼️ ${urlImagemWhatsApp}`;
+        // ==========================================
+
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
 
     } catch (e) {
         console.error("Erro fatal:", e);
         mostrarErroPremium("Erro no Servidor", "Houve um problema ao registar o pedido.");
+        
+        // Em caso de erro, devolve o estado original do botão
+        if (btn) {
+            btn.innerHTML = '<i class="fab fa-whatsapp text-[18px]"></i> Finalizar Pedido';
+            btn.classList.remove('pointer-events-none', 'opacity-80');
+        }
     }
 }
 
