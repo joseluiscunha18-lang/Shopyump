@@ -697,41 +697,35 @@ async function checkoutProgresso() {
         else { carrinho = []; localStorage.removeItem('shopyump_spa'); }
 
         // ==========================================
-        // CONFIGURAÇÃO DA MENSAGEM DO WHATSAPP
+        // CONFIGURAÇÃO DA MENSAGEM DO WHATSAPP (PROFISSIONAL)
         // ==========================================
         let urlLoja = window.location.origin + window.location.pathname;
 
-        // 1. Organizar visualmente os itens do carrinho na mensagem
-        let itensFormatados = itensPedido.map((i, index) => {
+        // Organizar itens de forma limpa numa única linha cada
+        let itensFormatados = itensPedido.map((i) => {
             let detalhes = [];
             if (i.corSelecionada) detalhes.push(`Cor: ${i.corSelecionada}`);
             if (i.tamanhoSelecionado) detalhes.push(`Tam: ${i.tamanhoSelecionado}`);
-            let detStr = detalhes.length > 0 ? ` [${detalhes.join(' | ')}]` : '';
+            let detStr = detalhes.length > 0 ? ` (${detalhes.join(', ')})` : '';
             
-            return `▫️ *${i.quantidade}x* ${i.nome} ${detStr}\n     ↳ ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
-        }).join('\n\n');
+            return `${i.quantidade}x ${i.nome}${detStr} - ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
+        }).join('\n');
 
-        // 2. Construir o Layout Profissional da mensagem
-        let msg = `🛍️ *NOVA ENCOMENDA* 🛍️\nOlá *${lojaAtual.nome}*, fiz um pedido através da vossa loja online.\n\n`;
-        
-        msg += `🛒 *RESUMO DO PEDIDO:*\n${itensFormatados}\n\n`;
-        msg += `💰 *TOTAL DO PEDIDO:* ${total.toLocaleString('pt-MZ')} MT\n\n`;
-        msg += `──────────────\n`;
-        
-        msg += `👤 *DADOS DO CLIENTE:*\n`;
-        msg += `▪️ *Nome:* ${nome}\n`;
-        msg += `▪️ *Telefone:* ${tel}\n`;
-        if (end) msg += `▪️ *Endereço:* ${end}\n`;
-        
-        msg += `──────────────\n\n`;
-        msg += `🔗 *Acessar a loja:* ${urlLoja}\n`;
+        // Referenciar lojista pelo nome
+        let nomeVendedor = lojaAtual.vendedor_nome || lojaAtual.nome;
 
-        // 3. Adicionar imagem para formar a miniatura do WhatsApp
-        // Substituímos os espaços por '+' e as quebras por '%0A' - O fundo é Dark Brown (#3B271F)
-        let textoImagem = `Encomenda Confirmada | Shopyump`;
-        let urlImagemWhatsApp = `https://dummyimage.com/1200x630/3b271f/ffffff.png&text=${encodeURIComponent(textoImagem)}`;
-        msg += `🖼️ ${urlImagemWhatsApp}`;
-        // ==========================================
+        let msg = `Olá *${nomeVendedor}*!\nGostaria de finalizar a minha encomenda feita na loja online.\n\n`;
+        
+        msg += `📦 *RESUMO DO PEDIDO*\n`;
+        msg += `${itensFormatados}\n\n`;
+        msg += `*Total:* ${total.toLocaleString('pt-MZ')} MT\n\n`;
+        
+        msg += `👤 *DADOS DE ENTREGA*\n`;
+        msg += `Nome: ${nome}\n`;
+        msg += `Contato: ${tel}\n`;
+        if (end) msg += `Endereço: ${end}\n`;
+        
+        msg += `\n🔗 *Loja:* ${urlLoja}`;
 
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
