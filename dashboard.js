@@ -78,7 +78,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <section class="space-y-4 pt-0" id="area-validacao">
                     <div class="flex justify-between items-center px-1 mb-2">
                         <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400">Ações Necessárias</h3>
-                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-orange-500 bg-orange-500/10 px-2.5 py-1 rounded-lg uppercase tracking-widest border border-orange-500/20">0 Pendentes</span>
+                        <span id="badge-acoes-pendentes" class="text-[9px] font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/50 px-2.5 py-1 rounded-lg uppercase tracking-widest border border-slate-200 dark:border-slate-700/50">0 Pendentes</span>
                     </div>
 
                     <div class="order-scroll-area" id="container-pedidos">
