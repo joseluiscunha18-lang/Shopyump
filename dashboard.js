@@ -323,11 +323,6 @@ document.addEventListener('spa:page-loaded', (e) => {
         if (!dashboardCarregado) {
             carregarDadosLojaDashboard().then(() => {
                 dashboardCarregado = true;
-                
-                // MÁGICA: Verificar se é a primeira vez que o novato entra e disparar o pop-up
-                if (!localStorage.getItem('boas_vindas_visto')) {
-                    setTimeout(() => abrirModalBoasVindas(), 600); // 600ms garante que o layout carregou primeiro
-                }
             });
         } else {
             // Redesenha instantaneamente da memória (Zero consumo de requisições ao mudar de página)
@@ -376,6 +371,12 @@ async function carregarDadosLojaDashboard() {
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
                 await carregarVisitasDashboard(loja.id); // <-- Carrega as visitas para os gráficos
+
+                // --- MÁGICA: POP-UP DE BOAS-VINDAS VINCULADO À CONTA ---
+                // Salvamos no LocalStorage usando o ID do utilizador! Assim uma conta nova verá o popup novamente.
+                if (!localStorage.getItem('boas_vindas_visto_' + userId)) {
+                    setTimeout(() => abrirModalBoasVindas(userId), 600);
+                }
 
                 // --- INÍCIO: NOVO CÓDIGO TEMPO REAL (Visitas) ---
                 if (!window.inscricaoRealtimeVisitas) {
@@ -860,7 +861,7 @@ function animarRemocaoPedidoEAtualizar(card) {
 // LÓGICA DO POP-UP DE BOAS VINDAS
 // ==========================================
 
-function abrirModalBoasVindas() {
+function abrirModalBoasVindas(userId) {
     const modal = document.getElementById('modal-boas-vindas');
     const backdrop = document.getElementById('backdrop-boas-vindas');
     const content = document.getElementById('content-boas-vindas');
@@ -880,8 +881,12 @@ function abrirModalBoasVindas() {
         content.classList.add('scale-100', 'opacity-100');
     }, 10);
     
-    // Marca na memória local para não incomodar mais o utilizador nos próximos logins
-    localStorage.setItem('boas_vindas_visto', 'true');
+    // A MÁGICA: Regista a visualização APENAS para o ID deste utilizador específico!
+    if (userId) {
+        localStorage.setItem('boas_vindas_visto_' + userId, 'true');
+    } else {
+        localStorage.setItem('boas_vindas_visto', 'true'); // Fallback por segurança
+    }
 }
 
 window.fecharModalBoasVindas = function() {
