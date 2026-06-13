@@ -304,8 +304,8 @@ function viewHome() {
     } else {
         produtosExibicao.forEach(p => {
             html += `
-                <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                    <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative">
+                <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col border border-slate-100 rounded-[20px] p-2 bg-white">
+                    <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 relative">
                         <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
