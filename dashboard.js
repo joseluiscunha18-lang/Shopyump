@@ -36,8 +36,8 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg"></span>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
-                                <h3 id="stat-pedidos" class="text-[52px] font-medium text-slate-900 tracking-tighter leading-none">0</h3>
-                                <span class="text-[12px] font-bold text-slate-600/80">no total</span>
+                                <h3 id="stat-pedidos" class="text-[13px] font-medium text-slate-500 tracking-tight leading-snug">Ainda não recebeu pedidos</h3>
+                                <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80">no total</span>
                             </div>
                         </div>
                     </div>
@@ -48,8 +48,8 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-visitas" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
-                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Visitas Hoje</p>
+                                <h4 id="stat-visitas" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Compartilhe sua loja para receber visitas</h4>
+                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
                             </div>
                         </div>
                         <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
@@ -57,8 +57,8 @@ document.body.insertAdjacentHTML('beforeend', `
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                             </div>
                             <div class="ml-4">
-                                <h4 id="stat-produtos-ativos" class="text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1">0</h4>
-                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Produtos Ativos</p>
+                                <h4 id="stat-produtos-ativos" class="text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1">Adicione seu primeiro produto</h4>
+                                <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
                             </div>
                         </div>
                     </div>
@@ -192,6 +192,23 @@ function animarNumero(id, valorFinal) {
     if (!elemento) return;
     
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
+    
+    // Restaurar as classes de texto gigante se o valor for MAIOR que zero (0)
+    if (!isNaN(valorAlvo) && valorAlvo > 0) {
+        if (id === 'stat-pedidos') {
+            elemento.className = "text-[52px] font-medium text-slate-900 tracking-tighter leading-none";
+            const labelTotal = document.getElementById('label-pedidos-total');
+            if (labelTotal) labelTotal.classList.remove('hidden'); // Volta a mostrar a palavra "no total"
+        } else if (id === 'stat-visitas' || id === 'stat-produtos-ativos') {
+            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
+        }
+    }
+    
+    // Se o valor for exatamente 0 ou menor, paramos para não subscrever as frases em texto originais
+    if (!isNaN(valorAlvo) && valorAlvo <= 0) {
+        return; 
+    }
+
     if (isNaN(valorAlvo)) { 
         elemento.textContent = valorFinal; 
     } else {
