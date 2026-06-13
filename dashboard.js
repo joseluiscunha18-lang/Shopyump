@@ -161,15 +161,18 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                         
                         <div id="container-produtos" class="w-full mt-3">
-                            <button onclick="navegarAnimado('criar-produto')" class="w-full bg-slate-50 dark:bg-slate-800 p-5 rounded-[24px] border-2 border-dashed border-emerald-500/40 flex flex-col items-center justify-center gap-3 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-all active:scale-[0.98] group">
-                                <div class="w-12 h-12 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-plus text-xl"></i>
+                            <div class="col-span-full py-12 flex flex-col items-center justify-center text-center gap-3 bg-white dark:bg-navy-900 rounded-[28px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800">
+                                <div class="w-14 h-14 bg-emerald-50 dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 rounded-[20px] flex items-center justify-center text-emerald-500 mb-2 shadow-sm">
+                                    <i class="fa-solid fa-box-open text-2xl"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">Adicionar Primeiro Produto</p>
-                                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Prepara o teu cat?logo para faturar</p>
+                                    <h4 class="text-[14px] font-bold text-slate-900 dark:text-white">Gere o teu stock e produtos</h4>
+                                    <p class="text-[11px] text-slate-500 font-medium px-4 mt-1 leading-relaxed">Adiciona o teu primeiro produto para começar a vender online.</p>
                                 </div>
-                            </button>
+                                <button onclick="navegarAnimado('criar-produto')" class="w-full max-w-[200px] mt-2 bg-[#0F172A] text-white h-12 rounded-full text-[11px] uppercase font-black tracking-wider flex items-center justify-center gap-2 shadow-xl active:scale-95 transition-all">
+                                    <i class="fas fa-plus"></i> Adicionar Produto
+                                </button>
+                            </div>
                         </div>
                     </section>
                 </div>
