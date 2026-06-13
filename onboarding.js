@@ -190,16 +190,15 @@ document.addEventListener('DOMContentLoaded', () => {
         this.value = this.value.replace(/[^0-9\\s]/g, '');
         validateStep4();
     });
-
-    // ─── FINALIZAÇÃO: LIGAR AO SUPABASE ───
+// ─── FINALIZAÇÃO: COM ANIMAÇÃO "A PREPARAR" E REDIRECIONAMENTO AUTOMÁTICO ───
     btnFinish?.addEventListener('click', async () => {
         const shopName = document.getElementById('shopName').value;
         const userName = document.getElementById('userName').value;
         const whatsappCode = document.getElementById('selectedCode').innerText;
         const whatsappNumber = document.getElementById('whatsapp').value;
         
-        const slug = shopName.toLowerCase().trim().replace(/\\s+/g, '-').replace(/[^\\w-]+/g, '');
-        const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\\s/g, '');
+        const slug = shopName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+        const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\s/g, '');
 
         const experience = document.querySelector('input[name="experience"]:checked')?.value || 'new';
         const businessModel = document.querySelector('input[name="businessModel"]:checked')?.value || 'stock';
@@ -243,32 +242,26 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('shopyump_seller_name', userName);
         sessionStorage.setItem('shopyump_whatsapp', fullWhatsapp);
 
-        // Novo Desfecho Automático (Loader Profissional) - Sem passo 5
+        // SUBSTITUI O ECRÃ PELA ANIMAÇÃO "A CARREGAR"
         document.body.innerHTML = `
-            <div class="h-full w-full flex flex-col items-center justify-center p-10 text-center min-h-screen bg-[#F6F6F7] dark:bg-[#0b0f1a] transition-colors duration-300">
-                <style>
-                    .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
-                    .delay-100 { animation-delay: 150ms; }
-                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                </style>
-                <div class="relative w-20 h-20 mb-8 flex items-center justify-center">
-                    <div class="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-navy-800"></div>
-                    <div class="absolute inset-0 rounded-full border-4 border-[#0F172A] dark:border-white border-t-transparent animate-spin"></div>
-                    <!-- Ícone no centro do anel -->
-                    <i class="fa-solid fa-store text-xl text-slate-800 dark:text-slate-200"></i>
+            <div class="h-full w-full h-screen flex flex-col items-center justify-center p-10 text-center bg-[#F9F7F5]">
+                <div class="relative w-20 h-20 mb-8">
+                    <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-[#1e1b4b] border-t-transparent animate-spin"></div>
                 </div>
-                <h2 class="text-[22px] font-bold text-slate-900 dark:text-white tracking-tight leading-snug mb-2 fade-in">A preparar catálogo...</h2>
-                <p class="text-[13px] text-slate-500 dark:text-slate-400 max-w-[240px] leading-relaxed mx-auto font-medium fade-in delay-100">Estamos a organizar o seu painel e a criar a montra da sua loja.</p>
+                <h2 class="text-2xl font-bold text-[#1e1b4b] tracking-tight mb-2">A preparar tudo...</h2>
+                <p class="text-slate-500 text-sm">Estamos a organizar o teu catálogo e a tua montra.</p>
             </div>
         `;
 
+        // REDIRECIONA SOZINHO PARA O DASHBOARD APÓS 2.5 SEGUNDOS
         setTimeout(() => {
             sessionStorage.setItem('shopyump_is_new', 'false');
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
-            // Redireciona diretamente para o Dashboard após a animação
+            
             window.location.href = 'dashboard.html';
-        }, 3000); // 3 Segundos exatos que permitem ao utilizador ler e aproveitar a "magia"
+        }, 2500);
     });
 
     const countryBtn = document.getElementById('countrySelector');
