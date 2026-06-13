@@ -87,9 +87,15 @@ async function inicializarLoja() {
                     else if (p.variantes.numeracao) tamanhosArr = p.variantes.numeracao.map(n => String(n));
                     if (p.variantes.cores) coresArr = p.variantes.cores.map(c => ({nome: c, hex: "#94a3b8"})); 
                 }
+                // Extrai apenas o último nome da categoria (ex: "Ténis" em vez de "Moda > Calçados > Ténis")
+                let categoriaCurta = p.categoria || 'Moda';
+                if (categoriaCurta.includes(' > ')) {
+                    categoriaCurta = categoriaCurta.split(' > ').pop().trim();
+                }
+
                 return {
                     id: p.id, nome: p.nome, preco: p.preco_promo && p.preco_promo > 0 ? p.preco_promo : p.preco,
-                    precoOriginal: p.preco, categoria: p.categoria || 'Moda', subcategoria: 'Destaques',
+                    precoOriginal: p.preco, categoria: categoriaCurta, subcategoria: 'Destaques',
                     imagem: (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/400x500?text=Sem+Foto',
                     imagens: p.fotos || [], desc: p.descricao || '', tamanhos: tamanhosArr, cores: coresArr
                 };
