@@ -249,8 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
                     <div class="absolute inset-0 rounded-full border-4 border-[#1e1b4b] border-t-transparent animate-spin"></div>
                 </div>
-                <h2 class="text-2xl font-bold text-[#1e1b4b] tracking-tight mb-2">A preparar tudo...</h2>
-                <p class="text-slate-500 text-sm">Estamos a organizar o teu catálogo e a tua montra.</p>
+                <h2 class="text-2xl font-bold text-[#1e1b4b] tracking-tight mb-2">A preparar a tua loja...</h2>
+                <p class="text-slate-500 text-sm">Estamos a configurar tudo para ti.</p>
             </div>
         `;
 
