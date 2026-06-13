@@ -701,34 +701,29 @@ async function checkoutProgresso() {
         // ==========================================
         let urlLoja = window.location.origin + window.location.pathname;
 
-        // Organizar itens de forma limpa numa única linha cada
+        // Organizar itens com os bullets e espaçamento
         let itensFormatados = itensPedido.map((i) => {
             let detalhes = [];
             if (i.corSelecionada) detalhes.push(`Cor: ${i.corSelecionada}`);
             if (i.tamanhoSelecionado) detalhes.push(`Tam: ${i.tamanhoSelecionado}`);
             let detStr = detalhes.length > 0 ? ` (${detalhes.join(', ')})` : '';
             
-            return `${i.quantidade}x ${i.nome}${detStr} - ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
+            return `• ${i.quantidade}x ${i.nome}${detStr} — ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
         }).join('\n');
 
-        // Extrair os primeiros nomes (do Lojista e do Cliente)
-        let nomeVendedor = lojaAtual.vendedor_nome || lojaAtual.nome;
-        let primeiroNomeVendedor = nomeVendedor.trim().split(' ')[0];
         let primeiroNomeCliente = nome.trim().split(' ')[0];
 
-        // Construir a mensagem com os novos formatos
-        let msg = `Olá ${primeiroNomeVendedor}!\nGostaria de finalizar uma encomenda da loja ${lojaAtual.nome}.\n\n`;
-        
-        msg += `📦 RESUMO DO PEDIDO\n`;
+        // Construir a mensagem com o formato exato solicitado
+        let msg = `Olá!\nGostaria de finalizar a minha encomenda na loja ${lojaAtual.nome}.\n`;
+        msg += `📦 Pedido\n`;
         msg += `${itensFormatados}\n`;
-        msg += `💰 Total: ${total.toLocaleString('pt-MZ')} MT\n\n`;
-        
-        msg += `👤 DADOS DE ENTREGA\n`;
-        msg += `Nome: ${primeiroNomeCliente}\n`;
-        msg += `Contacto: ${tel}\n`;
-        if (end) msg += `Endereço: ${end}\n`;
-        
-        msg += `\n🔗 Loja: ${urlLoja}`;
+        msg += `💰 Total: ${total.toLocaleString('pt-MZ')} MT\n`;
+        msg += `👤 Entrega\n`;
+        msg += `• Nome: ${primeiroNomeCliente}\n`;
+        msg += `• Contacto: ${tel}\n`;
+        if (end) msg += `• Endereço: ${end}\n`;
+        msg += `🔗 Link da loja: ${urlLoja}\n\n`;
+        msg += `Obrigado!`;
 
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
