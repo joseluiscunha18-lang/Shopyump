@@ -694,8 +694,11 @@ function renderizarPendentesDashboard(pendentes) {
                     
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between mb-0.5">
-                            <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate pr-2">${p.cliente_nome}</h4>
-                            <span class="text-[9px] font-black text-orange-500 bg-orange-50 dark:bg-orange-500/10 px-2 py-0.5 rounded-[6px] tracking-widest uppercase">Pendente</span>
+                            <h4 class="text-[13px] font-bold text-slate-900 dark:text-white truncate pr-2">${p.cliente_nome || 'Anónimo'}</h4>
+                            <div class="flex items-center gap-1.5 px-2 py-0.5 rounded-[6px] bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                                <span class="text-[9px] font-black tracking-widest uppercase">Pendente</span>
+                            </div>
                         </div>
                         
                         <div class="flex items-center text-[11px] font-medium text-slate-500 truncate mb-1.5">
