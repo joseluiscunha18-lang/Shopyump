@@ -3,7 +3,6 @@
  */
 
 (async function verificarAcesso() {
-    if(!window.supabaseClient) return;
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (!session) {
         window.location.href = 'auth.html';
@@ -130,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNext3.disabled = true;
         shopInput.addEventListener('input', function() {
             const val = this.value.trim();
-            const slugBase = val.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            const slug = val.toLowerCase().replace(/\\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             
             clearTimeout(typingTimer);
             
@@ -143,45 +142,20 @@ document.addEventListener('DOMContentLoaded', () => {
             shopFeedback.classList.remove('hidden');
             setTimeout(() => shopFeedback.classList.add('opacity-100'), 10);
             
-            // Usamos shopyump.vercel.app/loja/ no preview
-            shopLinkPreview.innerHTML = `<span class="text-slate-400">shopyump.vercel.app/loja/</span><span class="font-bold text-navy-900" id="previewSlug">${slugBase || 'loja'}</span>`;
+            shopLinkPreview.innerHTML = `<span class="font-bold text-navy-900">${slug || 'loja'}</span><span class="text-slate-400">.shopyump.com</span>`;
 
             shopStatusBadge.innerHTML = '<span class="animate-pulse">A verificar...</span>';
             shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-slate-100 text-slate-500 text-[10px] font-bold tracking-wide';
             btnNext3.disabled = true;
 
-            typingTimer = setTimeout(async () => {
-                if (slugBase.length < 3) {
+            typingTimer = setTimeout(() => {
+                if (slug.length < 3) {
                     shopStatusBadge.innerHTML = 'Nome curto';
                     shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-red-50 text-red-600 text-[10px] font-bold tracking-wide';
                     btnNext3.disabled = true;
                 } else {
-                    // Verificacao no banco de dados para evitar conflitos
-                    const { count, error } = await window.supabaseClient.from('lojas')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('slug', slugBase);
-
-                    if (count > 0) {
-                        // Ja existe, sugerir um com numeros
-                        const numeroAleatorio = Math.floor(1000 + Math.random() * 9000);
-                        const slugAlternativo = `${slugBase}-${numeroAleatorio}`;
-                        
-                        document.getElementById('shopName').setAttribute('data-final-slug', slugAlternativo);
-                        const previewSlugEl = document.getElementById('previewSlug');
-                        if (previewSlugEl) previewSlugEl.innerText = slugAlternativo;
-                        
-                        shopStatusBadge.innerHTML = '<i class="fa-solid fa-check mr-1 text-[10px]"></i> Link Ajustado';
-                        shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-yellow-100/50 text-yellow-700 text-[10px] font-bold tracking-wide';
-                    } else {
-                        // Nao existe, podemos usar assim
-                        document.getElementById('shopName').setAttribute('data-final-slug', slugBase);
-                        const previewSlugEl = document.getElementById('previewSlug');
-                        if (previewSlugEl) previewSlugEl.innerText = slugBase;
-                        
-                        shopStatusBadge.innerHTML = '<i class="fa-solid fa-check mr-1 text-[10px]"></i> Disponível';
-                        shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-emerald-100/50 text-emerald-700 text-[10px] font-bold tracking-wide';
-                    }
-                    
+                    shopStatusBadge.innerHTML = '<i class="fa-solid fa-check mr-1 text-[10px]"></i> Disponível';
+                    shopStatusBadge.className = 'flex-shrink-0 ml-2 px-2.5 py-1 flex items-center rounded-full bg-emerald-100/50 text-emerald-700 text-[10px] font-bold tracking-wide';
                     btnNext3.disabled = false;
                 }
             }, 600);
@@ -199,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function validateStep4() {
         const nameVal = (inputUserName?.value || "").trim();
-        const waVal = (inputWhatsapp?.value || "").replace(/\s/g, '');
+        const waVal = (inputWhatsapp?.value || "").replace(/\\s/g, '');
         
         if (nameVal.length >= 2 && waVal.length >= 8) {
             btnFinish.disabled = false;
@@ -213,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inputUserName?.addEventListener('input', validateStep4);
     
     inputWhatsapp?.addEventListener('input', function() {
-        this.value = this.value.replace(/[^0-9\s]/g, '');
+        this.value = this.value.replace(/[^0-9\\s]/g, '');
         validateStep4();
     });
 
@@ -224,13 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const whatsappCode = document.getElementById('selectedCode').innerText;
         const whatsappNumber = document.getElementById('whatsapp').value;
         
-        // Pega o slug validado globalmente que definimos durante o evento 'input'
-        let slug = document.getElementById('shopName').getAttribute('data-final-slug');
-        if (!slug) {
-            slug = shopName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-        }
-
-        const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\s/g, '');
+        const slug = shopName.toLowerCase().trim().replace(/\\s+/g, '-').replace(/[^\\w-]+/g, '');
+        const fullWhatsapp = whatsappCode + whatsappNumber.replace(/\\s/g, '');
 
         const experience = document.querySelector('input[name="experience"]:checked')?.value || 'new';
         const businessModel = document.querySelector('input[name="businessModel"]:checked')?.value || 'stock';
@@ -269,28 +238,38 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Armazena no sessionStorage local usando o mesmo dominio do preview (vercel)
-        sessionStorage.setItem('shopyump_store_url', `shopyump.vercel.app/loja/${slug}`);
+        // Armazena no sessionStorage local
+        sessionStorage.setItem('shopyump_store_url', `${slug}.shopyump.com`);
         sessionStorage.setItem('shopyump_seller_name', userName);
         sessionStorage.setItem('shopyump_whatsapp', fullWhatsapp);
 
-        goToStep(5);
-        setTimeout(() => {
-            btnFinish.innerHTML = originalText;
-            btnFinish.style.pointerEvents = 'auto';
-        }, 500);
-    });
+        // Novo Desfecho Automático (Loader Profissional) - Sem passo 5
+        document.body.innerHTML = `
+            <div class="h-full w-full flex flex-col items-center justify-center p-10 text-center min-h-screen bg-[#F6F6F7] dark:bg-[#0b0f1a] transition-colors duration-300">
+                <style>
+                    .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
+                    .delay-100 { animation-delay: 150ms; }
+                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                </style>
+                <div class="relative w-20 h-20 mb-8 flex items-center justify-center">
+                    <div class="absolute inset-0 rounded-full border-4 border-slate-200 dark:border-navy-800"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-[#0F172A] dark:border-white border-t-transparent animate-spin"></div>
+                    <!-- Ícone no centro do anel -->
+                    <i class="fa-solid fa-store text-xl text-slate-800 dark:text-slate-200"></i>
+                </div>
+                <h2 class="text-[22px] font-bold text-slate-900 dark:text-white tracking-tight leading-snug mb-2 fade-in">A preparar catálogo...</h2>
+                <p class="text-[13px] text-slate-500 dark:text-slate-400 max-w-[240px] leading-relaxed mx-auto font-medium fade-in delay-100">Estamos a organizar o seu painel e a criar a montra da sua loja.</p>
+            </div>
+        `;
 
-    const btnGoToDashboard = document.getElementById('btnGoToDashboard');
-    if (btnGoToDashboard) {
-        btnGoToDashboard.addEventListener('click', () => {
+        setTimeout(() => {
             sessionStorage.setItem('shopyump_is_new', 'false');
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
-            
+            // Redireciona diretamente para o Dashboard após a animação
             window.location.href = 'dashboard.html';
-        });
-    }
+        }, 3000); // 3 Segundos exatos que permitem ao utilizador ler e aproveitar a "magia"
+    });
 
     const countryBtn = document.getElementById('countrySelector');
     const countryList = document.getElementById('countryList');
