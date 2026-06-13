@@ -863,7 +863,17 @@ function toggleFavorito(id, btn) {
 }
 
 function viewFavoritos() {
-    let favoritos = JSON.parse(localStorage.getItem('shopyump_favs')) || [];
+    let favoritosStorage = [];
+    try {
+        // Tenta ler com segurança para evitar que erros deixem a página em branco
+        favoritosStorage = JSON.parse(localStorage.getItem('shopyump_favs')) || [];
+    } catch (e) {
+        favoritosStorage = [];
+    }
+    
+    // Cruza os IDs guardados com os produtos que REALMENTE existem na loja no momento
+    let produtosFavoritos = produtos.filter(p => favoritosStorage.includes(p.id));
+
     let html = `
         <div class="px-5 py-6 pb-24 animate-fade-in">
             <div class="relative flex items-center justify-center min-h-[40px] mb-8 w-full">
@@ -871,7 +881,8 @@ function viewFavoritos() {
             </div>
     `;
 
-    if (favoritos.length === 0) {
+    // Agora usa a lista filtrada para conferir se está vazio!
+    if (produtosFavoritos.length === 0) {
         return html + `
             <div class="text-center py-20 flex flex-col items-center justify-center gap-4">
                 <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300"><i class="far fa-heart text-xl"></i></div>
@@ -887,7 +898,7 @@ function viewFavoritos() {
     }
 
     html += `<div class="grid grid-cols-2 gap-x-3 gap-y-6">`;
-    produtos.filter(p => favoritos.includes(p.id)).forEach(p => {
+    produtosFavoritos.forEach(p => {
         html += `
             <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
                 <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative">
