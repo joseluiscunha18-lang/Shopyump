@@ -711,21 +711,24 @@ async function checkoutProgresso() {
             return `${i.quantidade}x ${i.nome}${detStr} - ${(i.preco * i.quantidade).toLocaleString('pt-MZ')} MT`;
         }).join('\n');
 
-        // Referenciar lojista pelo nome
+        // Extrair os primeiros nomes (do Lojista e do Cliente)
         let nomeVendedor = lojaAtual.vendedor_nome || lojaAtual.nome;
+        let primeiroNomeVendedor = nomeVendedor.trim().split(' ')[0];
+        let primeiroNomeCliente = nome.trim().split(' ')[0];
 
-        let msg = `Olá *${nomeVendedor}*!\nGostaria de finalizar a minha encomenda feita na loja online.\n\n`;
+        // Construir a mensagem com os novos formatos
+        let msg = `Olá ${primeiroNomeVendedor}!\nGostaria de finalizar uma encomenda da loja ${lojaAtual.nome}.\n\n`;
         
-        msg += `📦 *RESUMO DO PEDIDO*\n`;
-        msg += `${itensFormatados}\n\n`;
-        msg += `*Total:* ${total.toLocaleString('pt-MZ')} MT\n\n`;
+        msg += `📦 RESUMO DO PEDIDO\n`;
+        msg += `${itensFormatados}\n`;
+        msg += `💰 Total: ${total.toLocaleString('pt-MZ')} MT\n\n`;
         
-        msg += `👤 *DADOS DE ENTREGA*\n`;
-        msg += `Nome: ${nome}\n`;
-        msg += `Contato: ${tel}\n`;
+        msg += `👤 DADOS DE ENTREGA\n`;
+        msg += `Nome: ${primeiroNomeCliente}\n`;
+        msg += `Contacto: ${tel}\n`;
         if (end) msg += `Endereço: ${end}\n`;
         
-        msg += `\n🔗 *Loja:* ${urlLoja}`;
+        msg += `\n🔗 Loja: ${urlLoja}`;
 
         window.open(`https://wa.me/${numeroLojista}?text=${encodeURIComponent(msg)}`, '_blank');
         navegarPara('home');
