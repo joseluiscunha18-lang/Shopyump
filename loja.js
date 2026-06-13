@@ -141,6 +141,7 @@ function mudarBanner(event) {
 async function salvarEdicaoLoja() {
     const btn = document.getElementById('btn-salvar-loja');
     
+    // 1. Pega os valores dos inputs
     const nome = document.getElementById('input-loja-nome').value.trim();
     const desc = document.getElementById('input-loja-desc').value.trim();
     const zap = document.getElementById('input-loja-whatsapp').value.trim();
@@ -159,6 +160,7 @@ async function salvarEdicaoLoja() {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
         
+        // 2. Prepara os dados para ir para a base de dados
         let payload = {
             nome: nome,
             descricao: desc,
@@ -166,12 +168,20 @@ async function salvarEdicaoLoja() {
             banner_botao: btnTexto
         };
         
-        if (bannerUploadAtivo) { payload.banner_url = bannerUploadAtivo; }
+        // Se escolheste uma foto, adiciona ao pacote
+        if (bannerUploadAtivo) { 
+            payload.banner_url = bannerUploadAtivo; 
+        }
 
+        // 3. Comunica com o Supabase
         const { error } = await window.supabaseClient.from('lojas').update(payload).eq('perfil_id', userId);
-        if (error) throw error;
         
-        // Mantém as outras páginas atualizadas
+        // Se houver BOOM no Supabase, nós interceptamos!
+        if (error) {
+            throw error; 
+        }
+        
+        // Sucesso maravilhoso
         if (typeof window.forcarAtualizacaoDashboard === 'function') window.forcarAtualizacaoDashboard();
         
         btn.innerHTML = 'Guardado com Sucesso ✓';
@@ -188,13 +198,15 @@ async function salvarEdicaoLoja() {
         }, 2500);
         
     } catch (err) {
-        console.error("Erro ao gravar:", err);
+        console.error("Erro detetado:", err);
         btn.innerHTML = 'Falha ao Guardar';
+        
+        // 🔴 AQUI ESTÁ A MAGIA DE DEBUB: Vai mostrar ao utilizador a Falha Exata
+        alert("Ocorreu o seguinte erro na Base de Dados:\\n\\n" + err.message + "\\n\\n🔴 DICA: Vai ao teu painel do Supabase, entra na tabela 'lojas' e certifica-te de que criaste as seguintes colunas (do tipo Text ou Varchar):\\n1. banner_url\\n2. banner_botao\\n3. descricao");
+
         setTimeout(() => {
             btn.innerHTML = 'Tentar Novamente';
             btn.disabled = false;
-        }, 2000);
+        }, 4000);
     }
 }
-
-// loja.js - Logic for loja page
