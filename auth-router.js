@@ -18,13 +18,13 @@ function inicializarAuth() {
                 
                 setTimeout(async () => {
                     // Verifica se o usuário é o ADMIN via base de dados
-                    const { data: isAdmin } = await window.supabaseClient
+                    const { data: adminData } = await window.supabaseClient
                         .from('admins')
-                        .select('id')
-                        .eq('email', session.user.email)
-                        .maybeSingle();
+                        .select('email')
+                        .eq('email', session.user.email);
 
-                    if (isAdmin) {
+                    // Se a query retornar dados (o email está na tabela admins)
+                    if (adminData && adminData.length > 0) {
                         window.location.href = 'admin.html'; // Painel Admin
                         return;
                     }
