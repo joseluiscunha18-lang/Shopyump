@@ -28,13 +28,7 @@ document.body.insertAdjacentHTML('beforeend', `
                             <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         </div>
                         <div class="ml-7 flex-1">
-                            <div class="flex items-center justify-between">
-                                <div id="label-pedidos-pendentes" class="hidden items-center gap-1.5">
-                                    <div class="w-1.5 h-1.5 rounded-full bg-[#9f6ef5] animate-pulse"></div>
-                                    <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
-                                </div>
-                                <span id="badge-pedidos-hoje" class="hidden text-[9px] font-black bg-[#9f6ef5]/10 text-[#9f6ef5] px-2.5 py-1 rounded-lg"></span>
-                            </div>
+                            <!-- Ponto roxo e textos de pendência removidos -->
                             <div class="flex items-baseline gap-2 mt-1">
                                 <h3 id="stat-pedidos">
     <div class="h-10 w-24 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-[10px]"></div>
@@ -705,12 +699,7 @@ function renderizarPendentesDashboard(pendentes) {
     if (statPedidos) animarNumero('stat-pedidos', pendentes.length);
     if (badgeAtivos) badgeAtivos.innerText = `${pendentes.length} Pendentes`;
     
-    if (badgePedidosHoje && pendentes.length > 0) {
-        badgePedidosHoje.innerText = `${pendentes.length} PENDENTE(S)`;
-        badgePedidosHoje.classList.remove('hidden');
-    } else if (badgePedidosHoje) {
-        badgePedidosHoje.classList.add('hidden');
-    }
+    
     
     if (pendentes.length > 0) {
         const cloneMsgVazio = msgVazia ? msgVazia.cloneNode(true) : null;
