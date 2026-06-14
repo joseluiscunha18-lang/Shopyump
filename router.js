@@ -92,12 +92,20 @@ const SPA = (() => {
     // MÁGICA: Ouve os toques no botão FÍSICO Voltar do Telemóvel/Navegador
     window.addEventListener('popstate', (e) => {
         if (e.state && e.state.pagina) {
+            
+            // Regra crucial: Se voltou ao dashboard, prendemos a navegação empurrando novo estado para a frente.
+            if (e.state.pagina === 'dashboard') {
+                window.history.pushState({ pagina: 'dashboard' }, paginas['dashboard'].titulo, `#dashboard`);
+            }
+            
             navegar(e.state.pagina, false);
         } else {
             const hash = window.location.hash.replace('#', '');
             if (hash && paginas[hash]) {
                 navegar(hash, false);
             } else {
+                // Tenta sair para algo não mapeado? Empurramos de volta para o dashboard
+                window.history.pushState({ pagina: 'dashboard' }, paginas['dashboard'].titulo, `#dashboard`);
                 navegar('dashboard', false);
             }
         }
@@ -111,7 +119,10 @@ const SPA = (() => {
             window.history.replaceState({ pagina: hashFixo }, paginas[hashFixo].titulo, `#${hashFixo}`);
         } else {
             navegar('dashboard', false);
+            // Mágica dupla: Apaga a origem anterior e empurra um passo novo. 
+            // Agora o usuário precisa pressionar "Voltar" 2 vezes muito rápido para conseguir fugir desse loop.
             window.history.replaceState({ pagina: 'dashboard' }, paginas['dashboard'].titulo, `#dashboard`);
+            window.history.pushState({ pagina: 'dashboard' }, paginas['dashboard'].titulo, `#dashboard`);
         }
     }, 50);
 

@@ -260,9 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
             
-            window.location.replace('dashboard.html');
+            window.location.replace('dashboard.html'); // Substitui e "mata" a aba do onboarding do histórico
         }, 2500);
-    });
 
     const countryBtn = document.getElementById('countrySelector');
     const countryList = document.getElementById('countryList');
