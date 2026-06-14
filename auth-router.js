@@ -17,22 +17,20 @@ function inicializarAuth() {
                 }
                 
                 setTimeout(async () => {
-                    // 1. O BANCO DE DADOS VALIDA SE É ADMIN
-                    // Verifica na tabela 'administradores' se este dono de sessão tem acesso
-                    const { data: admin } = await window.supabaseClient
-                        .from('administradores')
+                    // Verifica se o usuário é o ADMIN via base de dados
+                    const { data: isAdmin } = await window.supabaseClient
+                        .from('admins')
                         .select('id')
                         .eq('email', session.user.email)
                         .maybeSingle();
 
-                    if (admin) {
-                        // Se for encontrado na tabela de administradores, redireciona para o Admin
-                        window.location.href = 'admin.html';
+                    if (isAdmin) {
+                        window.location.href = 'admin.html'; // Painel Admin
                         return;
                     }
 
-                    // 2. SE NÃO FOR ADMIN, VERIFICA SE O UTILIZADOR JÁ TEM LOJA
-                    const { data: loja } = await window.supabaseClient
+                    // VERIFICA SE JÁ TEM LOJA (Para usuários normais)
+                    const { data: loja, error } = await window.supabaseClient
                         .from('lojas')
                         .select('id')
                         .eq('perfil_id', session.user.id)

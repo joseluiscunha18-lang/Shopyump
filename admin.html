@@ -38,7 +38,7 @@
             const { data: isAdmin, error: adminError } = await window.supabaseClient
                 .from('admins')
                 .select('id')
-                .eq('id', session.user.id)
+                .eq('email', session.user.email)
                 .maybeSingle();
 
             if (!isAdmin) {
