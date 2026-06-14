@@ -19,7 +19,7 @@ const SPA = (() => {
 
     let paginaAtual = null;
 
-    function navegar(pagina) {
+    function navegar(pagina, pushHistory = true) {
         if (!paginas[pagina]) { console.warn('Página não encontrada:', pagina); return; }
         const cfg = paginas[pagina];
         const tpl = document.getElementById(cfg.tpl);
@@ -77,16 +77,42 @@ const SPA = (() => {
             });
 
             paginaAtual = pagina;
+            
+            // Regista a página atual no histórico do browser para o Back-button funcionar corretamente
+            if (pushHistory) {
+                window.history.pushState({ pagina: pagina }, cfg.titulo, `#${pagina}`);
+            }
 
             // Dispara evento para os módulos JS
             document.dispatchEvent(new CustomEvent('spa:page-loaded', { detail: pagina }));
 
         }, 200);
     }
+    
+    // MÁGICA: Ouve os toques no botão FÍSICO Voltar do Telemóvel/Navegador
+    window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.pagina) {
+            navegar(e.state.pagina, false);
+        } else {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && paginas[hash]) {
+                navegar(hash, false);
+            } else {
+                navegar('dashboard', false);
+            }
+        }
+    });
 
-    // Inicia na página dashboard
+    // Inicia baseando-se no URL memorizado (ex: Voltar abrir a última secção) ou no dashboard
     setTimeout(() => {
-        navegar('dashboard');
+        const hashFixo = window.location.hash.replace('#', '');
+        if (hashFixo && paginas[hashFixo]) {
+            navegar(hashFixo, false);
+            window.history.replaceState({ pagina: hashFixo }, paginas[hashFixo].titulo, `#${hashFixo}`);
+        } else {
+            navegar('dashboard', false);
+            window.history.replaceState({ pagina: 'dashboard' }, paginas['dashboard'].titulo, `#dashboard`);
+        }
     }, 50);
 
     return { navegar };
@@ -100,5 +126,5 @@ function navegarAnimado(pagina) {
     const overlay = document.getElementById('overlay');
     if (menu) menu.classList.remove('open');
     if (overlay) overlay.classList.remove('show');
-    SPA.navegar(nome);
+    SPA.navegar(nome, true); // O 'true' avisa o Router que o utilizador clicou e deve criar novo histórico
 }

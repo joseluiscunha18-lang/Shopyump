@@ -5,14 +5,14 @@
 (async function verificarAcesso() {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (!session) {
-        window.location.href = 'auth.html';
+        window.location.replace('auth.html');
         return;
     }
     
     // Verificar se já tem loja e redirigir para dashboard.html se já tiver
     const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', session.user.id).maybeSingle();
     if (loja) {
-        window.location.href = 'dashboard.html';
+        window.location.replace('dashboard.html');
     }
 })();
 
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
             
-            window.location.href = 'dashboard.html';
+            window.location.replace('dashboard.html');
         }, 2500);
     });
 
