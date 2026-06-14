@@ -17,8 +17,14 @@ function inicializarAuth() {
                 }
                 
                 setTimeout(async () => {
-                    // Verifica de forma direta pelo seu email do Google se é o Admin
-                    if (session.user?.email && session.user.email.toLowerCase() === 'joseluiscunha18@gmail.com') {
+                    // Verifica se o usuário é o ADMIN via base de dados
+                    const { data: adminData, error: adminError } = await window.supabaseClient
+                        .from('admins')
+                        .select('email')
+                        .eq('email', session.user.email);
+
+                    // Se a query retornar dados (o e-mail logado está na tabela admins)
+                    if (adminData && adminData.length > 0) {
                         window.location.href = 'admin.html'; // Painel Admin
                         return;
                     }
