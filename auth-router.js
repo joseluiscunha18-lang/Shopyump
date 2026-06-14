@@ -16,14 +16,28 @@ function inicializarAuth() {
                     root.style.transition = 'opacity 0.4s ease';
                 }
                 
-                // VERIFICA SE JÁ TEM LOJA
-                const { data: loja, error } = await window.supabaseClient
-                    .from('lojas')
-                    .select('id')
-                    .eq('perfil_id', session.user.id)
-                    .maybeSingle();
+                setTimeout(async () => {
+                    // 1. O BANCO DE DADOS VALIDA SE É ADMIN
+                    // Verifica na tabela 'administradores' se este dono de sessão tem acesso
+                    const { data: admin } = await window.supabaseClient
+                        .from('administradores')
+                        .select('id')
+                        .eq('email', session.user.email)
+                        .maybeSingle();
 
-                setTimeout(() => {
+                    if (admin) {
+                        // Se for encontrado na tabela de administradores, redireciona para o Admin
+                        window.location.href = 'admin.html';
+                        return;
+                    }
+
+                    // 2. SE NÃO FOR ADMIN, VERIFICA SE O UTILIZADOR JÁ TEM LOJA
+                    const { data: loja } = await window.supabaseClient
+                        .from('lojas')
+                        .select('id')
+                        .eq('perfil_id', session.user.id)
+                        .maybeSingle();
+
                     if (loja) {
                         window.location.href = 'dashboard.html'; // Dashboard
                     } else {
