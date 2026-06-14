@@ -35,12 +35,8 @@
                 return;
             }
 
-            const { data: adminData, error: adminError } = await window.supabaseClient
-                .from('admins')
-                .select('email')
-                .eq('email', session.user.email);
-
-            if (!adminData || adminData.length === 0) {
+            // Valida imediatamente e expulsa se o e-mail logado não for o seu
+            if (!session.user?.email || session.user.email.toLowerCase() !== 'joseluiscunha18@gmail.com') {
                 alert('Acesso negado. Apenas o administrador pode aceder a este painel.');
                 window.location.href = 'index.html#login';
                 return;
