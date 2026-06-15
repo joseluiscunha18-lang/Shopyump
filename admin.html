@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT" class="h-full bg-[#F9F7F5]">
+<html lang="pt-MZ" class="h-full bg-[#F9F7F5]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <script>
@@ -21,108 +20,78 @@
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     boxShadow: { 
                         'premium': '0 4px 20px -2px rgba(15,23,42,0.05)',
-                        'card': '0 1px 3px rgba(15,23,42,0.02), 0 10px 15px -3px rgba(15,23,42,0.03)'
+                        'card': '0 1px 3px rgba(15,23,42,0.02), 0 10px 15px -3px rgba(15,23,42,0.03)',
+                        'floating': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)'
                     }
                 }
             }
         }
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const supabaseUrl = 'https://bpufeystnepnmvnprnaz.supabase.co';
-        const supabaseKey = 'sb_publishable_jXe-pPbg78tfbssQwEZDjw_KICuIs6X';
-        window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session }, error } = await window.supabaseClient.auth.getSession();
-            
-            if (!session) {
-                window.location.href = 'index.html#login';
-                return;
-            }
-
-            const { data: adminData } = await window.supabaseClient
-                .from('admins')
-                .select('email')
-                .eq('email', session.user.email);
-
-            if (!adminData || adminData.length === 0) {
-                window.location.href = 'index.html#login';
-                return;
-            }
-
-            document.getElementById('adminEmail').innerText = session.user.email;
-        });
-
-        async function logout() {
-            await window.supabaseClient.auth.signOut();
-            window.location.href = 'index.html#login';
-        }
-    </script>
 </head>
-<body class="h-full text-slate-800 antialiased overflow-hidden">
+<body class="h-full text-slate-800 antialiased overflow-hidden flex">
 
-    <div class="h-full flex">
-        <aside class="w-[260px] bg-navy-900 text-white flex flex-col hidden md:flex border-r border-white/5">
-            <div class="p-6 pb-2">
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-navy-900 font-black text-xl">S</div>
-                    <h1 class="text-xl font-bold tracking-tight">Shopyump</h1>
-                </div>
-                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Menu Principal</p>
+    <aside class="w-[260px] bg-navy-900 text-white flex-col hidden md:flex border-r border-white/5 relative z-20">
+        <div class="p-6 pb-2">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-navy-900 font-black text-xl">S</div>
+                <h1 class="text-xl font-bold tracking-tight">Shopyump Admin</h1>
             </div>
-            
-            <nav class="flex-1 px-4 space-y-1" id="admin-nav">
-                <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 bg-white/10 text-white rounded-xl font-semibold text-sm transition-all" data-route="dashboard">
-                    <i class="ph ph-squares-four text-lg"></i> Resumo
-                </a>
-                <a href="#lojistas" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="lojistas">
-                    <i class="ph ph-users text-lg"></i> Lojistas
-                </a>
-                <a href="#orcamentos" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="orcamentos">
-                    <i class="ph ph-receipt text-lg"></i> Orçamentos
-                </a>
-                <a href="#logs" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="logs">
-                    <i class="ph ph-chart-line-up text-lg"></i> Visitas & Logs
-                </a>
-            </nav>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Gestão Principal</p>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-1.5">
+            <a href="#dashboard" class="nav-link flex items-center gap-3 px-3 py-2.5 bg-white/10 text-white rounded-xl font-semibold text-sm transition-all" data-route="dashboard">
+                <i class="ph ph-squares-four text-lg"></i> Resumo
+            </a>
+            <a href="#lojas" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="lojas">
+                <i class="ph ph-storefront text-lg"></i> Lojas
+            </a>
+            <a href="#utilizadores" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="utilizadores">
+                <i class="ph ph-users text-lg"></i> Utilizadores
+            </a>
+            <a href="#onboarding" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="onboarding">
+                <i class="ph ph-clipboard-text text-lg"></i> Dados Onboarding
+            </a>
+        </nav>
 
-            <div class="p-4 mt-auto">
-                <div class="bg-navy-800/50 p-4 rounded-2xl border border-white/5">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-indigo-500"></div>
-                        <div class="overflow-hidden">
-                            <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Administrador</p>
-                            <p id="adminEmail" class="text-xs font-bold truncate text-white">...</p>
-                        </div>
+        <div class="p-4 mt-auto">
+            <div class="bg-navy-800/50 p-4 rounded-2xl border border-white/5">
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff" class="w-8 h-8 rounded-full" alt="Admin">
+                    <div class="overflow-hidden">
+                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Sessão Ativa</p>
+                        <p class="text-xs font-bold truncate text-white">admin@shopyump.com</p>
                     </div>
-                    <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-red-500/10 text-slate-300 hover:text-red-400 py-2 rounded-xl text-xs font-bold transition-colors">
-                        <i class="ph ph-sign-out"></i> Terminar Sessão
-                    </button>
                 </div>
+                <button class="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-red-500/10 text-slate-300 hover:text-red-400 py-2 rounded-xl text-xs font-bold transition-colors">
+                    <i class="ph ph-sign-out"></i> Sair
+                </button>
             </div>
-        </aside>
+        </div>
+    </aside>
 
-        <main class="flex-1 flex flex-col h-full bg-[#F9F7F5]">
-            <header class="bg-white/60 backdrop-blur-md px-8 py-5 border-b border-slate-200/60 flex items-center justify-between sticky top-0 z-10">
-                <div>
-                    <h2 id="header-title" class="text-xl font-bold text-navy-900 tracking-tight">Resumo Geral</h2>
-                    <p id="header-subtitle" class="text-xs text-slate-500 font-medium mt-0.5">Visão global da plataforma Shopyump</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="relative p-2 text-slate-400 hover:text-navy-900 transition-colors rounded-full hover:bg-slate-100">
-                        <i class="ph ph-bell text-xl"></i>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
-            </header>
+    <main class="flex-1 flex flex-col h-full bg-[#F9F7F5] relative overflow-hidden">
+        <header class="bg-white/80 backdrop-blur-xl px-8 py-5 border-b border-slate-200/60 flex items-center justify-between sticky top-0 z-10">
+            <div>
+                <h2 id="header-title" class="text-xl font-bold text-navy-900 tracking-tight">Resumo Geral</h2>
+                <p id="header-subtitle" class="text-xs text-slate-500 font-medium mt-0.5">Métricas e saúde global da plataforma</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-navy-900 transition-colors rounded-full hover:bg-slate-100 relative">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+            </div>
+        </header>
 
-            <div id="admin-root" class="flex-1 p-8 overflow-y-auto">
-                </div>
-        </main>
-    </div>
+        <div id="admin-root" class="flex-1 p-8 overflow-y-auto w-full max-w-7xl mx-auto">
+            </div>
+    </main>
 
-    <script src="admin-app.js"></script>
+    <script src="views-dashboard.js"></script>
+    <script src="views-lojas.js"></script>
+    <script src="views-utilizadores.js"></script>
+    <script src="views-onboarding.js"></script>
+    <script src="admin-router.js"></script>
 </body>
 </html>
