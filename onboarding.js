@@ -5,14 +5,14 @@
 (async function verificarAcesso() {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (!session) {
-        window.location.replace('auth.html');
+        window.location.href = 'auth.html';
         return;
     }
     
     // Verificar se já tem loja e redirigir para dashboard.html se já tiver
     const { data: loja } = await window.supabaseClient.from('lojas').select('id').eq('perfil_id', session.user.id).maybeSingle();
     if (loja) {
-        window.location.replace('dashboard.html');
+        window.location.href = 'dashboard.html';
     }
 })();
 
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameVal = (inputUserName?.value || "").trim();
         const waVal = (inputWhatsapp?.value || "").replace(/\\s/g, '');
         
-        if (nameVal.length >= 2 && waVal.length >= 9) {
+        if (nameVal.length >= 2 && waVal.length >= 8) {
             btnFinish.disabled = false;
             btnFinish.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
@@ -260,8 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('onboarding_completo', 'true');
             localStorage.setItem('produtos_criados', '0'); // FORÇA O DASHBOARD A COMEÇAR A ZEROS
             
-            window.location.replace('dashboard.html'); // Substitui e "mata" a aba do onboarding do histórico
+            window.location.href = 'dashboard.html';
         }, 2500);
+    });
 
     const countryBtn = document.getElementById('countrySelector');
     const countryList = document.getElementById('countryList');
