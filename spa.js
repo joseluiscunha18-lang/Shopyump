@@ -316,7 +316,7 @@ function viewHome() {
                         <h3 class="text-[12px] font-medium text-slate-500 line-clamp-1 leading-snug">${p.nome}</h3>
                         <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-400 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
-                            <p class="text-[15px] font-black ${p.precoOriginal && p.preco < p.precoOriginal ? 'text-emerald-500' : 'text-slate-900'} tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] ${p.precoOriginal && p.preco < p.precoOriginal ? 'text-emerald-400' : 'text-slate-400'} font-bold">MT</span></p>
+                            <p class="text-[15px] font-black text-slate-900 tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] text-slate-400 font-bold">MT</span></p>
                         </div>
                     </div>
                 </div>
@@ -342,7 +342,7 @@ function renderProdutoCardHorizontal(p) {
                 <h3 class="text-[12px] font-medium text-slate-500 line-clamp-1 leading-snug">${p.nome}</h3>
                 <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-400 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
-                    <p class="text-[14px] font-black ${p.precoOriginal && p.preco < p.precoOriginal ? 'text-emerald-500' : 'text-slate-900'} tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] ${p.precoOriginal && p.preco < p.precoOriginal ? 'text-emerald-400' : 'text-slate-400'} font-bold">MT</span></p>
+                    <p class="text-[14px] font-black text-slate-900 tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-400 font-bold">MT</span></p>
                 </div>
             </div>
         </div>
