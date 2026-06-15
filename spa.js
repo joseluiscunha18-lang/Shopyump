@@ -310,8 +310,7 @@ function viewHome() {
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
-                    </div>
+                                            </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[12px] font-medium text-slate-500 line-clamp-1 leading-snug">${p.nome}</h3>
                         <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
@@ -336,7 +335,7 @@ function renderProdutoCardHorizontal(p) {
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                 </button>
-                <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
+                <img src="${p.imagem}" class="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-active:scale-95">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
                 <h3 class="text-[12px] font-medium text-slate-500 line-clamp-1 leading-snug">${p.nome}</h3>
@@ -361,7 +360,8 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
     imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center"><img src="${img}" class="w-full h-full object-cover"></div>`;
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center"><img src="${img}" class="w-full h-full object-contain p-2 mix-blend-multiply">
+</div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/90 border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     });
 
