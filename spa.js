@@ -953,8 +953,30 @@ function viewFavoritos() {
     return html;
 }
 
-function abrirPesquisa() { document.getElementById('painel-pesquisa').classList.remove('translate-y-full'); document.getElementById('input-pesquisa').focus(); }
-function fecharPesquisa() { document.getElementById('painel-pesquisa').classList.add('translate-y-full'); }
+function abrirPesquisa() { 
+    const painel = document.getElementById('painel-pesquisa');
+    if (painel) {
+        painel.style.display = 'block'; // Mostra primeiro o elemento no DOM
+        setTimeout(() => painel.classList.remove('translate-y-full'), 10); // Depois desliza
+        setTimeout(() => document.getElementById('input-pesquisa').focus(), 300);
+    }
+}
+
+function fecharPesquisa() { 
+    const painel = document.getElementById('painel-pesquisa');
+    if (painel) {
+        painel.classList.add('translate-y-full'); // Desliza para baixo
+        setTimeout(() => { painel.style.display = 'none'; }, 300); // Esconde completamente após a animação de 300ms
+    }
+}
+
+// Inicializar a aplicação quando as bibliotecas carregam
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarLoja();
+    // Proteção extra: Garante que a barra de pesquisa arranca oculta e não atrapalha o touch/scroll inferior
+    const painel = document.getElementById('painel-pesquisa');
+    if (painel) painel.style.display = 'none';
+});
 
 function pesquisarProdutos(termo) {
     const resultadosContainer = document.getElementById('resultados-pesquisa');
@@ -1074,10 +1096,7 @@ function cartTouchEnd(e, index) {
     swipingIndex = null;
 }
 
-// Inicializar a aplicação quando as bibliotecas carregam
-document.addEventListener('DOMContentLoaded', () => {
-    inicializarLoja();
-});
+
 
 // Função para Partilhar Produto (nativo no telemóvel ou copia o link no PC)
 function partilharProduto(id, nome) {
