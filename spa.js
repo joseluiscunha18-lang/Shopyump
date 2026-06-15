@@ -1025,9 +1025,15 @@ function abrirDescricaoModal() {
     content.addEventListener('touchmove', (e) => {
         if (scrollArea.scrollTop <= 0) {
             currentY = e.touches[0].clientY - startY;
-            if (currentY > 0) { content.style.transform = `translateY(${currentY}px)`; content.style.transition = 'none'; }
+            if (currentY > 0) { 
+                // Impede o Chrome/Safari de fazer o "pull-to-refresh" da página inteira
+                if (e.cancelable) e.preventDefault(); 
+                
+                content.style.transform = `translateY(${currentY}px)`; 
+                content.style.transition = 'none'; 
+            }
         }
-    }, { passive: true });
+    }, { passive: false }); // <-- O segredo está em colocar passive como false aqui
     content.addEventListener('touchend', () => {
         content.style.transition = '';
         if (currentY > 100) fecharDescricaoModal();
