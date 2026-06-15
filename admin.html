@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Admin | Shopyump</title>
+    <title>Admin | Shopyump</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -19,9 +19,7 @@
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     boxShadow: { 
-                        'premium': '0 4px 20px -2px rgba(15,23,42,0.05)',
-                        'card': '0 1px 3px rgba(15,23,42,0.02), 0 10px 15px -3px rgba(15,23,42,0.03)',
-                        'floating': '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)'
+                        'card': '0 1px 3px rgba(15,23,42,0.02), 0 10px 15px -3px rgba(15,23,42,0.03)'
                     }
                 }
             }
@@ -34,9 +32,9 @@
         <div class="p-6 pb-2">
             <div class="flex items-center gap-3 mb-8">
                 <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-navy-900 font-black text-xl">S</div>
-                <h1 class="text-xl font-bold tracking-tight">Shopyump Admin</h1>
+                <h1 class="text-xl font-bold tracking-tight">Shopyump</h1>
             </div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Gestão Principal</p>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Menu</p>
         </div>
         
         <nav class="flex-1 px-4 space-y-1.5">
@@ -44,9 +42,9 @@
                 <i class="ph ph-squares-four text-lg"></i> Resumo
             </a>
             <a href="#lojas" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="lojas">
-                <i class="ph ph-storefront text-lg"></i> Lojas
+                <i class="ph ph-storefront text-lg"></i> Gestão de Lojas
             </a>
-            <a href="#utilizadores" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="utilizadores">
+            <a href="#usuarios" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="usuarios">
                 <i class="ph ph-users text-lg"></i> Utilizadores
             </a>
             <a href="#onboarding" class="nav-link flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-white/5 rounded-xl font-medium text-sm transition-all" data-route="onboarding">
@@ -55,26 +53,16 @@
         </nav>
 
         <div class="p-4 mt-auto">
-            <div class="bg-navy-800/50 p-4 rounded-2xl border border-white/5">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=3B82F6&color=fff" class="w-8 h-8 rounded-full" alt="Admin">
-                    <div class="overflow-hidden">
-                        <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Sessão Ativa</p>
-                        <p class="text-xs font-bold truncate text-white">admin@shopyump.com</p>
-                    </div>
-                </div>
-                <button class="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-red-500/10 text-slate-300 hover:text-red-400 py-2 rounded-xl text-xs font-bold transition-colors">
-                    <i class="ph ph-sign-out"></i> Sair
-                </button>
-            </div>
+            <button class="w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-red-500/10 text-slate-300 hover:text-red-400 py-3 rounded-xl text-xs font-bold transition-colors">
+                <i class="ph ph-sign-out"></i> Terminar Sessão
+            </button>
         </div>
     </aside>
 
     <main class="flex-1 flex flex-col h-full bg-[#F9F7F5] relative overflow-hidden">
         <header class="bg-white/80 backdrop-blur-xl px-8 py-5 border-b border-slate-200/60 flex items-center justify-between sticky top-0 z-10">
             <div>
-                <h2 id="header-title" class="text-xl font-bold text-navy-900 tracking-tight">Resumo Geral</h2>
-                <p id="header-subtitle" class="text-xs text-slate-500 font-medium mt-0.5">Métricas e saúde global da plataforma</p>
+                <h2 id="header-title" class="text-xl font-bold text-navy-900 tracking-tight">A Carregar...</h2>
             </div>
             <div class="flex items-center gap-4">
                 <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-navy-900 transition-colors rounded-full hover:bg-slate-100 relative">
@@ -84,14 +72,14 @@
             </div>
         </header>
 
-        <div id="admin-root" class="flex-1 p-8 overflow-y-auto w-full max-w-7xl mx-auto">
+        <div id="admin-root" class="flex-1 p-8 overflow-y-auto w-full max-w-7xl mx-auto pb-20">
             </div>
     </main>
 
-    <script src="views-dashboard.js"></script>
-    <script src="views-lojas.js"></script>
-    <script src="views-utilizadores.js"></script>
-    <script src="views-onboarding.js"></script>
-    <script src="admin-router.js"></script>
+    <script src="admin-dashboard.js"></script>
+    <script src="admin-lojas.js"></script>
+    <script src="admin-usuarios.js"></script>
+    <script src="admin-onboarding.js"></script>
+    <script src="admin-app.js"></script>
 </body>
 </html>
