@@ -937,7 +937,7 @@ function viewFavoritos() {
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
                     </button>
-                    <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
+                    <img src="${p.imagem}" class="w-full h-full object-contain p-2 mix-blend-multiply transition-transform duration-500 group-active:scale-95">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
                     <h3 class="text-[12px] font-medium text-slate-500 line-clamp-1 leading-snug">${p.nome}</h3>
