@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameVal = (inputUserName?.value || "").trim();
         const waVal = (inputWhatsapp?.value || "").replace(/\\s/g, '');
         
-        if (nameVal.length >= 2 && waVal.length >= 8) {
+        if (nameVal.length >= 2 && waVal.length >= 9) {
             btnFinish.disabled = false;
             btnFinish.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
