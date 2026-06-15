@@ -313,7 +313,7 @@ function viewHome() {
                         <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
-                        <h3 class="text-[13px] font-bold text-slate-900 line-clamp-1 leading-snug">${p.nome}</h3>
+                        <h3 class="text-[13px] font-bold text-slate-900 line-clamp-2 leading-snug min-h-[36px]">${p.nome}</h3>
                         <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-500 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
                             <p class="text-[15px] font-black text-slate-900 tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] text-slate-900 font-bold">MT</span></p>
@@ -339,7 +339,7 @@ function renderProdutoCardHorizontal(p) {
                 <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
-                <h3 class="text-[13px] font-bold text-slate-900 line-clamp-1 leading-snug">${p.nome}</h3>
+                <h3 class="text-[13px] font-bold text-slate-900 line-clamp-2 leading-snug min-h-[36px]">${p.nome}</h3>
                 <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-500 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
                     <p class="text-[14px] font-black text-slate-900 tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[9px] text-slate-900 font-bold">MT</span></p>
@@ -940,7 +940,7 @@ function viewFavoritos() {
                     <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
-                    <h3 class="text-[13px] font-bold text-slate-900 line-clamp-1 leading-snug">${p.nome}</h3>
+                    <h3 class="text-[13px] font-bold text-slate-900 line-clamp-2 leading-snug min-h-[36px]">${p.nome}</h3>
                     <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
                         ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-500 line-through">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
                         <p class="text-[15px] font-black text-slate-900 tracking-tight">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] text-slate-900 font-bold">MT</span></p>
@@ -972,7 +972,7 @@ function pesquisarProdutos(termo) {
                     <img src="${p.imagem}" class="w-full h-full object-cover">
                 </div>
                 <div class="px-1">
-                    <h3 class="text-[12px] font-semibold text-slate-500 truncate">${p.nome}</h3>
+                    <h3 class="text-[12px] font-bold text-slate-900 line-clamp-2 leading-snug">${p.nome}</h3>
                     <p class="text-[14px] font-black text-slate-900">${p.preco.toLocaleString('pt-MZ')} MT</p>
                 </div>
             </div>
