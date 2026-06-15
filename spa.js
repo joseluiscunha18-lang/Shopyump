@@ -449,7 +449,7 @@ function viewProduto(id) {
                         <i class="fas fa-shopping-cart text-[10px]"></i> Adicionar
                     </button>
                     <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.2] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
-                        Comprar
+                        Comprar Agora
                     </button>
                 </div>
             </div>
