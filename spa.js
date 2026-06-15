@@ -378,13 +378,13 @@ function viewProduto(id) {
 
             <div class="bg-white rounded-t-3xl -mt-5 relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
-                    <div class="flex flex-col flex-1">
-                        <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-0.5">${p.categoria}</span>
-                        <h1 class="text-base font-black text-slate-900 leading-tight">${p.nome}</h1>
+                    <div class="flex flex-col flex-1 pr-2">
+                        <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
+                        <h1 class="text-[20px] font-extrabold text-black leading-tight break-words">${p.nome}</h1>
                     </div>
-                    <div class="text-xl font-black text-slate-900 text-right whitespace-nowrap flex flex-col items-end">
-                        ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[10px] text-slate-400 line-through mb-0.5">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
-                        <div class="leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[10px] font-bold text-slate-400">MT</span></div>
+                    <div class="text-right whitespace-nowrap flex flex-col items-end pt-0.5">
+                        ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[12px] text-slate-400 font-semibold line-through mb-1">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
+                        <div class="text-[22px] font-black text-black tracking-tight leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[13px] font-extrabold text-black ml-0.5">MT</span></div>
                     </div>
                 </div>
 
