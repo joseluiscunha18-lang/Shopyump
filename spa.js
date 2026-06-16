@@ -330,7 +330,7 @@ function viewHome() {
 
 function renderProdutoCardHorizontal(p) {
     return `
-        <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[170px] snap-start">
+        <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[170px] snap-start first:ml-2">
             <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
