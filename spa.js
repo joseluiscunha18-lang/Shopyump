@@ -234,23 +234,24 @@ function renderizarNavegacao() {
 // 3. AS VIEWS
 // ==========================================
 function viewHome() {
-    let produtosExibicao = [...produtos];
-
     // 1. Identificamos quais são os 4 produtos das Novidades
     let novidades = produtos.slice(0, 4);
+    let IDsNovidades = novidades.map(n => n.id);
 
-    // 2. Se a loja tiver mais de 4 produtos, removemos as novidades da lista de baixo 
-    // para não haver repetição visual e parecer que a loja tem mais variedade!
-    if (produtos.length > 4) {
-        produtosExibicao = produtosExibicao.filter(p => !novidades.some(n => n.id === p.id));
-    }
-
-    // 3. Aplicamos o filtro escolhido (Tudo, Moda, etc) aos produtos restantes
+    // 2. Aplicamos o filtro da categoria (Tudo, Moda, etc) a TODOS os produtos primeiro
+    let produtosFiltrados = [...produtos];
     if (filtroAtual.tipo === 'categoria') {
-        produtosExibicao = produtosExibicao.filter(p => p.categoria === filtroAtual.valor);
+        produtosFiltrados = produtosFiltrados.filter(p => p.categoria === filtroAtual.valor);
     } else if (filtroAtual.tipo === 'subcategoria') {
-        produtosExibicao = produtosExibicao.filter(p => p.subcategoria === filtroAtual.valor);
+        produtosFiltrados = produtosFiltrados.filter(p => p.subcategoria === filtroAtual.valor);
     }
+
+    // 3. Separamos os restantes produtos das novidades
+    let outrosProdutos = produtosFiltrados.filter(p => !IDsNovidades.includes(p.id));
+    let novidadesFiltradas = produtosFiltrados.filter(p => IDsNovidades.includes(p.id));
+
+    // 4. Juntamos tudo: os "outros" aparecem primeiro, empurrando as novidades para o fundo do catálogo!
+    let produtosExibicao = [...outrosProdutos, ...novidadesFiltradas];
 
     let lojaDisplayTitle = lojaAtual ? lojaAtual.nome : "LOJA";
     
