@@ -281,11 +281,7 @@ function viewHome() {
                 <div class="flex items-end justify-between px-5 mb-4">
                     <h2 class="text-lg font-black tracking-tight text-slate-900">Novidades</h2>
                 </div>
-                <!-- Removemos o px-5 (que cortava o ecrã) e deixamos o scroll fluir até à margem -->
-                <div class="flex overflow-x-auto gap-4 no-scrollbar pb-2 snap-x snap-mandatory">
-                    
-                    <!-- Este espaçador invisível inicial + o "gap-4" tem a mesma largura (20px) que o px-5 do Título -->
-                    <div class="w-1 flex-shrink-0"></div>
+                <div class="flex overflow-x-auto gap-4 no-scrollbar px-5 pb-2 snap-x snap-mandatory scroll-px-5">
     `;
     
     produtos.slice(0, 4).forEach(produto => {
@@ -293,8 +289,6 @@ function viewHome() {
     });
     
     html += `
-                    <!-- Espaçador invisível no final, para o último produto não colar à borda direita -->
-                    <div class="w-1 flex-shrink-0"></div>
                 </div>
             </section>
 
