@@ -234,11 +234,22 @@ function renderizarNavegacao() {
 // 3. AS VIEWS
 // ==========================================
 function viewHome() {
-    let produtosExibicao = produtos;
+    let produtosExibicao = [...produtos];
+
+    // 1. Identificamos quais são os 4 produtos das Novidades
+    let novidades = produtos.slice(0, 4);
+
+    // 2. Se a loja tiver mais de 4 produtos, removemos as novidades da lista de baixo 
+    // para não haver repetição visual e parecer que a loja tem mais variedade!
+    if (produtos.length > 4) {
+        produtosExibicao = produtosExibicao.filter(p => !novidades.some(n => n.id === p.id));
+    }
+
+    // 3. Aplicamos o filtro escolhido (Tudo, Moda, etc) aos produtos restantes
     if (filtroAtual.tipo === 'categoria') {
-        produtosExibicao = produtos.filter(p => p.categoria === filtroAtual.valor);
+        produtosExibicao = produtosExibicao.filter(p => p.categoria === filtroAtual.valor);
     } else if (filtroAtual.tipo === 'subcategoria') {
-        produtosExibicao = produtos.filter(p => p.subcategoria === filtroAtual.valor);
+        produtosExibicao = produtosExibicao.filter(p => p.subcategoria === filtroAtual.valor);
     }
 
     let lojaDisplayTitle = lojaAtual ? lojaAtual.nome : "LOJA";
