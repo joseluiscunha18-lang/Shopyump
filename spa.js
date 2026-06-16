@@ -281,7 +281,8 @@ function viewHome() {
                 <div class="flex items-end justify-between px-5 mb-4">
                     <h2 class="text-lg font-black tracking-tight text-slate-900">Novidades</h2>
                 </div>
-                <div class="flex overflow-x-auto gap-4 no-scrollbar px-5 pb-2 snap-x snap-mandatory scroll-px-5">
+                <!-- Usado scroll-pl-5 para o snap perfeito esquerdo (não colando à borda). Reduzimos o gap e usamos after content para garantir respiro no fim do scroll -->
+                <div class="flex overflow-x-auto gap-3.5 no-scrollbar pl-5 pb-2 snap-x snap-mandatory scroll-pl-5 after:content-[''] after:w-[1px] after:pr-5 after:shrink-0">
     `;
     
     produtos.slice(0, 4).forEach(produto => {
@@ -330,7 +331,8 @@ function viewHome() {
 
 function renderProdutoCardHorizontal(p) {
     return `
-        <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[170px] snap-start">
+        <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
+        <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
             <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
