@@ -1162,66 +1162,32 @@ function abrirMenuLateral() {
     const menu = document.getElementById('menu-lateral');
     const overlay = document.getElementById('menu-overlay');
     const painel = document.getElementById('menu-painel');
+    
+    // Prevenção de erros: se os elementos não existirem no HTML, não faz nada (não crasha)
     if(!menu || !overlay || !painel) return;
 
+    // Atualiza o nome da loja no painel
     const menuNomeLoja = document.getElementById('menu-nome-loja');
-    if (menuNomeLoja && lojaAtual) menuNomeLoja.innerText = lojaAtual.nome || 'Loja';
+    if (menuNomeLoja && lojaAtual) {
+        menuNomeLoja.innerText = lojaAtual.nome || 'Loja';
+    }
     
-    // Mágico: Agora constrói o menu e os contactos respeitando as regras do Lojista!
+    // Constrói os links e as redes sociais da loja no menu
     if (lojaAtual) {
         preencherContactosMenu();
         preencherLinksMenu();
     }
     
+    // Abre o menu lateral com um efeito de deslize suave
     menu.classList.remove('pointer-events-none');
     setTimeout(() => {
         overlay.classList.remove('opacity-0');
         overlay.classList.add('opacity-100');
         painel.classList.remove('-translate-x-full');
     }, 10);
+    
+    // Bloqueia o scroll do fundo enquanto o menu está aberto
     document.body.style.overflow = 'hidden';
-}
-
-function preencherLinksMenu() {
-    // Almeja cirurgicamente a lista dos links do Teu Menu
-    const nav = document.querySelector('#menu-painel nav');
-    if (!nav || !lojaAtual) return;
-
-    // Estes vão aparecer SEMPRE, pois são estruturais à loja:
-    let html = `
-        <button onclick="irParaInicio()" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
-            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Início</span>
-        </button>
-        <button onclick="irParaFiltro('tudo')" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
-            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Categorias</span>
-            <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
-        </button>
-    `;
-
-    // Lógica para injetar ou censurar baseada nas opções que o Lojista guardou!
-    if (lojaAtual.mostrar_sobre !== false) {
-        html += `
-            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'sobre'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
-                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Sobre a Loja</span>
-            </button>
-        `;
-    }
-    if (lojaAtual.mostrar_entrega !== false) {
-        html += `
-            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'entrega'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
-                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Política de Entrega</span>
-            </button>
-        `;
-    }
-    if (lojaAtual.mostrar_termos !== false) {
-        html += `
-            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'termos'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity group">
-                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Termos e Condições</span>
-            </button>
-        `;
-    }
-
-    nav.innerHTML = html;
 }
 
 function fecharMenuLateral() {
@@ -1230,13 +1196,14 @@ function fecharMenuLateral() {
     const painel = document.getElementById('menu-painel');
     if(!menu || !overlay || !painel) return;
     
+    // Esconde o painel com deslizamento
     painel.classList.add('-translate-x-full');
     overlay.classList.remove('opacity-100');
     overlay.classList.add('opacity-0');
     
     setTimeout(() => {
         menu.classList.add('pointer-events-none');
-        document.body.style.overflow = '';
+        document.body.style.overflow = ''; // Devolve o scroll natural à página
     }, 300);
 }
 
