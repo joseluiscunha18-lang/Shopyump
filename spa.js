@@ -1324,7 +1324,7 @@ function viewInstitucional(pagina) {
             <div class="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-slate-100 px-5 py-4 flex items-center justify-between">
                 <button onclick="navegarPara('home')" class="w-10 h-10 flex items-center justify-start text-slate-900 active:scale-90 transition-transform"><i class="fas fa-arrow-left text-base"></i></button>
                 <h1 class="text-[12px] font-black uppercase tracking-widest text-slate-900 text-center flex-1">${titulo}</h1>
-                <button onclick="partilharPagina('${titulo}')" class="w-10 h-10 flex items-center justify-end text-slate-900 active:scale-90 transition-transform"><i class="far fa-share-square text-base relative z-10"></i></button>
+                <div class="w-10 h-10"></div>
             </div>
             <div class="px-6 pt-8 max-w-2xl mx-auto">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">${titulo}</h2>
@@ -1334,10 +1334,4 @@ function viewInstitucional(pagina) {
     `;
 }
 
-function partilharPagina(titulo) {
-    if (navigator.share) {
-        navigator.share({ title: titulo, url: window.location.href }).catch(err => console.log(err));
-    } else {
-        alert('Copiado! O link foi copiado.');
-    }
-}
+
