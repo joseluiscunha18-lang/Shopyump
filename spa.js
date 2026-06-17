@@ -1251,9 +1251,9 @@ function preencherContactosMenu() {
     if (!box) return;
 
     let htmlRedes = '';
-    if (lojaAtual.instagram) htmlRedes += `<a href="${lojaAtual.instagram}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-instagram text-[18px]"></i></a>`;
-    if (lojaAtual.facebook) htmlRedes += `<a href="${lojaAtual.facebook}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-facebook-f text-[16px]"></i></a>`;
-    if (lojaAtual.tiktok) htmlRedes += `<a href="${lojaAtual.tiktok}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-tiktok text-[16px]"></i></a>`;
+    if (lojaAtual.instagram && lojaAtual.mostrar_instagram) htmlRedes += `<a href="${lojaAtual.instagram}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-instagram text-[18px]"></i></a>`;
+    if (lojaAtual.facebook && lojaAtual.mostrar_facebook) htmlRedes += `<a href="${lojaAtual.facebook}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-facebook-f text-[16px]"></i></a>`;
+    if (lojaAtual.tiktok && lojaAtual.mostrar_tiktok) htmlRedes += `<a href="${lojaAtual.tiktok}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-tiktok text-[16px]"></i></a>`;
 
     let htmlContactos = '';
     if (lojaAtual.whatsapp) {

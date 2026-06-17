@@ -112,6 +112,75 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </div>
 
+                <!-- Redes Sociais -->
+                <div class="sf-card p-6 space-y-6">
+                    <div class="space-y-1 relative">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Redes Sociais</h3>
+                                <p class="text-[10px] text-slate-500 font-medium mt-1">Configura e ativa os links das tuas redes sociais para aparecerem na loja.</p>
+                            </div>
+                        </div>
+
+                        <!-- Instagram -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fab fa-instagram text-pink-500"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Instagram</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-instagram" class="sr-only peer" onchange="toggleSecaoExtra('instagram')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-instagram" class="hidden transition-all duration-300 relative">
+                                <input type="url" id="input-loja-instagram" placeholder="Link do Instagram (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                            </div>
+                        </div>
+                        
+                        <!-- Facebook -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fab fa-facebook-f text-blue-600"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Facebook</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-facebook" class="sr-only peer" onchange="toggleSecaoExtra('facebook')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-facebook" class="hidden transition-all duration-300 relative">
+                                <input type="url" id="input-loja-facebook" placeholder="Link do Facebook (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                            </div>
+                        </div>
+
+                        <!-- TikTok -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fab fa-tiktok text-slate-900 dark:text-white"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">TikTok</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-tiktok" class="sr-only peer" onchange="toggleSecaoExtra('tiktok')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-tiktok" class="hidden transition-all duration-300 relative">
+                                <input type="url" id="input-loja-tiktok" placeholder="Link do TikTok (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 mb-2 rounded-xl text-xs font-black shadow-lg uppercase tracking-widest active:scale-[0.98] transition-all">
                     Guardar Alterações
                 </button>
@@ -148,7 +217,7 @@ document.addEventListener('spa:page-loaded', (e) => {
         
         // MÁGICA TEMPO REAL: Guarda o que estás a escrever sem salvar na BD (evita perdas)
         setTimeout(() => {
-            const idsInputs = ['input-loja-nome', 'input-loja-desc', 'input-loja-whatsapp', 'input-banner-botao', 'input-loja-sobre', 'input-loja-entrega', 'input-loja-termos'];
+            const idsInputs = ['input-loja-nome', 'input-loja-desc', 'input-loja-whatsapp', 'input-banner-botao', 'input-loja-sobre', 'input-loja-entrega', 'input-loja-termos', 'input-loja-instagram', 'input-loja-facebook', 'input-loja-tiktok'];
             idsInputs.forEach(id => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
@@ -161,13 +230,16 @@ document.addEventListener('spa:page-loaded', (e) => {
                             if (id === 'input-loja-sobre') memoriaEditarLoja.conteudo_sobre = event.target.value;
                             if (id === 'input-loja-entrega') memoriaEditarLoja.conteudo_entrega = event.target.value;
                             if (id === 'input-loja-termos') memoriaEditarLoja.conteudo_termos = event.target.value;
+                            if (id === 'input-loja-instagram') memoriaEditarLoja.instagram = event.target.value;
+                            if (id === 'input-loja-facebook') memoriaEditarLoja.facebook = event.target.value;
+                            if (id === 'input-loja-tiktok') memoriaEditarLoja.tiktok = event.target.value;
                         }
                     });
                 }
             });
 
-            // Guarda se escolheste LIGAR/DESLIGAR as páginas
-            const idsToggles = ['toggle-sobre', 'toggle-entrega', 'toggle-termos'];
+            // Guarda se escolheste LIGAR/DESLIGAR as páginas e as redes sociais
+            const idsToggles = ['toggle-sobre', 'toggle-entrega', 'toggle-termos', 'toggle-instagram', 'toggle-facebook', 'toggle-tiktok'];
             idsToggles.forEach(id => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
@@ -176,6 +248,9 @@ document.addEventListener('spa:page-loaded', (e) => {
                             if (id === 'toggle-sobre') memoriaEditarLoja.mostrar_sobre = event.target.checked;
                             if (id === 'toggle-entrega') memoriaEditarLoja.mostrar_entrega = event.target.checked;
                             if (id === 'toggle-termos') memoriaEditarLoja.mostrar_termos = event.target.checked;
+                            if (id === 'toggle-instagram') memoriaEditarLoja.mostrar_instagram = event.target.checked;
+                            if (id === 'toggle-facebook') memoriaEditarLoja.mostrar_facebook = event.target.checked;
+                            if (id === 'toggle-tiktok') memoriaEditarLoja.mostrar_tiktok = event.target.checked;
                         }
                     });
                 }
@@ -233,6 +308,22 @@ function preencherFormularioEditarLoja(loja) {
     const txtTermos = document.getElementById('input-loja-termos');
     if (chkTermos) { chkTermos.checked = loja.mostrar_termos === true; window.toggleSecaoExtra('termos'); }
     if (txtTermos) txtTermos.value = loja.conteudo_termos || '';
+    
+    // Novas Redes Sociais
+    const chkInstagram = document.getElementById('toggle-instagram');
+    const txtInstagram = document.getElementById('input-loja-instagram');
+    if (chkInstagram) { chkInstagram.checked = loja.mostrar_instagram === true; window.toggleSecaoExtra('instagram'); }
+    if (txtInstagram) txtInstagram.value = loja.instagram || '';
+
+    const chkFacebook = document.getElementById('toggle-facebook');
+    const txtFacebook = document.getElementById('input-loja-facebook');
+    if (chkFacebook) { chkFacebook.checked = loja.mostrar_facebook === true; window.toggleSecaoExtra('facebook'); }
+    if (txtFacebook) txtFacebook.value = loja.facebook || '';
+
+    const chkTiktok = document.getElementById('toggle-tiktok');
+    const txtTiktok = document.getElementById('input-loja-tiktok');
+    if (chkTiktok) { chkTiktok.checked = loja.mostrar_tiktok === true; window.toggleSecaoExtra('tiktok'); }
+    if (txtTiktok) txtTiktok.value = loja.tiktok || '';
     
     // 3. Preenchimento de Banner Image
     const preview = document.getElementById('banner-preview');
@@ -320,7 +411,13 @@ async function salvarEdicaoLoja() {
             mostrar_entrega: document.getElementById('toggle-entrega')?.checked || false,
             conteudo_entrega: document.getElementById('input-loja-entrega')?.value || null,
             mostrar_termos: document.getElementById('toggle-termos')?.checked || false,
-            conteudo_termos: document.getElementById('input-loja-termos')?.value || null
+            conteudo_termos: document.getElementById('input-loja-termos')?.value || null,
+            mostrar_instagram: document.getElementById('toggle-instagram')?.checked || false,
+            instagram: document.getElementById('input-loja-instagram')?.value || null,
+            mostrar_facebook: document.getElementById('toggle-facebook')?.checked || false,
+            facebook: document.getElementById('input-loja-facebook')?.value || null,
+            mostrar_tiktok: document.getElementById('toggle-tiktok')?.checked || false,
+            tiktok: document.getElementById('input-loja-tiktok')?.value || null
         };
         
         if (bannerUploadAtivo) payload.banner_url = bannerUploadAtivo; 
@@ -349,7 +446,7 @@ async function salvarEdicaoLoja() {
         btn.innerHTML = 'Falha ao Guardar';
         
         // 🔴 ALERTA VERMELHO: Lista EXATA do que falta nas colunas do Supabase!
-        alert("Ocorreu o seguinte erro ao guardar na Base de Dados:\n\n" + (err.message || 'Erro desconhecido') + "\n\n🔴 ATENÇÃO LOJISTA - VERIFICA O SUPABASE:\nVai à tabela 'lojas' e cria estas colunas em falta:\n1. mostrar_sobre (Boolean ou bool)\n2. conteudo_sobre (Text)\n3. mostrar_entrega (Boolean ou bool)\n4. conteudo_entrega (Text)\n5. mostrar_termos (Boolean ou bool)\n6. conteudo_termos (Text)");
+        alert("Ocorreu o erro:\n" + (err.message || 'Erro desconhecido') + "\n\n🔴 VERIFICA O SUPABASE NA TABELA 'lojas':\nDeves ter as colunas bool:\n- mostrar_sobre\n- mostrar_entrega\n- mostrar_termos\n- mostrar_instagram\n- mostrar_facebook\n- mostrar_tiktok");
 
         setTimeout(() => {
             btn.innerHTML = 'Tentar Novamente';
