@@ -41,8 +41,78 @@ document.body.insertAdjacentHTML('beforeend', `
                         <input type="tel" id="input-loja-whatsapp" placeholder="+258 84 000 0000" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
                     </div>
                 </div>
-                
-                <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl text-xs font-black shadow-lg uppercase tracking-widest active:scale-[0.98] transition-all">
+
+                <!-- Páginas Institucionais (Sobre, Entrega, Termos) -->
+                <div class="sf-card p-6 space-y-6">
+                    <div class="space-y-1 relative">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Páginas da Loja</h3>
+                                <p class="text-[10px] text-slate-500 font-medium mt-1">Configura as páginas que devem aparecer no menu da tua loja.</p>
+                            </div>
+                        </div>
+
+                        <!-- Sobre a Loja -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Sobre a Loja</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-sobre" class="sr-only peer" onchange="toggleSecaoExtra('sobre')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-sobre" class="hidden transition-all duration-300 relative">
+                                <textarea id="input-loja-sobre" rows="4" placeholder="Conta um pouco a história e visão da tua loja..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Política de Entrega -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Política de Entrega</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-entrega" class="sr-only peer" onchange="toggleSecaoExtra('entrega')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-entrega" class="hidden transition-all duration-300 relative">
+                                <textarea id="input-loja-entrega" rows="4" placeholder="Explica os teus métodos e prazos de entrega..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Termos e Condições -->
+                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50">
+                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
+                                        <i class="fas fa-file-contract"></i>
+                                    </div>
+                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Termos e Condições</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-termos" class="sr-only peer" onchange="toggleSecaoExtra('termos')">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-termos" class="hidden transition-all duration-300 relative">
+                                <textarea id="input-loja-termos" rows="4" placeholder="Condições, devoluções e garantias de uso da tua loja..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 mb-2 rounded-xl text-xs font-black shadow-lg uppercase tracking-widest active:scale-[0.98] transition-all">
                     Guardar Alterações
                 </button>
             </div>
@@ -50,23 +120,35 @@ document.body.insertAdjacentHTML('beforeend', `
     </template>
 `);
 
-// ─── LÓGICA DE DADOS (Junta automaticamente logo a seguir ao template) ───
+// ─── FUNÇÃO AUXILIAR PARA MOSTRAR/OCULTAR CAIXAS DE PÁGINAS ───
+window.toggleSecaoExtra = function(secao) {
+    const check = document.getElementById('toggle-' + secao);
+    const area = document.getElementById('area-' + secao);
+    if (!check || !area) return;
+    
+    if (check.checked) {
+        area.classList.remove('hidden');
+    } else {
+        area.classList.add('hidden');
+    }
+}
+
+// ─── LÓGICA DE DADOS ───
 
 let memoriaEditarLoja = null;
 let bannerUploadAtivo = null;
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'editar-loja') {
-        // Se ainda não carregou, vai à base de dados. Se já carregou, usa a memória rápida.
         if (!memoriaEditarLoja) {
             carregarDadosEditarLoja();
         } else {
             preencherFormularioEditarLoja(memoriaEditarLoja);
         }
         
-        // MÁGICA: Guarda os dados temporários na memória enquanto escreves, para nunca perderes o teu progresso
+        // MÁGICA TEMPO REAL: Guarda o que estás a escrever sem salvar na BD (evita perdas)
         setTimeout(() => {
-            const idsInputs = ['input-loja-nome', 'input-loja-desc', 'input-loja-whatsapp', 'input-banner-botao'];
+            const idsInputs = ['input-loja-nome', 'input-loja-desc', 'input-loja-whatsapp', 'input-banner-botao', 'input-loja-sobre', 'input-loja-entrega', 'input-loja-termos'];
             idsInputs.forEach(id => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
@@ -76,6 +158,24 @@ document.addEventListener('spa:page-loaded', (e) => {
                             if (id === 'input-loja-desc') memoriaEditarLoja.descricao = event.target.value;
                             if (id === 'input-loja-whatsapp') memoriaEditarLoja.whatsapp = event.target.value;
                             if (id === 'input-banner-botao') memoriaEditarLoja.banner_botao = event.target.value;
+                            if (id === 'input-loja-sobre') memoriaEditarLoja.conteudo_sobre = event.target.value;
+                            if (id === 'input-loja-entrega') memoriaEditarLoja.conteudo_entrega = event.target.value;
+                            if (id === 'input-loja-termos') memoriaEditarLoja.conteudo_termos = event.target.value;
+                        }
+                    });
+                }
+            });
+
+            // Guarda se escolheste LIGAR/DESLIGAR as páginas
+            const idsToggles = ['toggle-sobre', 'toggle-entrega', 'toggle-termos'];
+            idsToggles.forEach(id => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                    elemento.addEventListener('change', (event) => {
+                        if (memoriaEditarLoja) {
+                            if (id === 'toggle-sobre') memoriaEditarLoja.mostrar_sobre = event.target.checked;
+                            if (id === 'toggle-entrega') memoriaEditarLoja.mostrar_entrega = event.target.checked;
+                            if (id === 'toggle-termos') memoriaEditarLoja.mostrar_termos = event.target.checked;
                         }
                     });
                 }
@@ -107,6 +207,7 @@ async function carregarDadosEditarLoja() {
 }
 
 function preencherFormularioEditarLoja(loja) {
+    // 1. Dados Básicos da Loja
     const nomeEl = document.getElementById('input-loja-nome');
     const descEl = document.getElementById('input-loja-desc');
     const zapEl = document.getElementById('input-loja-whatsapp');
@@ -116,12 +217,28 @@ function preencherFormularioEditarLoja(loja) {
     if (descEl) descEl.value = loja.descricao || '';
     if (zapEl) zapEl.value = loja.whatsapp || '';
     if (btnEl) btnEl.value = loja.banner_botao || '';
+
+    // 2. Preenchimento Dinâmico (Toggles e Textos Opcionais)
+    const chkSobre = document.getElementById('toggle-sobre');
+    const txtSobre = document.getElementById('input-loja-sobre');
+    if (chkSobre) { chkSobre.checked = loja.mostrar_sobre === true; window.toggleSecaoExtra('sobre'); }
+    if (txtSobre) txtSobre.value = loja.conteudo_sobre || '';
+
+    const chkEntrega = document.getElementById('toggle-entrega');
+    const txtEntrega = document.getElementById('input-loja-entrega');
+    if (chkEntrega) { chkEntrega.checked = loja.mostrar_entrega === true; window.toggleSecaoExtra('entrega'); }
+    if (txtEntrega) txtEntrega.value = loja.conteudo_entrega || '';
+
+    const chkTermos = document.getElementById('toggle-termos');
+    const txtTermos = document.getElementById('input-loja-termos');
+    if (chkTermos) { chkTermos.checked = loja.mostrar_termos === true; window.toggleSecaoExtra('termos'); }
+    if (txtTermos) txtTermos.value = loja.conteudo_termos || '';
     
+    // 3. Preenchimento de Banner Image
     const preview = document.getElementById('banner-preview');
     const placeholder = document.getElementById('banner-placeholder');
     const hover = document.getElementById('banner-hover');
     
-    // Se trocaste o banner e voltaste antes de salvar, ele mostra a imagem do teu rascunho
     const bannerMostrar = bannerUploadAtivo || loja.banner_url;
     
     if (bannerMostrar && preview) {
@@ -141,10 +258,9 @@ function mudarBanner(event) {
         const img = new Image();
         img.src = e.target.result;
         img.onload = function() {
-            // Recorta e Otimiza a Imagem 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const cw = 800; // Resolução recomendada
+            const cw = 800; // Resolução otimizada
             const ch = 400; 
             canvas.width = cw;
             canvas.height = ch;
@@ -154,7 +270,7 @@ function mudarBanner(event) {
             const y = (ch / 2) - (img.height / 2) * scale;
             
             ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-            const base64Url = canvas.toDataURL('image/webp', 0.85); // Otimiza para Base de dados 
+            const base64Url = canvas.toDataURL('image/webp', 0.85); 
             
             const preview = document.getElementById('banner-preview');
             const placeholder = document.getElementById('banner-placeholder');
@@ -165,7 +281,7 @@ function mudarBanner(event) {
             placeholder.classList.add('hidden');
             hover.classList.remove('hidden');
             
-            bannerUploadAtivo = base64Url; // Guarda a info para salvar
+            bannerUploadAtivo = base64Url;
         };
     };
     leitor.readAsDataURL(ficheiro);
@@ -174,7 +290,6 @@ function mudarBanner(event) {
 async function salvarEdicaoLoja() {
     const btn = document.getElementById('btn-salvar-loja');
     
-    // 1. Pega os valores dos inputs
     const nome = document.getElementById('input-loja-nome').value.trim();
     const desc = document.getElementById('input-loja-desc').value.trim();
     const zap = document.getElementById('input-loja-whatsapp').value.trim();
@@ -193,28 +308,27 @@ async function salvarEdicaoLoja() {
         const { data: sessionData } = await window.supabaseClient.auth.getSession();
         const userId = sessionData?.session?.user?.id;
         
-        // 2. Prepara os dados para ir para a base de dados
         let payload = {
             nome: nome,
             descricao: desc,
             whatsapp: zap,
-            banner_botao: btnTexto
+            banner_botao: btnTexto,
+            
+            // Novos campos recolhidos
+            mostrar_sobre: document.getElementById('toggle-sobre')?.checked || false,
+            conteudo_sobre: document.getElementById('input-loja-sobre')?.value || null,
+            mostrar_entrega: document.getElementById('toggle-entrega')?.checked || false,
+            conteudo_entrega: document.getElementById('input-loja-entrega')?.value || null,
+            mostrar_termos: document.getElementById('toggle-termos')?.checked || false,
+            conteudo_termos: document.getElementById('input-loja-termos')?.value || null
         };
         
-        // Se escolheste uma foto, adiciona ao pacote
-        if (bannerUploadAtivo) { 
-            payload.banner_url = bannerUploadAtivo; 
-        }
+        if (bannerUploadAtivo) payload.banner_url = bannerUploadAtivo; 
 
-        // 3. Comunica com o Supabase
         const { error } = await window.supabaseClient.from('lojas').update(payload).eq('perfil_id', userId);
         
-        // Se houver BOOM no Supabase, nós interceptamos!
-        if (error) {
-            throw error; 
-        }
+        if (error) throw error; 
         
-        // Sucesso maravilhoso
         if (typeof window.forcarAtualizacaoDashboard === 'function') window.forcarAtualizacaoDashboard();
         
         btn.innerHTML = 'Guardado com Sucesso ✓';
@@ -234,8 +348,8 @@ async function salvarEdicaoLoja() {
         console.error("Erro detetado:", err);
         btn.innerHTML = 'Falha ao Guardar';
         
-        // 🔴 AQUI ESTÁ A MAGIA DE DEBUB: Vai mostrar ao utilizador a Falha Exata
-        alert("Ocorreu o seguinte erro na Base de Dados:\\n\\n" + err.message + "\\n\\n🔴 DICA: Vai ao teu painel do Supabase, entra na tabela 'lojas' e certifica-te de que criaste as seguintes colunas (do tipo Text ou Varchar):\\n1. banner_url\\n2. banner_botao\\n3. descricao");
+        // 🔴 ALERTA VERMELHO: Lista EXATA do que falta nas colunas do Supabase!
+        alert("Ocorreu o seguinte erro ao guardar na Base de Dados:\n\n" + (err.message || 'Erro desconhecido') + "\n\n🔴 ATENÇÃO LOJISTA - VERIFICA O SUPABASE:\nVai à tabela 'lojas' e cria estas colunas em falta:\n1. mostrar_sobre (Boolean ou bool)\n2. conteudo_sobre (Text)\n3. mostrar_entrega (Boolean ou bool)\n4. conteudo_entrega (Text)\n5. mostrar_termos (Boolean ou bool)\n6. conteudo_termos (Text)");
 
         setTimeout(() => {
             btn.innerHTML = 'Tentar Novamente';
