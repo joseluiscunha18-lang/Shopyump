@@ -1163,22 +1163,21 @@ function abrirMenuLateral() {
     const overlay = document.getElementById('menu-overlay');
     const painel = document.getElementById('menu-painel');
     
-    // Prevenção de erros: se os elementos não existirem no HTML, não faz nada (não crasha)
     if(!menu || !overlay || !painel) return;
 
-    // Atualiza o nome da loja no painel
     const menuNomeLoja = document.getElementById('menu-nome-loja');
     if (menuNomeLoja && lojaAtual) {
         menuNomeLoja.innerText = lojaAtual.nome || 'Loja';
     }
     
-    // Constrói os links e as redes sociais da loja no menu
     if (lojaAtual) {
         preencherContactosMenu();
-        preencherLinksMenu();
+        // Verifica se a função existe, e cria os links baseados nas opções ativas da BD
+        if (typeof preencherLinksMenu === 'function') {
+            preencherLinksMenu();
+        }
     }
     
-    // Abre o menu lateral com um efeito de deslize suave
     menu.classList.remove('pointer-events-none');
     setTimeout(() => {
         overlay.classList.remove('opacity-0');
@@ -1186,8 +1185,46 @@ function abrirMenuLateral() {
         painel.classList.remove('-translate-x-full');
     }, 10);
     
-    // Bloqueia o scroll do fundo enquanto o menu está aberto
     document.body.style.overflow = 'hidden';
+}
+
+function preencherLinksMenu() {
+    const nav = document.querySelector('#menu-painel nav');
+    if (!nav || !lojaAtual) return;
+
+    let html = `
+        <button onclick="irParaInicio()" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Início</span>
+        </button>
+        <button onclick="irParaFiltro('tudo')" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Categorias</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+        </button>
+    `;
+
+    if (lojaAtual.mostrar_sobre !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'sobre'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Sobre a Loja</span>
+            </button>
+        `;
+    }
+    if (lojaAtual.mostrar_entrega !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'entrega'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Política de Entrega</span>
+            </button>
+        `;
+    }
+    if (lojaAtual.mostrar_termos !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'termos'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Termos e Condições</span>
+            </button>
+        `;
+    }
+
+    nav.innerHTML = html;
 }
 
 function fecharMenuLateral() {
@@ -1267,8 +1304,7 @@ function viewInstitucional(pagina) {
 
     if (pagina === 'sobre') {
         titulo = "Sobre a Loja";
-        // Usa o texto da BD com quebras de linha (<br>). Fallback elegante caso esteja ativado mas em branco.
-        const textoBd = (lojaAtual && lojaAtual.texto_sobre) ? lojaAtual.texto_sobre.replace(/\n/g, '<br>') : `<p class="mb-4">Somos a <strong>${nomeDaLoja}</strong>, com a missão de trazer os melhores produtos diretamente para ti com total segurança.</p>`;
+        const textoBd = (lojaAtual && lojaAtual.conteudo_sobre) ? lojaAtual.conteudo_sobre.replace(/\n/g, '<br>') : `<p class="mb-4">Somos a <strong>${nomeDaLoja}</strong>, com a missão de trazer os melhores produtos diretamente para ti com total segurança.</p>`;
         
         conteudo = `
             ${textoBd}
@@ -1282,11 +1318,11 @@ function viewInstitucional(pagina) {
         `;
     } else if (pagina === 'entrega') {
         titulo = "Política de Entrega";
-        const textoBd = (lojaAtual && lojaAtual.texto_entrega) ? lojaAtual.texto_entrega.replace(/\n/g, '<br>') : `<p class="mb-4">Na <strong>${nomeDaLoja}</strong>, o nosso compromisso é garantir que o teu pedido chega nas melhores condições.</p><p>Contacta-nos combinarmos o método de entrega via WhatsApp.</p>`;
+        const textoBd = (lojaAtual && lojaAtual.conteudo_entrega) ? lojaAtual.conteudo_entrega.replace(/\n/g, '<br>') : `<p class="mb-4">Na <strong>${nomeDaLoja}</strong>, o nosso compromisso é garantir que o teu pedido chega nas melhores condições.</p><p>Contacta-nos combinarmos o método de entrega via WhatsApp.</p>`;
         conteudo = textoBd;
     } else if (pagina === 'termos') {
         titulo = "Termos e Condições";
-        const textoBd = (lojaAtual && lojaAtual.texto_termos) ? lojaAtual.texto_termos.replace(/\n/g, '<br>') : `<p class="mb-4">Ao utilizar a loja <strong>${nomeDaLoja}</strong>, concorda com as nossas regras e políticas gerais.</p>`;
+        const textoBd = (lojaAtual && lojaAtual.conteudo_termos) ? lojaAtual.conteudo_termos.replace(/\n/g, '<br>') : `<p class="mb-4">Ao utilizar a loja <strong>${nomeDaLoja}</strong>, concorda com as nossas regras e políticas gerais.</p>`;
         conteudo = textoBd;
     }
 
