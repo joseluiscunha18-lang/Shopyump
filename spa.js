@@ -1308,16 +1308,7 @@ function viewInstitucional(pagina) {
         titulo = "Sobre a Loja";
         const textoBd = (lojaAtual && lojaAtual.conteudo_sobre) ? lojaAtual.conteudo_sobre.replace(/\n/g, '<br>') : `<p class="mb-4">Somos a <strong>${nomeDaLoja}</strong>, com a missão de trazer os melhores produtos diretamente para ti com total segurança.</p>`;
         
-        conteudo = `
-            ${textoBd}
-            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 mt-6">
-                <div class="flex items-center gap-3 mb-2">
-                    <i class="fas fa-shield-alt text-emerald-500 text-lg"></i>
-                    <span class="font-bold text-slate-900 text-sm">Loja Segura</span>
-                </div>
-                <p class="text-[11px] text-slate-500">Utilizamos os mais rigorosos padrões da plataforma para manter os teus dados super protegidos em cada passo da navegação.</p>
-            </div>
-        `;
+        conteudo = textoBd;
     } else if (pagina === 'entrega') {
         titulo = "Política de Entrega";
         const textoBd = (lojaAtual && lojaAtual.conteudo_entrega) ? lojaAtual.conteudo_entrega.replace(/\n/g, '<br>') : `<p class="mb-4">Na <strong>${nomeDaLoja}</strong>, o nosso compromisso é garantir que o teu pedido chega nas melhores condições.</p><p>Contacta-nos combinarmos o método de entrega via WhatsApp.</p>`;
