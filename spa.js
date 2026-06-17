@@ -189,6 +189,7 @@ function renderizar(rota, params) {
     else if (rota === 'carrinho') root.innerHTML = viewCarrinho();
     else if (rota === 'entrega') root.innerHTML = viewEntrega(); 
     else if (rota === 'favoritos') root.innerHTML = viewFavoritos();
+    else if (rota === 'institucional') root.innerHTML = viewInstitucional(params);
 
     if (rota === 'home') {
         window.scrollTo(0, scrollHome);
@@ -1151,4 +1152,196 @@ function toggleFavoritoProduto(id, btn) {
         if(texto) texto.innerText = 'Guardado';
     }
     localStorage.setItem('shopyump_favs', JSON.stringify(favoritos));
+}
+
+// ==========================================
+// MENU LATERAL & PÁGINAS INSTITUCIONAIS
+// ==========================================
+
+function abrirMenuLateral() {
+    const menu = document.getElementById('menu-lateral');
+    const overlay = document.getElementById('menu-overlay');
+    const painel = document.getElementById('menu-painel');
+    if(!menu || !overlay || !painel) return;
+
+    const menuNomeLoja = document.getElementById('menu-nome-loja');
+    if (menuNomeLoja && lojaAtual) menuNomeLoja.innerText = lojaAtual.nome || 'Loja';
+    
+    // Mágico: Agora constrói o menu e os contactos respeitando as regras do Lojista!
+    if (lojaAtual) {
+        preencherContactosMenu();
+        preencherLinksMenu();
+    }
+    
+    menu.classList.remove('pointer-events-none');
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+        painel.classList.remove('-translate-x-full');
+    }, 10);
+    document.body.style.overflow = 'hidden';
+}
+
+function preencherLinksMenu() {
+    // Almeja cirurgicamente a lista dos links do Teu Menu
+    const nav = document.querySelector('#menu-painel nav');
+    if (!nav || !lojaAtual) return;
+
+    // Estes vão aparecer SEMPRE, pois são estruturais à loja:
+    let html = `
+        <button onclick="irParaInicio()" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Início</span>
+        </button>
+        <button onclick="irParaFiltro('tudo')" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+            <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Categorias</span>
+            <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+        </button>
+    `;
+
+    // Lógica para injetar ou censurar baseada nas opções que o Lojista guardou!
+    if (lojaAtual.mostrar_sobre !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'sobre'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Sobre a Loja</span>
+            </button>
+        `;
+    }
+    if (lojaAtual.mostrar_entrega !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'entrega'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity border-b border-slate-100/60 group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Política de Entrega</span>
+            </button>
+        `;
+    }
+    if (lojaAtual.mostrar_termos !== false) {
+        html += `
+            <button onclick="fecharMenuLateral(); setTimeout(() => navegarPara('institucional', 'termos'), 300);" class="flex items-center justify-between py-4 text-left w-full active:opacity-70 transition-opacity group">
+                <span class="text-[15px] font-medium text-slate-800 group-hover:text-black transition-colors">Termos e Condições</span>
+            </button>
+        `;
+    }
+
+    nav.innerHTML = html;
+}
+
+function fecharMenuLateral() {
+    const menu = document.getElementById('menu-lateral');
+    const overlay = document.getElementById('menu-overlay');
+    const painel = document.getElementById('menu-painel');
+    if(!menu || !overlay || !painel) return;
+    
+    painel.classList.add('-translate-x-full');
+    overlay.classList.remove('opacity-100');
+    overlay.classList.add('opacity-0');
+    
+    setTimeout(() => {
+        menu.classList.add('pointer-events-none');
+        document.body.style.overflow = '';
+    }, 300);
+}
+
+function preencherContactosMenu() {
+    const box = document.getElementById('box-contactos-menu');
+    if (!box) return;
+
+    let htmlRedes = '';
+    if (lojaAtual.instagram) htmlRedes += `<a href="${lojaAtual.instagram}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-instagram text-[18px]"></i></a>`;
+    if (lojaAtual.facebook) htmlRedes += `<a href="${lojaAtual.facebook}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-facebook-f text-[16px]"></i></a>`;
+    if (lojaAtual.tiktok) htmlRedes += `<a href="${lojaAtual.tiktok}" target="_blank" class="text-slate-500 hover:text-slate-900 transition-colors"><i class="fab fa-tiktok text-[16px]"></i></a>`;
+
+    let htmlContactos = '';
+    if (lojaAtual.whatsapp) {
+        htmlContactos += `
+            <a href="tel:+${lojaAtual.whatsapp.replace(/\D/g, '')}" class="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors">
+                <i class="fas fa-phone-alt text-[14px] w-4 opacity-80 text-center"></i>
+                <span class="text-[13px] font-medium">${lojaAtual.whatsapp}</span>
+            </a>
+        `;
+    }
+    if (lojaAtual.email) {
+        htmlContactos += `
+            <a href="mailto:${lojaAtual.email}" class="flex items-center gap-3 text-slate-600 hover:text-slate-900 transition-colors">
+                <i class="far fa-envelope text-[14px] w-4 opacity-80 text-center"></i>
+                <span class="text-[13px] font-medium">${lojaAtual.email}</span>
+            </a>
+        `;
+    }
+
+    let linkWhatsapp = lojaAtual.whatsapp ? `https://wa.me/${lojaAtual.whatsapp.replace(/\D/g, '')}` : "#";
+
+    box.innerHTML = `
+        ${htmlRedes ? `<div class="flex items-center gap-5 mb-6">${htmlRedes}</div>` : ''}
+        ${htmlContactos ? `<div class="flex flex-col gap-3 mb-6">${htmlContactos}</div>` : ''}
+        <a href="${linkWhatsapp}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-[#25D366] text-white font-semibold text-[14px] hover:bg-[#20bd5a] transition-colors">
+            <i class="fab fa-whatsapp text-[16px]"></i> Falar no WhatsApp
+        </a>
+    `;
+}
+
+function irParaFiltro(categoria) {
+    fecharMenuLateral();
+    setTimeout(() => {
+        navegarPara('home');
+        if(categoria === 'tudo') aplicarFiltro('tudo', 'Tudo');
+        else aplicarFiltro('categoria', categoria);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 150);
+}
+
+function irParaInicio() {
+    fecharMenuLateral();
+    setTimeout(() => { navegarPara('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }, 150);
+}
+
+function viewInstitucional(pagina) {
+    let titulo = ""; let conteudo = "";
+    let dataAtualizacao = new Date().toLocaleDateString('pt-MZ', { day: 'numeric', month: 'short', year: 'numeric' });
+    const nomeDaLoja = lojaAtual ? lojaAtual.nome : 'Loja'; 
+
+    if (pagina === 'sobre') {
+        titulo = "Sobre a Loja";
+        // Usa o texto da BD com quebras de linha (<br>). Fallback elegante caso esteja ativado mas em branco.
+        const textoBd = (lojaAtual && lojaAtual.texto_sobre) ? lojaAtual.texto_sobre.replace(/\n/g, '<br>') : `<p class="mb-4">Somos a <strong>${nomeDaLoja}</strong>, com a missão de trazer os melhores produtos diretamente para ti com total segurança.</p>`;
+        
+        conteudo = `
+            ${textoBd}
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 mt-6">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-shield-alt text-emerald-500 text-lg"></i>
+                    <span class="font-bold text-slate-900 text-sm">Loja Segura</span>
+                </div>
+                <p class="text-[11px] text-slate-500">Utilizamos os mais rigorosos padrões da plataforma para manter os teus dados super protegidos em cada passo da navegação.</p>
+            </div>
+        `;
+    } else if (pagina === 'entrega') {
+        titulo = "Política de Entrega";
+        const textoBd = (lojaAtual && lojaAtual.texto_entrega) ? lojaAtual.texto_entrega.replace(/\n/g, '<br>') : `<p class="mb-4">Na <strong>${nomeDaLoja}</strong>, o nosso compromisso é garantir que o teu pedido chega nas melhores condições.</p><p>Contacta-nos combinarmos o método de entrega via WhatsApp.</p>`;
+        conteudo = textoBd;
+    } else if (pagina === 'termos') {
+        titulo = "Termos e Condições";
+        const textoBd = (lojaAtual && lojaAtual.texto_termos) ? lojaAtual.texto_termos.replace(/\n/g, '<br>') : `<p class="mb-4">Ao utilizar a loja <strong>${nomeDaLoja}</strong>, concorda com as nossas regras e políticas gerais.</p>`;
+        conteudo = textoBd;
+    }
+
+    return `
+        <div class="bg-white min-h-[100dvh] pb-24 animate-fade-in relative z-40">
+            <div class="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b border-slate-100 px-5 py-4 flex items-center justify-between">
+                <button onclick="navegarPara('home')" class="w-10 h-10 flex items-center justify-start text-slate-900 active:scale-90 transition-transform"><i class="fas fa-arrow-left text-base"></i></button>
+                <h1 class="text-[12px] font-black uppercase tracking-widest text-slate-900 text-center flex-1">${titulo}</h1>
+                <button onclick="partilharPagina('${titulo}')" class="w-10 h-10 flex items-center justify-end text-slate-900 active:scale-90 transition-transform"><i class="far fa-share-square text-base relative z-10"></i></button>
+            </div>
+            <div class="px-6 pt-8 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">${titulo}</h2>
+                <div class="text-[13px] font-medium leading-relaxed text-slate-600">${conteudo}</div>
+            </div>
+        </div>
+    `;
+}
+
+function partilharPagina(titulo) {
+    if (navigator.share) {
+        navigator.share({ title: titulo, url: window.location.href }).catch(err => console.log(err));
+    } else {
+        alert('Copiado! O link foi copiado.');
+    }
 }
