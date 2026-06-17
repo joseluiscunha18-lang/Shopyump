@@ -164,7 +164,8 @@ function navegarPara(rota, params = null) {
     
     const header = document.getElementById('main-header');
     if (header) {
-        if (rota === 'produto' || rota === 'carrinho' || rota === 'favoritos' || rota === 'entrega') {
+        // CORREÇÃO: Adicionada a rota 'institucional' para ocultar inteligentemente o menu superior e a barra de pesquisa
+        if (rota === 'produto' || rota === 'carrinho' || rota === 'favoritos' || rota === 'entrega' || rota === 'institucional') {
             header.classList.add('opacity-0', 'pointer-events-none', '-translate-y-28');
         } else {
             header.classList.remove('opacity-0', 'pointer-events-none');
@@ -198,7 +199,8 @@ function renderizar(rota, params) {
     }
 
     if (navInferior) {
-        if (rota === 'produto' || rota === 'carrinho' || rota === 'entrega') {
+        // CORREÇÃO: Adicionada a rota 'institucional' para também ocultar o menu inferior
+        if (rota === 'produto' || rota === 'carrinho' || rota === 'entrega' || rota === 'institucional') {
             navInferior.classList.add('hidden'); 
         } else {
             navInferior.classList.remove('hidden'); 
