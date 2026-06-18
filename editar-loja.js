@@ -146,7 +146,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 </label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-instagram" class="sr-only peer" onchange="toggleSecaoExtra('instagram')">
-                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-[#0F172A] shadow-inner"></div>
                                 </label>
                             </div>
                             <div id="area-instagram" class="hidden transition-all mt-2.5">
@@ -162,7 +162,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 </label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-facebook" class="sr-only peer" onchange="toggleSecaoExtra('facebook')">
-                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-[#0F172A] shadow-inner"></div>
                                 </label>
                             </div>
                             <div id="area-facebook" class="hidden transition-all mt-2.5">
@@ -178,7 +178,7 @@ document.body.insertAdjacentHTML('beforeend', `
                                 </label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-tiktok" class="sr-only peer" onchange="toggleSecaoExtra('tiktok')">
-                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-[#0F172A] shadow-inner"></div>
                                 </label>
                             </div>
                             <div id="area-tiktok" class="hidden transition-all mt-2.5">
