@@ -445,7 +445,11 @@ async function salvarEdicaoLoja() {
         
         if (error) throw error; 
         
-        if (typeof window.forcarAtualizacaoDashboard === 'function') window.forcarAtualizacaoDashboard();
+        // Aplica as novas definições silenciosamente na cache para que o Dashboard não encrave a refazer tudo de novo do servidor!
+        if (typeof memDashboard !== 'undefined' && memDashboard.loja) {
+            memDashboard.loja.nome = nome;
+            memDashboard.loja.descricao = desc;
+        }
         
         btn.innerHTML = 'Guardado com Sucesso ✓';
         btn.classList.replace('bg-slate-900', 'bg-emerald-500');
