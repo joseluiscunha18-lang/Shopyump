@@ -189,7 +189,7 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </details>
 
-                <div class="pt-2 pb-6">
+                <div class="pt-2 pb-6 hidden transition-all duration-300" id="wrapper-btn-salvar">
                     <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white py-3.5 rounded-xl text-[13px] font-bold shadow-sm transition-all focus:ring-4 focus:ring-slate-900/20 active:scale-[0.98]">
                         Guardar Alterações
                     </button>
@@ -200,7 +200,12 @@ document.body.insertAdjacentHTML('beforeend', `
     </template> 
 `);
 
-// ─── FUNÇÃO AUXILIAR PARA MOSTRAR/OCULTAR CAIXAS DE PÁGINAS ───
+// ─── FUNÇÕES AUXILIARES ───
+window.mostrarBotaoSalvarLoja = function() {
+    const btnWrapper = document.getElementById('wrapper-btn-salvar');
+    if (btnWrapper) btnWrapper.classList.remove('hidden');
+}
+
 window.toggleSecaoExtra = function(secao) {
     const check = document.getElementById('toggle-' + secao);
     const area = document.getElementById('area-' + secao);
@@ -233,6 +238,7 @@ document.addEventListener('spa:page-loaded', (e) => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
                     elemento.addEventListener('input', (event) => {
+                        window.mostrarBotaoSalvarLoja(); // <--- APARECE AO ESCREVER
                         if (memoriaEditarLoja) {
                             if (id === 'input-loja-nome') memoriaEditarLoja.nome = event.target.value;
                             if (id === 'input-loja-desc') memoriaEditarLoja.descricao = event.target.value;
@@ -255,6 +261,7 @@ document.addEventListener('spa:page-loaded', (e) => {
                 const elemento = document.getElementById(id);
                 if (elemento) {
                     elemento.addEventListener('change', (event) => {
+                        window.mostrarBotaoSalvarLoja(); // <--- APARECE AO USAR OS BOTÕES ON/OFF
                         if (memoriaEditarLoja) {
                             if (id === 'toggle-sobre') memoriaEditarLoja.mostrar_sobre = event.target.checked;
                             if (id === 'toggle-entrega') memoriaEditarLoja.mostrar_entrega = event.target.checked;
@@ -384,6 +391,7 @@ function mudarBanner(event) {
             hover.classList.remove('hidden');
             
             bannerUploadAtivo = base64Url;
+            window.mostrarBotaoSalvarLoja(); // <--- APARECE QUANDO CARREGA FOTO
         };
     };
     leitor.readAsDataURL(ficheiro);
@@ -450,6 +458,8 @@ async function salvarEdicaoLoja() {
             btn.classList.replace('bg-emerald-500', 'bg-slate-900');
             btn.classList.replace('dark:bg-emerald-500', 'dark:bg-white');
             btn.disabled = false;
+            // Oculta o botão novamente até fazer uma nova alteração
+            document.getElementById('wrapper-btn-salvar').classList.add('hidden');
         }, 2500);
         
     } catch (err) {
