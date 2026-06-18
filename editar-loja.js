@@ -68,7 +68,8 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
                     </div>
                 </details>
-                </div>
+
+          
 
                 <!-- PÁGINAS INSTITUCIONAIS -->
                 <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
