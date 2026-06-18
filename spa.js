@@ -1326,8 +1326,7 @@ function viewInstitucional(pagina) {
                 <h1 class="text-[12px] font-black uppercase tracking-widest text-slate-900 text-center flex-1">${titulo}</h1>
                 <div class="w-10 h-10"></div>
             </div>
-            <div class="px-6 pt-8 max-w-2xl mx-auto">
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">${titulo}</h2>
+            <div class="px-6 pt-6 max-w-2xl mx-auto">
                 <div class="text-[13px] font-medium leading-relaxed text-slate-600">${conteudo}</div>
             </div>
         </div>
