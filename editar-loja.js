@@ -2,11 +2,6 @@ document.body.insertAdjacentHTML('beforeend', `
    <template id="tpl-editar-loja">
         <div class="pt-24 px-4 sm:px-6 main-wrapper pb-24 bg-[#F1F5F9] dark:bg-[#020617] min-h-screen">
             <div class="max-w-2xl mx-auto space-y-6">
-                
-                <div class="mb-6 px-1">
-                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Customizar Loja</h2>
-                    <p class="text-[13px] text-slate-500 dark:text-slate-400 mt-1">Gere o visual, contatos e as políticas da sua loja.</p>
-                </div>
 
                 <!-- APARÊNCIA -->
                 <details class="group/acc bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
