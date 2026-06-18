@@ -1,0 +1,18 @@
+{
+  "name": "Shopyump",
+  "short_name": "Shopyump",
+  "description": "Dashboard profissional para gerir a sua loja",
+  "start_url": "/Pwa.html",
+  "display": "standalone",
+  "background_color": "#F9F7F5",
+  "theme_color": "#020617",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

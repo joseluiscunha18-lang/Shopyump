@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Previne o zoom indesejado ao tocar em botões no celular -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" />
+    
+    <title>Shopyump Dashboard</title>
+    <meta name="description" content="Dashboard de gestão profissional Shopyump" />
+    
+    <!-- Configurações PWA (Geral) -->
+    <meta name="theme-color" content="#020617" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- Configurações PWA exclusivas para iOS / Apple (Remove as barras do navegador) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Shopyump" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    
+    <!-- Ficheiro Manifesto que avisa o telemóvel que isto é uma App instalável -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Registo silencioso do Service Worker (Mantém a App rápida e a funcionar) -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('PWA Shopyump ativado com sucesso!'))
+            .catch(err => console.log('PWA a aguardar servidor: ', err));
+        });
+      }
+    </script>
+  </body>
+</html>
