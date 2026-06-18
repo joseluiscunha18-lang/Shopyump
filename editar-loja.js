@@ -64,16 +64,15 @@ document.body.insertAdjacentHTML('beforeend', `
                     </div>
                 </details>
 
-          
-
                 <!-- PÁGINAS INSTITUCIONAIS -->
-                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                <details class="group/acc bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <summary class="p-4 bg-slate-50/50 dark:bg-navy-800/20 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center justify-between outline-none transition-colors hover:bg-slate-100 dark:hover:bg-navy-800/50">
                         <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
                             <i class="fa-solid fa-file-lines text-slate-400"></i> Páginas Legais e Políticas
                         </h3>
-                    </div>
-                    <div class="p-0">
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 group-open/acc:rotate-180"></i>
+                    </summary>
+                    <div class="p-0 border-t border-slate-100 dark:border-navy-800">
                         
                         <!-- Item: Sobre -->
                         <div class="border-b border-slate-100 dark:border-navy-800 last:border-0 p-5 sm:px-6">
@@ -127,16 +126,17 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
 
                     </div>
-                </div>
+                </details>
 
                 <!-- REDES SOCIAIS -->
-                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                <details class="group/acc bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <summary class="p-4 bg-slate-50/50 dark:bg-navy-800/20 cursor-pointer list-none [&::-webkit-details-marker]:hidden flex items-center justify-between outline-none transition-colors hover:bg-slate-100 dark:hover:bg-navy-800/50">
                         <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
                             <i class="fa-solid fa-hashtag text-slate-400"></i> Redes Sociais
                         </h3>
-                    </div>
-                    <div class="p-5 sm:p-6 space-y-4">
+                        <i class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 group-open/acc:rotate-180"></i>
+                    </summary>
+                    <div class="p-5 sm:p-6 space-y-4 border-t border-slate-100 dark:border-navy-800">
                         
                         <!-- Instagram -->
                         <div>
@@ -187,7 +187,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         </div>
 
                     </div>
-                </div>
+                </details>
 
                 <div class="pt-2 pb-6">
                     <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white py-3.5 rounded-xl text-[13px] font-bold shadow-sm transition-all focus:ring-4 focus:ring-slate-900/20 active:scale-[0.98]">
