@@ -1,192 +1,204 @@
 document.body.insertAdjacentHTML('beforeend', `
-    <template id="tpl-editar-loja">
-        <div class="pt-24 px-6 main-wrapper pb-20 bg-[#f6f6f7] dark:bg-[#0b0f1a] min-h-screen">
-            <div class="max-w-lg mx-auto space-y-6">
-                <!-- Seção Nova do Banner -->
-                <div class="sf-card p-6 space-y-4">
-                    <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Banner da Loja</h3>
-                    <p class="text-[11px] text-slate-500 font-medium">Adiciona uma imagem principal e personaliza o botão que o cliente vai ver.</p>
-                    
-                    <input type="file" id="input-banner" accept="image/*" class="hidden" onchange="mudarBanner(event)">
-                    <div id="area-banner" class="w-full h-40 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors relative overflow-hidden group" onclick="document.getElementById('input-banner').click()">
-                        <div id="banner-placeholder" class="flex flex-col items-center justify-center text-slate-400">
-                            <i class="fa-solid fa-camera text-2xl mb-2 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-[11px] font-bold">Tocar para adicionar banner</span>
-                        </div>
-                        <img id="banner-preview" class="absolute inset-0 w-full h-full object-cover hidden" src="" />
-                        <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hidden" id="banner-hover">
-                            <i class="fa-solid fa-pen text-white text-xl mb-1"></i>
-                            <span class="text-white text-[10px] font-bold">Alterar Banner</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block mt-4">Nome do Botão no Banner</label>
-                        <input type="text" id="input-banner-botao" placeholder="Ex: Ver Coleção" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
-                    </div>
+   <template id="tpl-editar-loja">
+        <div class="pt-24 px-4 sm:px-6 main-wrapper pb-24 bg-[#F1F5F9] dark:bg-[#020617] min-h-screen">
+            <div class="max-w-2xl mx-auto space-y-6">
+                
+                <div class="mb-6 px-1">
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Customizar Loja</h2>
+                    <p class="text-[13px] text-slate-500 dark:text-slate-400 mt-1">Gere o visual, contatos e as políticas da sua loja.</p>
                 </div>
 
-                <!-- Informações Básicas da Loja -->
-                <div class="sf-card p-6 space-y-5">
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Nome da Loja</label>
-                        <input type="text" id="input-loja-nome" placeholder="A carregar..." class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                <!-- APARÊNCIA -->
+                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                        <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
+                            <i class="fa-solid fa-image text-slate-400"></i> Aparência
+                        </h3>
                     </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">Descrição da Loja</label>
-                        <textarea id="input-loja-desc" rows="3" placeholder="Descreve a tua loja..." class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 block">WhatsApp de Contacto</label>
-                        <input type="tel" id="input-loja-whatsapp" placeholder="+258 84 000 0000" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3.5 rounded-xl text-sm font-bold focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
-                    </div>
-                </div>
-
-                <!-- Páginas Institucionais (Sobre, Entrega, Termos) -->
-                <div class="sf-card p-6 space-y-6">
-                    <div class="space-y-1 relative">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Páginas da Loja</h3>
-                                <p class="text-[10px] text-slate-500 font-medium mt-1">Configura as páginas que devem aparecer no menu da tua loja.</p>
+                    <div class="p-5 sm:p-6 space-y-5">
+                        <div>
+                            <label class="block text-[12px] font-medium text-slate-700 dark:text-slate-300 mb-2">Banner Principal</label>
+                            <input type="file" id="input-banner" accept="image/*" class="hidden" onchange="mudarBanner(event)">
+                            <div id="area-banner" class="w-full h-32 md:h-48 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-600 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors relative overflow-hidden group" onclick="document.getElementById('input-banner').click()">
+                                <div id="banner-placeholder" class="flex flex-col items-center justify-center text-slate-400">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl mb-2 group-hover:scale-110 transition-transform text-slate-400"></i>
+                                    <span class="text-[12px] font-medium">Clique para carregar imagem</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">JPG, PNG ou WEBP</span>
+                                </div>
+                                <img id="banner-preview" class="absolute inset-0 w-full h-full object-cover hidden" src="" />
+                                <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 hidden" id="banner-hover">
+                                    <i class="fa-solid fa-camera text-white text-xl mb-1"></i>
+                                    <span class="text-white text-[11px] font-medium">Trocar Imagem</span>
+                                </div>
                             </div>
                         </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Texto do Botão no Banner</label>
+                            <input type="text" id="input-banner-botao" placeholder="Ex: Ver Coleção" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all shadow-sm">
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Sobre a Loja -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fas fa-info-circle"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Sobre a Loja</span>
+                <!-- INFORMAÇÕES GERAIS -->
+                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                        <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
+                            <i class="fa-solid fa-circle-info text-slate-400"></i> Informações Gerais
+                        </h3>
+                    </div>
+                    <div class="p-5 sm:p-6 space-y-5">
+                        <div>
+                            <label class="block text-[12px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nome da Loja <span class="text-red-500">*</span></label>
+                            <input type="text" id="input-loja-nome" placeholder="Nome da sua loja" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">Descrição</label>
+                            <textarea id="input-loja-desc" rows="3" placeholder="A minha loja especializa-se em..." class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none shadow-sm"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[12px] font-medium text-slate-700 dark:text-slate-300 mb-1.5">WhatsApp (Contacto de Vendas) <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </span>
+                                <input type="tel" id="input-loja-whatsapp" placeholder="+258 84 000 0000" class="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white pl-9 pr-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all shadow-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PÁGINAS INSTITUCIONAIS -->
+                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                        <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
+                            <i class="fa-solid fa-file-lines text-slate-400"></i> Páginas Legais e Políticas
+                        </h3>
+                    </div>
+                    <div class="p-0">
+                        
+                        <!-- Item: Sobre -->
+                        <div class="border-b border-slate-100 dark:border-navy-800 last:border-0 p-5 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-[13px] font-semibold text-slate-800 dark:text-white">Sobre a Loja</h4>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">História e visão da sua marca.</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-sobre" class="sr-only peer" onchange="toggleSecaoExtra('sobre')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <div id="area-sobre" class="hidden transition-all duration-300 relative">
-                                <textarea id="input-loja-sobre" rows="4" placeholder="Conta um pouco a história e visão da tua loja..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            <div id="area-sobre" class="hidden mt-4">
+                                <textarea id="input-loja-sobre" rows="3" placeholder="Escreva sobre nós..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none"></textarea>
                             </div>
                         </div>
 
-                        <!-- Política de Entrega -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fas fa-truck"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Política de Entrega</span>
+                        <!-- Item: Entrega -->
+                        <div class="border-b border-slate-100 dark:border-navy-800 last:border-0 p-5 sm:px-6 cursor-default">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-[13px] font-semibold text-slate-800 dark:text-white">Política de Entrega</h4>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Prazos e métodos de envio.</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-entrega" class="sr-only peer" onchange="toggleSecaoExtra('entrega')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <div id="area-entrega" class="hidden transition-all duration-300 relative">
-                                <textarea id="input-loja-entrega" rows="4" placeholder="Explica os teus métodos e prazos de entrega..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            <div id="area-entrega" class="hidden mt-4">
+                                <textarea id="input-loja-entrega" rows="3" placeholder="Detalhes da entrega, locais de levantamento..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none"></textarea>
                             </div>
                         </div>
 
-                        <!-- Termos e Condições -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fas fa-file-contract"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Termos e Condições</span>
+                        <!-- Item: Termos -->
+                        <div class="border-b border-slate-100 dark:border-navy-800 last:border-0 p-5 sm:px-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-[13px] font-semibold text-slate-800 dark:text-white">Termos e Condições</h4>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Regras, devoluções e garantias.</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-termos" class="sr-only peer" onchange="toggleSecaoExtra('termos')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <div id="area-termos" class="hidden transition-all duration-300 relative">
-                                <textarea id="input-loja-termos" rows="4" placeholder="Condições, devoluções e garantias de uso da tua loja..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all resize-none"></textarea>
+                            <div id="area-termos" class="hidden mt-4">
+                                <textarea id="input-loja-termos" rows="3" placeholder="Condições gerais de serviço..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all resize-none"></textarea>
                             </div>
                         </div>
 
                     </div>
                 </div>
 
-                <!-- Redes Sociais -->
-                <div class="sf-card p-6 space-y-6">
-                    <div class="space-y-1 relative">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest">Redes Sociais</h3>
-                                <p class="text-[10px] text-slate-500 font-medium mt-1">Configura e ativa os links das tuas redes sociais para aparecerem na loja.</p>
+                <!-- REDES SOCIAIS -->
+                <div class="bg-white dark:bg-navy-900 rounded-xl shadow-sm border border-slate-200 dark:border-navy-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 dark:border-navy-800 bg-slate-50/50 dark:bg-navy-800/20">
+                        <h3 class="text-[14px] font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2.5">
+                            <i class="fa-solid fa-hashtag text-slate-400"></i> Redes Sociais
+                        </h3>
+                    </div>
+                    <div class="p-5 sm:p-6 space-y-4">
+                        
+                        <!-- Instagram -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[13px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                    <i class="fa-brands fa-instagram text-pink-500 w-4"></i> Instagram
+                                </label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="toggle-instagram" class="sr-only peer" onchange="toggleSecaoExtra('instagram')">
+                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                </label>
+                            </div>
+                            <div id="area-instagram" class="hidden transition-all mt-2.5">
+                                <input type="url" id="input-loja-instagram" placeholder="https://instagram.com/..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                             </div>
                         </div>
 
-                        <!-- Instagram -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fab fa-instagram text-pink-500"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Instagram</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="toggle-instagram" class="sr-only peer" onchange="toggleSecaoExtra('instagram')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
-                                </label>
-                            </div>
-                            <div id="area-instagram" class="hidden transition-all duration-300 relative">
-                                <input type="url" id="input-loja-instagram" placeholder="Link do Instagram (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
-                            </div>
-                        </div>
-                        
                         <!-- Facebook -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 mb-3">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fab fa-facebook-f text-blue-600"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">Facebook</span>
-                                </div>
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[13px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                    <i class="fa-brands fa-facebook text-blue-600 w-4"></i> Facebook
+                                </label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-facebook" class="sr-only peer" onchange="toggleSecaoExtra('facebook')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <div id="area-facebook" class="hidden transition-all duration-300 relative">
-                                <input type="url" id="input-loja-facebook" placeholder="Link do Facebook (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                            <div id="area-facebook" class="hidden transition-all mt-2.5">
+                                <input type="url" id="input-loja-facebook" placeholder="https://facebook.com/..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                             </div>
                         </div>
 
                         <!-- TikTok -->
-                        <div class="bg-slate-50 dark:bg-slate-800/30 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50">
-                            <div class="flex items-center justify-between mb-3 border-b border-slate-200 dark:border-slate-700 pb-3">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 text-sm">
-                                        <i class="fab fa-tiktok text-slate-900 dark:text-white"></i>
-                                    </div>
-                                    <span class="text-[12px] font-bold text-slate-900 dark:text-white">TikTok</span>
-                                </div>
+                        <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-[13px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                                    <i class="fa-brands fa-tiktok text-slate-900 dark:text-white w-4"></i> TikTok
+                                </label>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="toggle-tiktok" class="sr-only peer" onchange="toggleSecaoExtra('tiktok')">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
+                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-500"></div>
                                 </label>
                             </div>
-                            <div id="area-tiktok" class="hidden transition-all duration-300 relative">
-                                <input type="url" id="input-loja-tiktok" placeholder="Link do TikTok (https://...)" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:border-slate-900 dark:focus:border-white focus:ring-1 transition-all">
+                            <div id="area-tiktok" class="hidden transition-all mt-2.5">
+                                <input type="url" id="input-loja-tiktok" placeholder="https://tiktok.com/@..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 transition-all">
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 mb-2 rounded-xl text-xs font-black shadow-lg uppercase tracking-widest active:scale-[0.98] transition-all">
-                    Guardar Alterações
-                </button>
+                <div class="pt-2 pb-6">
+                    <button id="btn-salvar-loja" onclick="salvarEdicaoLoja()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white py-3.5 rounded-xl text-[13px] font-bold shadow-sm transition-all focus:ring-4 focus:ring-slate-900/20 active:scale-[0.98]">
+                        Guardar Alterações
+                    </button>
+                </div>
+
             </div>
         </div>
-    </template>
+    </template> 
 `);
 
 // ─── FUNÇÃO AUXILIAR PARA MOSTRAR/OCULTAR CAIXAS DE PÁGINAS ───
