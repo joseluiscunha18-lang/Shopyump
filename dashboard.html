@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no, viewport-fit=cover">
     <title>SaaS Professional Dashboard - Zé</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -30,7 +30,16 @@
 
     <!-- ARQUIVOS E CONFIGURAÇÃO PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0a1a3b">
+    
+    <!-- Cor da Barra de Navegação Android para misturar-se com o fundo do teu Dashboard e não ficar "bloqueada" a azul -->
+    <meta name="theme-color" content="#FDE6DA" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+
+    <!-- Magia para iPhone (iOS): Força o ecrã a ficar 100% Fullscreen com o conteúdo a vazar por detrás do relógio -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
     <!-- Imagem de ícone para a Apple/iOS -->
     <link rel="apple-touch-icon" href="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192.png">
     
@@ -46,6 +55,15 @@
     </script>
 
     <style>
+        /* Protege a UI de bater nos rebordos físicos dos telemóveis (Notch em cima e Linha Gestual em baixo) */
+        #bottom-nav {
+            padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+        }
+        #main-header {
+            padding-top: env(safe-area-inset-top) !important;
+            height: calc(80px + env(safe-area-inset-top)) !important;
+        }
+
         /* Transição de entrada de página */
         #spa-view {
             transition: opacity 0.22s ease, transform 0.22s ease;
