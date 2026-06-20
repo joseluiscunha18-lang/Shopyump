@@ -77,17 +77,6 @@
             transform: translateX(20px);
         }
     </style>
-<!-- ======== INTEGRAÇÃO ONESIGNAL ======== -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "40d38a2e-8cf5-4fb1-9690-7125e88d4fbc",
-        });
-      });
-    </script>
-
 </head>
 <body class="pb-24 transition-colors duration-500 bg-[#F9F7F5] dark:bg-[#020617] text-navy-900 dark:text-slate-100 w-full overflow-x-hidden relative">
 
@@ -346,9 +335,13 @@
                 // Ao confirmar que está logado no Supabase, vincula o utilizador ao OneSignal
                 window.OneSignalDeferred = window.OneSignalDeferred || [];
                 window.OneSignalDeferred.push(async function(OneSignal) {
-                    await OneSignal.login(session.user.id);
-                    // Aciona o pop-up a pedir permissão de notificações (caso ele ainda não tenha aceite)
-                    await OneSignal.Slidedown.promptPush(); 
+                    try {
+                        await OneSignal.login(session.user.id);
+                        await OneSignal.Slidedown.promptPush({ force: true }); 
+                        console.log("Notificações Push ativadas para:", session.user.id);
+                    } catch (err) {
+                        console.error("Erro ao ativar o prompt do OneSignal:", err);
+                    }
                 });
             }
         })();
