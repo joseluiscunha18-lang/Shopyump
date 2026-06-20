@@ -30,8 +30,13 @@
 
     <!-- ARQUIVOS E CONFIGURAÇÃO PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0F172A">
-    <!-- Imagem de ícone para a Apple/iOS -->
+    <!-- Cores da barra de estado adaptativas para modo claro/escuro -->
+    <meta name="theme-color" content="#F9F7F5" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+    
+    <!-- Configurações extra para a barra de estado em Apple/iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link rel="apple-touch-icon" href="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192.png">
     
     <script>
