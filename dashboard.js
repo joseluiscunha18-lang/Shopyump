@@ -235,7 +235,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <!-- Fotografia / Ícone (Pode alterar o src depois) -->
                 <div class="relative w-20 h-20 mb-6 mt-2">
                     <div class="absolute inset-0 bg-[#9f6ef5] blur-xl opacity-30 rounded-full"></div>
-                    <img src="https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=200&auto=format&fit=crop" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+                    <img src="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192.png" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 bg-white">
                 </div>
 
                 <h3 class="text-[22px] font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Instalar App</h3>
@@ -933,17 +933,23 @@ window.fecharModalBoasVindas = function() {
     
     if (!modal || !backdrop || !content) return;
     
-    // Anima o desaparecimento
     backdrop.classList.remove('opacity-100');
     backdrop.classList.add('opacity-0');
     
     content.classList.remove('scale-100', 'opacity-100');
     content.classList.add('scale-95', 'opacity-0');
     
-    // Quando a transição acabar de sumir, aplico o display: hidden
     setTimeout(() => {
         modal.classList.remove('flex');
         modal.classList.add('hidden');
+        
+        // MÁGICA: Se o navegador autorizou a instalação da app (PWA),
+        // esperamos 2.5 segundos após fechar as boas-vindas para lançar a pop-up de instalar!
+        if (window.deferredPwaPrompt) {
+            setTimeout(() => {
+                window.abrirModalPwa();
+            }, 2500);
+        }
     }, 400); 
 };
 
@@ -964,16 +970,21 @@ window.deferredPwaPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
     console.log("PWA: O navegador autorizou a instalação e disparou o evento!");
     
-    // Impede que a barra feia do Chrome apareça em baixo automaticamente
     e.preventDefault();
-    
-    // Guardamos o evento oficial na nossa variável para usar no botão
     window.deferredPwaPrompt = e;
     
-    // Abrimos o nosso Pop-Up Moderno (o HTML de instalação) ao fim de 2 segundos.
-    setTimeout(() => {
-        window.abrirModalPwa();
-    }, 2000); 
+    // Verifica se o aviso de Boas Vindas / Novo Utilizador está aberto
+    const modalBoasVindas = document.getElementById('modal-boas-vindas');
+    const boasVindasAberto = modalBoasVindas && !modalBoasVindas.classList.contains('hidden');
+    
+    if (!boasVindasAberto) {
+        // Não é utilizador novo ou já fechou: mostra o popup PWA passados 3 segundos
+        setTimeout(() => {
+            window.abrirModalPwa();
+        }, 3000); 
+    } else {
+        console.log("PWA: Pop-up adiado porque o utilizador está a criar o primeiro produto.");
+    }
 });
 
 window.abrirModalPwa = function() {
