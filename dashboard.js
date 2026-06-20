@@ -235,7 +235,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <!-- Fotografia / Ícone (Pode alterar o src depois) -->
                 <div class="relative w-20 h-20 mb-6 mt-2">
                     <div class="absolute inset-0 bg-[#9f6ef5] blur-xl opacity-30 rounded-full"></div>
-                    <img src="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192.png" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 bg-white">
+                    <img src="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192x192.png" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 bg-white">
                 </div>
 
                 <h3 class="text-[22px] font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Instalar App</h3>
