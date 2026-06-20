@@ -1,8 +1,16 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
-        <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
-            <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
-            <div class="relative z-10 px-6 pt-28 w-full">
+        <!-- O container agora cobre totalmente a área de topo (horas e barra de tarefas) com recurso às variáveis env() de segurança tátil -->
+        <div class="relative w-[100vw] pb-16 overflow-hidden rounded-b-[40px] left-1/2 right-1/2 -ml-[50vw] mr-[50vw] mt-[calc(-1*env(safe-area-inset-top,0px))]">
+            
+            <!-- Gradiente Mágico (Modo Claro) -->
+            <div class="absolute inset-0 w-full h-full z-0 dark:hidden transition-colors duration-500" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center top;"></div>
+            
+            <!-- Gradiente Noturno (Modo Escuro) -> Esta foi a causa do texto desaparecer. Adicionado fundo premium! -->
+            <div class="absolute inset-0 w-full h-full z-0 hidden dark:block bg-gradient-to-b from-[#10172A] via-[#0F172A] to-[#020617] opacity-100 transition-opacity duration-500"></div>
+            
+            <!-- Empurra o conteúdo de texto de volta para debaixo do relógio/notch -->
+            <div class="relative z-10 px-6 w-full max-w-md mx-auto" style="padding-top: calc(7rem + env(safe-area-inset-top, 0px));">
                 <div class="flex justify-between items-center mb-8 w-full gap-2">
                     <div class="flex-1 min-w-0">
                         <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 tracking-tight leading-tight truncate">
