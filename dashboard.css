@@ -48,7 +48,7 @@ body {
 
 /* AJUSTES GERAIS DARK MODE - PREMIUM NAVY */
 .dark body { background-color: #020617; color: #F1F5F9; }
-.dark header, .dark #menuZ, .dark nav { 
+.dark #menuZ, .dark nav { 
     background: #020617 !important; 
     border-color: #1E293B !important; 
 }
