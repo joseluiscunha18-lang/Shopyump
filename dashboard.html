@@ -338,7 +338,12 @@
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
                         await OneSignal.login(session.user.id);
-                        await OneSignal.Slidedown.promptPush({ force: true }); 
+                        
+                        // Solicita diretamente a permissão nativa do sistema (evita o duplo pop-up visual do OneSignal)
+                        if (OneSignal.Notifications.permission !== true) {
+                            await OneSignal.Notifications.requestPermission();
+                        }
+                        
                         console.log("Notificações Push ativadas para:", session.user.id);
                     } catch (err) {
                         console.error("Erro ao ativar o prompt do OneSignal:", err);
