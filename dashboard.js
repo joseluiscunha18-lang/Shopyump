@@ -955,25 +955,24 @@ window.fecharModalECriarProduto = function() {
 };
 
 // ==========================================
-// LÓGICA DO POP-UP DE INSTALAÇÃO PWA (REAL)
+// LÓGICA DO POP-UP DE INSTALAÇÃO PWA (REAL E TESTADO)
 // ==========================================
 
-// Guardamos o evento nativo aqui
 window.deferredPwaPrompt = null;
 
-// Só apanhamos isto se o navegador detetar que TUDO está perfeito no PWA (sw.js e manifest.json)
+// Escuta o evento nativo (Apenas dispara se manifest.json e sw.js funcionarem bem e em HTTPS)
 window.addEventListener('beforeinstallprompt', (e) => {
-    console.log("PWA: O navegador autorizou a instalação!");
+    console.log("PWA: O navegador autorizou a instalação e disparou o evento!");
     
-    // Impedir que a barra mini do Chrome apareça em baixo
+    // Impede que a barra feia do Chrome apareça em baixo automaticamente
     e.preventDefault();
     
-    // Guardamos o evento oficial na nossa variável
+    // Guardamos o evento oficial na nossa variável para usar no botão
     window.deferredPwaPrompt = e;
     
-    // Agora sim! Como é instalável, abrimos o nosso Pop-Up Bonito ao fim de 2 segundos.
+    // Abrimos o nosso Pop-Up Moderno (o HTML de instalação) ao fim de 2 segundos.
     setTimeout(() => {
-        abrirModalPwa();
+        window.abrirModalPwa();
     }, 2000); 
 });
 
@@ -1015,24 +1014,24 @@ window.fecharModalPwa = function() {
 
 window.instalarPwaApp = async function() {
     if (!window.deferredPwaPrompt) {
-        // Se este alerta aparecer, significa que clicaste sem o evento estar pronto
-        console.log("Variável deferredPwaPrompt está vazia.");
+        alert('O evento nativo de instalação não está pronto. Verifique se o modo PWA já está ativou ou se a App já foi instalada neste dispositivo.');
+        window.fecharModalPwa();
         return;
     }
     
-    // Mostra a janela OFICIAL de instalação do telemóvel (Aquela popup do sistema operativo)
+    // Chama a janela OFICIAL de instalação nativa (Android / Chrome)
     window.deferredPwaPrompt.prompt();
     
-    // Aguarda que o utilizador escolha "Instalar" ou "Cancelar" oficial no telemóvel
+    // Aguarda para saber o que o utilizador escolheu na janela de sistema
     const { outcome } = await window.deferredPwaPrompt.userChoice;
     
     if (outcome === 'accepted') {
-        console.log('PWA: Instalado com sucesso no ecrã!');
+        console.log('PWA: Utilizador aceitou e instalou a App!');
     } else {
-        console.log('PWA: Utilizador recusou instalação.');
+        console.log('PWA: Utilizador cancelou a instalação de sistema.');
     }
     
-    // Limpar o evento para não disparar duas vezes
+    // Limpar o evento
     window.deferredPwaPrompt = null;
-    fecharModalPwa();
+    window.fecharModalPwa();
 };
