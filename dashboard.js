@@ -649,7 +649,17 @@ function renderizarSaudacaoMemoria() {
 // PRODUTOS
 // ----------------------------------------------------
 async function carregarProdutosDashboard(lojaId) {
+    const nomeCache = 'shopyump_produtos_pwa_' + lojaId;
+    
     try {
+        // 1. CARREGAMENTO INSTANTÂNEO (MAGIA CACHE PWA)
+        const cacheLocal = localStorage.getItem(nomeCache);
+        if (cacheLocal) {
+            memDashboard.produtos = JSON.parse(cacheLocal);
+            renderizarProdutosDashboard(memDashboard.produtos);
+        }
+
+        // 2. LÊ DO BANCO DE DADOS EM SEGUNDO PLANO
         const { data: produtos, error } = await window.supabaseClient
             .from('produtos')
             .select('*')
@@ -658,10 +668,12 @@ async function carregarProdutosDashboard(lojaId) {
             
         if (error) throw error;
         
-        memDashboard.produtos = produtos || []; // Guarda na memória
-        renderizarProdutosDashboard(memDashboard.produtos); // Aplica no visual
+        // 3. ATUALIZA A CACHE SE HOUVER ALTERAÇÕES
+        localStorage.setItem(nomeCache, JSON.stringify(produtos || []));
         
-        // Verifica silenciosamente se está na hora de lhe recomendarmos instalar a APP
+        memDashboard.produtos = produtos || []; 
+        renderizarProdutosDashboard(memDashboard.produtos); 
+        
         if (typeof window.verificarElegibilidadePwa === 'function') {
             window.verificarElegibilidadePwa();
         }
