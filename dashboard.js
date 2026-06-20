@@ -659,6 +659,11 @@ async function carregarProdutosDashboard(lojaId) {
         
         memDashboard.produtos = produtos || []; // Guarda na memória
         renderizarProdutosDashboard(memDashboard.produtos); // Aplica no visual
+        
+        // Verifica silenciosamente se está na hora de lhe recomendarmos instalar a APP
+        if (typeof window.verificarElegibilidadePwa === 'function') {
+            window.verificarElegibilidadePwa();
+        }
     } catch (e) {
         console.error("Erro ao carregar produtos:", e);
     }
@@ -942,14 +947,7 @@ window.fecharModalBoasVindas = function() {
     setTimeout(() => {
         modal.classList.remove('flex');
         modal.classList.add('hidden');
-        
-        // MÁGICA: Se o navegador autorizou a instalação da app (PWA),
-        // esperamos 2.5 segundos após fechar as boas-vindas para lançar a pop-up de instalar!
-        if (window.deferredPwaPrompt) {
-            setTimeout(() => {
-                window.abrirModalPwa();
-            }, 2500);
-        }
+        // PWA não é mais chamado imediatamente aqui, espera o primeiro produto ser criado.
     }, 400); 
 };
 
@@ -966,6 +964,8 @@ window.fecharModalECriarProduto = function() {
 
 window.deferredPwaPrompt = null;
 
+window.pwaPromptMostrado = false;
+
 // Escuta o evento nativo (Apenas dispara se manifest.json e sw.js funcionarem bem e em HTTPS)
 window.addEventListener('beforeinstallprompt', (e) => {
     console.log("PWA: O navegador autorizou a instalação e disparou o evento!");
@@ -973,19 +973,34 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     window.deferredPwaPrompt = e;
     
-    // Verifica se o aviso de Boas Vindas / Novo Utilizador está aberto
-    const modalBoasVindas = document.getElementById('modal-boas-vindas');
-    const boasVindasAberto = modalBoasVindas && !modalBoasVindas.classList.contains('hidden');
-    
-    if (!boasVindasAberto) {
-        // Não é utilizador novo ou já fechou: mostra o popup PWA passados 3 segundos
-        setTimeout(() => {
-            window.abrirModalPwa();
-        }, 3000); 
-    } else {
-        console.log("PWA: Pop-up adiado porque o utilizador está a criar o primeiro produto.");
+    // Dispara a verificação caso os produtos já tenham sido carregados antecipadamente
+    if (typeof window.verificarElegibilidadePwa === 'function') {
+        window.verificarElegibilidadePwa();
     }
 });
+
+// Nova função global para avaliar o momento certo de mostrar a pop-up (PWA)
+window.verificarElegibilidadePwa = function() {
+    if (!window.deferredPwaPrompt || window.pwaPromptMostrado) return;
+    
+    // Só mostra se já tiver pelo menos 1 produto no seu inventário
+    if (memDashboard && memDashboard.produtos && memDashboard.produtos.length > 0) {
+        window.pwaPromptMostrado = true;
+        console.log("PWA: Utilizador já tem produtos, a disparar PWA após 8 segundos...");
+        
+        setTimeout(() => {
+            // Verificar se ele não está a ver uma pop-up de Boas Vindas antiga
+            const modalBoasVindas = document.getElementById('modal-boas-vindas');
+            const boasVindasAberto = modalBoasVindas && !modalBoasVindas.classList.contains('hidden');
+            
+            if (!boasVindasAberto) {
+                window.abrirModalPwa();
+            }
+        }, 8000); // Aguarda 8 segundos de uso pacífico do dashboard
+    } else {
+        console.log("PWA: Ocultado porque o utilizador ainda não criou o seu primeiro produto.");
+    }
+};
 
 window.abrirModalPwa = function() {
     const modal = document.getElementById('modal-pwa-install');
