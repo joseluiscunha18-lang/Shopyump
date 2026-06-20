@@ -2,9 +2,9 @@
   "name": "Shopyump Dashboard",
   "short_name": "Shopyump",
   "start_url": "/dashboard.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#0a1a3b",
-  "theme_color": "#9f6ef5",
+  "theme_color": "#0a1a3b",
   "description": "Painel de gestão da tua loja",
   "icons": [
     {
