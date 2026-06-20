@@ -421,22 +421,51 @@ async function carregarDadosLojaDashboard() {
                     setTimeout(() => abrirModalBoasVindas(userId), 600);
                 }
 
-                // --- INÍCIO: NOVO CÓDIGO TEMPO REAL (Visitas) ---
+                // --- INÍCIO: MAGIA EM TEMPO REAL E NOTIFICAÇÕES ---
+                
+                // 1. Pedir permissão ao navegador/telemóvel para enviar Notificações
+                if (window.Notification && Notification.permission !== "granted") {
+                    Notification.requestPermission();
+                }
+
                 if (!window.inscricaoRealtimeVisitas) {
                     window.inscricaoRealtimeVisitas = window.supabaseClient
-                        .channel('realtime_visitas_dashboard')
+                        .channel('realtime_dashboard_super')
+                        // Escuta novas visitas (Mantém o gráfico em tempo real)
                         .on('postgres_changes', { 
-                            event: 'INSERT', 
-                            schema: 'public', 
-                            table: 'visitas', 
-                            filter: `loja_id=eq.${loja.id}` 
-                        }, (payload) => {
-                            // MAGIA: Quando alguém entra na loja ("INSERT" em 'visitas'), reanima o gráfico sozinho!
+                            event: 'INSERT', schema: 'public', table: 'visitas', filter: `loja_id=eq.${loja.id}` 
+                        }, () => {
                             carregarVisitasDashboard(loja.id);
+                        })
+                        // AQUI ESTÁ: Escuta Novos Pedidos (Quando a app estiver ABERTA)
+                        .on('postgres_changes', { 
+                            event: 'INSERT', schema: 'public', table: 'pedidos', filter: `loja_id=eq.${loja.id}` 
+                        }, (payload) => {
+                            
+                            // 1. Atualizar instantaneamente os números na tela
+                            carregarPedidosPendentesDashboard(loja.id);
+                            
+                            // 2. Tocar som e Exibir Notification HTML5 (Funciona até no PC)
+                            if (window.Notification && Notification.permission === "granted") {
+                                // Som catita de caixa registadora ou sino (Não quebra fluxo)
+                                const ding = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                                ding.play().catch(e => console.log('Autoplay bloqueado pelo navegador'));
+                                
+                                new Notification("Novo Pedido Recebido!", {
+                                    body: `Recebeste um pedido no valor de ${payload.new.total} MT. Verifica o painel.`,
+                                    icon: "https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192x192.png",
+                                    badge: "https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192x192.png",
+                                    vibrate: [200, 100, 200]
+                                });
+                            }
                         })
                         .subscribe();
                 }
-                // --- FIM: NOVO CÓDIGO TEMPO REAL ---
+                
+                // 2. Invocar o Registo do Firebase Token em Background
+                registarTokenFirebaseNoSupabase(userId);
+
+                // --- FIM: MAGIA EM TEMPO REAL E NOTIFICAÇÕES ---
 
            } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
@@ -460,6 +489,46 @@ async function carregarDadosLojaDashboard() {
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
+    }
+}
+
+// === NOVA LÓGICA FIREBASE PUSH OTIMIZADA PARA SERVICE WORKERS ===
+async function registarTokenFirebaseNoSupabase(userId) {
+    try {
+        if (!window.firebaseAppDashboard) {
+            import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(async (firebaseApp) => {
+                const { initializeApp } = firebaseApp;
+                const { getMessaging, getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+                
+                const firebaseConfig = {
+                    apiKey: "AIzaSyBTWweTX-vR2TJR--QLP9bIdCMbYEQdbuw",
+                    authDomain: "carbide-crowbar-479120-s7.firebaseapp.com",
+                    projectId: "carbide-crowbar-479120-s7",
+                    storageBucket: "carbide-crowbar-479120-s7.firebasestorage.app",
+                    messagingSenderId: "199596159576",
+                    appId: "1:199596159576:web:d4b53fb23220884d46902d"
+                };
+
+                window.firebaseAppDashboard = initializeApp(firebaseConfig);
+                const messaging = getMessaging(window.firebaseAppDashboard);
+                
+                // MÁGICA: Garante que o sw.js é lido e focado
+                const registration = await navigator.serviceWorker.ready;
+                
+                const token = await getToken(messaging, { 
+                    vapidKey: 'BA1AXI-cadqYm_aaklbj3DhNegd_nG8RHpLBqJi9P8IN8LLStznloOScJxu9lI0Vs9hUyUHgLqJ8MJ-lJ8TJWN4',
+                    serviceWorkerRegistration: registration
+                });
+
+                if (token) {
+                    console.log("🔥 Token Mágico FCM registado:", token);
+                    // Guarda o token na tabela 'lojas' usando o perfil_id atual
+                    await window.supabaseClient.from('lojas').update({ fcm_token: token }).eq('perfil_id', userId);
+                }
+            }).catch(err => console.log('Erro na integração nativa do Firebase', err));
+        }
+    } catch (erro) {
+        console.log("Aviso: Falha ao registar o PWA Token em background:", erro);
     }
 }
 
