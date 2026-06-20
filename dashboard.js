@@ -219,6 +219,50 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
             </div>
         </div>
+
+        <!-- Pop-up de Instalação PWA -->
+        <div id="modal-pwa-install" class="fixed inset-0 z-[999] hidden items-center justify-center p-4">
+            <!-- Fundo Escuro -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity opacity-0" id="backdrop-pwa-install" onclick="fecharModalPwa()"></div>
+            
+            <!-- Conteúdo do Pop-up -->
+            <div class="bg-white dark:bg-[#0f172a] w-full max-w-[340px] rounded-[36px] p-8 shadow-2xl relative border border-slate-100 dark:border-slate-800 transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center" id="content-pwa-install">
+                
+                <button onclick="fecharModalPwa()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+                <!-- Fotografia / Ícone (Pode alterar o src depois) -->
+                <div class="relative w-20 h-20 mb-6 mt-2">
+                    <div class="absolute inset-0 bg-[#9f6ef5] blur-xl opacity-30 rounded-full"></div>
+                    <img src="https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=200&auto=format&fit=crop" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
+                </div>
+
+                <h3 class="text-[22px] font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Instalar App</h3>
+                <p class="text-[13px] text-slate-500 font-medium leading-relaxed mb-6 px-2">
+                    Adicione a nossa plataforma ao ecrã principal para aceder offline e ter uma experiência mais fluida.
+                </p>
+
+                <div class="w-full flex flex-col gap-3">
+                    <div class="flex items-center gap-3 text-left bg-slate-50 dark:bg-[#1e293b] p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800">
+                        <div class="w-10 h-10 rounded-xl bg-[#9f6ef5]/10 flex items-center justify-center text-[#9f6ef5] shrink-0">
+                            <i class="fa-solid fa-bolt text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[12px] font-bold text-slate-900 dark:text-white">Mais Rápido & Leve</p>
+                            <p class="text-[10px] text-slate-500 font-medium mt-0.5">Sem precisar de abrir navegador</p>
+                        </div>
+                    </div>
+
+                    <button onclick="instalarPwaApp()" class="w-full bg-[#0F172A] dark:bg-white dark:text-slate-900 text-white h-14 rounded-full text-[12px] font-black uppercase tracking-wider shadow-xl shadow-slate-900/10 active:scale-95 transition-all flex items-center justify-center gap-2 mt-2">
+                        <i class="fa-solid fa-download"></i> Instalar Agora
+                    </button>
+                    <button onclick="fecharModalPwa()" class="w-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 text-[11px] font-bold uppercase tracking-widest mt-1">
+                        Talvez mais tarde
+                    </button>
+                </div>
+            </div>
+        </div>
     </template>
 `);
 
@@ -908,4 +952,89 @@ window.fecharModalECriarProduto = function() {
     setTimeout(() => {
         navegarAnimado('criar-produto'); // Navega pelo router de uma maneira moderna!
     }, 300); // 300ms garante que bate com a animação de desaparecer do modal antes de transitar os ecrãs
+};
+
+// ==========================================
+// LÓGICA DO POP-UP DE INSTALAÇÃO PWA
+// ==========================================
+
+window.deferredPwaPrompt = null;
+
+// Escuta o evento nativo do Chrome/Android para instalar o App
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Esconder o aviso padrão foleiro
+    e.preventDefault();
+    // Guardar para o nosso botão "Instalar Agora"
+    window.deferredPwaPrompt = e;
+    
+    // Aparece o nosso Pop-up premium passados 2 segundos
+    setTimeout(() => {
+        abrirModalPwa();
+    }, 2000); 
+});
+
+// SIMULAÇÃO VISUAL (Para forçar no momento enquanto testa na Vercel)
+// Ele verifica se carregou e abre sozinho após 3 segundos!
+setTimeout(() => {
+    // Só abre a simulação se o pop-up nativo ainda não o invocou
+    if (!window.deferredPwaPrompt) {
+        abrirModalPwa();
+    }
+}, 3000);
+
+window.abrirModalPwa = function() {
+    const modal = document.getElementById('modal-pwa-install');
+    const backdrop = document.getElementById('backdrop-pwa-install');
+    const content = document.getElementById('content-pwa-install');
+    
+    if (!modal || !backdrop || !content) return;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+};
+
+window.fecharModalPwa = function() {
+    const modal = document.getElementById('modal-pwa-install');
+    const backdrop = document.getElementById('backdrop-pwa-install');
+    const content = document.getElementById('content-pwa-install');
+    
+    if (!modal || !backdrop || !content) return;
+    
+    backdrop.classList.remove('opacity-100');
+    backdrop.classList.add('opacity-0');
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 300); 
+};
+
+window.instalarPwaApp = async function() {
+    if (!window.deferredPwaPrompt) {
+        alert('Este é um teste visual do botão! O App será instalado na versão real pelo navegador quando os critérios PWA da Vercel estiverem ativos.');
+        fecharModalPwa();
+        return;
+    }
+    
+    // Mostra o aviso oficial de instalação do sistema operativo do utlizador
+    window.deferredPwaPrompt.prompt();
+    
+    // Aguarda que o utilizador clique "Instalar" ou "Cancelar" oficial no telemóvel
+    const { outcome } = await window.deferredPwaPrompt.userChoice;
+    if (outcome === 'accepted') {
+        console.log('App Instalada com sucesso!');
+    }
+    
+    // Limpar
+    window.deferredPwaPrompt = null;
+    fecharModalPwa();
 };

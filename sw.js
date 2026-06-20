@@ -1,24 +1,11 @@
 const CACHE_NAME = 'shopyump-pwa-v1';
-const urlsToCache = [
-  '/Pwa.html',
-  '/manifest.json',
-  '/logo.svg'
-];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
-  );
+// Instala o service worker sem esperar
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-  );
+// Responde a pedidos de rede (fallback moderno minimalista)
+self.addEventListener('fetch', (event) => {
+  event.respondWith(fetch(event.request).catch(() => new Response('Offline - Sem Internet')));
 });
