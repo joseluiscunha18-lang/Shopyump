@@ -32,7 +32,7 @@
     <link rel="manifest" href="/manifest.json">
     
     <!-- Cor da Barra de Navegação Android para misturar-se com o fundo do teu Dashboard e não ficar "bloqueada" a azul -->
-    <meta name="theme-color" content="#FDE6DA" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#EBC5F1" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
 
     <!-- Magia para iPhone (iOS): Força o ecrã a ficar 100% Fullscreen com o conteúdo a vazar por detrás do relógio -->
@@ -60,9 +60,9 @@
             padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
         }
         #main-header {
-            padding-top: env(safe-area-inset-top) !important;
-            /* Altura reduzida de 80px para 60px para elevar o painel superior */
-            height: calc(60px + env(safe-area-inset-top)) !important;
+            padding-top: calc(16px + env(safe-area-inset-top)) !important;
+            min-height: calc(60px + env(safe-area-inset-top)) !important;
+            height: auto !important;
         }
 
         /* Transição de entrada de página */
@@ -260,7 +260,7 @@
 </aside>
 
 
-    <header id="main-header" class="fixed top-0 left-0 right-0 h-20 px-6 flex justify-between items-center z-[100]">
+    <header id="main-header" class="fixed top-0 left-0 right-0 px-6 flex justify-between items-start z-[100]">
         <div class="flex items-center gap-3">
             <button onclick="toggleSidebar()" class="p-1 -ml-1 text-slate-800 dark:text-white active:scale-90 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h8"></path></svg>
