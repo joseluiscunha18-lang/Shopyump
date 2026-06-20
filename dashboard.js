@@ -1,7 +1,7 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
-        <!-- O container sobe 80px para passar por trás do header e devolve o padding interno para manter os textos impecáveis -->
-        <div class="relative w-[100vw] pb-16 overflow-hidden rounded-b-[40px] left-1/2 right-1/2 -ml-[50vw] mr-[50vw]" style="margin-top: calc(-80px - env(safe-area-inset-top, 0px)); padding-top: calc(80px + env(safe-area-inset-top, 0px));">
+        <!-- O container do dashboard a expandir a 100% fluidamente -->
+        <div class="relative w-[100vw] pb-16 overflow-hidden rounded-b-[40px] left-1/2 right-1/2 -ml-[50vw] mr-[50vw]">
             
             <!-- Gradiente Mágico (Modo Claro) -->
             <div class="absolute inset-0 w-full h-full z-0 dark:hidden transition-colors duration-500" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center top;"></div>
