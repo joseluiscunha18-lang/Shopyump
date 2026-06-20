@@ -1,15 +1,8 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
-        <!-- Container corrigido que começa exatamente no topo do ecrã para exibir o gradiente por completo sem cortes -->
-        <div class="relative w-[100vw] pb-16 overflow-hidden rounded-b-[40px] left-1/2 right-1/2 -ml-[50vw] mr-[50vw]" style="padding-top: calc(100px + env(safe-area-inset-top, 0px));">
-            <!-- Gradiente Mágico (Modo Claro) -->
-            <div class="absolute inset-0 w-full h-full z-0 dark:hidden transition-colors duration-500" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center top;"></div>
-            
-            <!-- Gradiente Noturno (Modo Escuro) -> Esta foi a causa do texto desaparecer. Adicionado fundo premium! -->
-            <div class="absolute inset-0 w-full h-full z-0 hidden dark:block bg-gradient-to-b from-[#10172A] via-[#0F172A] to-[#020617] opacity-100 transition-opacity duration-500"></div>
-            
-            <!-- Empurra o conteúdo de texto de volta para debaixo do relógio/notch -->
-            <div class="relative z-10 px-6 w-full max-w-md mx-auto" style="padding-top: calc(7rem + env(safe-area-inset-top, 0px));">
+        <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
+            <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
+            <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-center mb-8 w-full gap-2">
                     <div class="flex-1 min-w-0">
                         <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 tracking-tight leading-tight truncate">
@@ -78,7 +71,7 @@ document.body.insertAdjacentHTML('beforeend', `
         </div>
 
         <main class="w-full bg-[#F9F7F5] dark:bg-[#020617] rounded-t-[40px] -mt-10 relative z-20 px-6 pt-5 pb-32 min-h-[50vh] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col items-center">
-            <div class="w-full space-y-8">
+            <div class="w-full max-w-md space-y-8">
 
                 <section class="space-y-4 pt-0" id="area-validacao">
                     <div class="flex justify-between items-center px-1 mb-2">
@@ -240,9 +233,9 @@ document.body.insertAdjacentHTML('beforeend', `
                 </button>
 
                 <!-- Fotografia / Ícone (Pode alterar o src depois) -->
-                <div class="relative w-20 h-20 mb-6 mt-2 bg-white rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden">
+                <div class="relative w-20 h-20 mb-6 mt-2">
                     <div class="absolute inset-0 bg-[#9f6ef5] blur-xl opacity-30 rounded-full"></div>
-                    <img src="https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-512.png" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px]">
+                    <img src="https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=200&auto=format&fit=crop" alt="App Icon" class="relative w-full h-full object-cover rounded-[20px] shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700">
                 </div>
 
                 <h3 class="text-[22px] font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Instalar App</h3>
