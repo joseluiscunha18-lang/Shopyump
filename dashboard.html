@@ -35,13 +35,24 @@
     <link rel="apple-touch-icon" href="https://placehold.co/192x192/9f6ef5/ffffff.png?text=S">
     
     <script>
-      // Regista o Service Worker UNIFICADO (PWA + OneSignal)
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          // Alterado para registar o OneSignal como Worker Principal. Resolve todos os problemas visuais de Push Backgound.
-          navigator.serviceWorker.register('/OneSignalSDKWorker.js')
-            .then(reg => console.log('Service Worker (OneSignal + PWA) Registado com sucesso', reg))
-            .catch(err => console.log('Falha ao registar Service Worker', err));
+        window.addEventListener('load', async () => {
+          try {
+            // 1. Limpa Workers antigos (sw.js) que estejam a abafar as notificações
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (let reg of registrations) {
+              if (reg.active && reg.active.scriptURL.endsWith('sw.js') && !reg.active.scriptURL.includes('OneSignal')) {
+                  await reg.unregister();
+                  console.log('Worker antigo apagado para evitar conflitos');
+              }
+            }
+            
+            // 2. Regista apenas o Worker unificado e limpo
+            await navigator.serviceWorker.register('/OneSignalSDKWorker.js');
+            console.log('Service Worker (OneSignal + PWA) Registado com sucesso!');
+          } catch (err) {
+            console.log('Erro no Service Worker:', err);
+          }
         });
       }
     </script>
