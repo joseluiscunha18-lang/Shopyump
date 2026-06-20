@@ -45,6 +45,24 @@
       }
     </script>
 
+    <!-- ======== INTEGRAÇÃO ONESIGNAL ======== -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "40d38a2e-8cf5-4fb1-9690-7125e88d4fbc",
+        });
+      });
+      
+      // Função global para identificar o utilizador no OneSignal (Para receber notificações privadas)
+      window.logarOneSignal = function(userId) {
+          OneSignalDeferred.push(function(OneSignal) {
+            OneSignal.login(userId);
+          });
+      };
+    </script>
+
     <style>
         /* Transição de entrada de página */
         #spa-view {
@@ -59,6 +77,17 @@
             transform: translateX(20px);
         }
     </style>
+<!-- ======== INTEGRAÇÃO ONESIGNAL ======== -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "40d38a2e-8cf5-4fb1-9690-7125e88d4fbc",
+        });
+      });
+    </script>
+
 </head>
 <body class="pb-24 transition-colors duration-500 bg-[#F9F7F5] dark:bg-[#020617] text-navy-900 dark:text-slate-100 w-full overflow-x-hidden relative">
 
@@ -153,6 +182,14 @@
                 if(window.supabaseClient) {
                     await window.supabaseClient.auth.signOut();
                 }
+                
+                // LOGOUT DO ONESIGNAL
+                if (window.OneSignalDeferred) {
+                  window.OneSignalDeferred.push(function(OneSignal) {
+                    OneSignal.logout();
+                  });
+                }
+                
                 sessionStorage.removeItem('shopyump_auth');
                 window.location.replace('/index.html');
             }
@@ -169,6 +206,9 @@
 
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (user) {
+                    // MÁGICA: Autentica o utilizador no OneSignal usando o ID do Supabase
+                    if (window.logarOneSignal) window.logarOneSignal(user.id);
+
                     // Prepara os dados básicos
                     let nome = user.user_metadata?.full_name || user.user_metadata?.nome || '';
                     const foto = user.user_metadata?.avatar_url || '';
@@ -297,11 +337,19 @@
         window.supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
     </script>
     <script>
-        // Verificação de autenticação no dashboard
+        // Verificação de autenticação no dashboard e Inicialização do OneSignal
         (async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.replace('/index.html');
+            } else {
+                // Ao confirmar que está logado no Supabase, vincula o utilizador ao OneSignal
+                window.OneSignalDeferred = window.OneSignalDeferred || [];
+                window.OneSignalDeferred.push(async function(OneSignal) {
+                    await OneSignal.login(session.user.id);
+                    // Aciona o pop-up a pedir permissão de notificações (caso ele ainda não tenha aceite)
+                    await OneSignal.Slidedown.promptPush(); 
+                });
             }
         })();
     </script>
