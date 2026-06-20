@@ -3,7 +3,7 @@
   "short_name": "Shopyump",
   "start_url": "/dashboard.html",
   "display": "standalone",
-  "background_color": "#020617",
+  "background_color": "#0a1a3b",
   "theme_color": "#9f6ef5",
   "description": "Painel de gestão da tua loja",
   "icons": [
