@@ -326,7 +326,7 @@ function viewHome() {
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" class="w-full h-full object-contain p-2 mix-blend-darken transition-transform duration-500 group-active:scale-95">
+                        <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight min-h-[40px] break-words pr-1">${p.nome}</h3>
