@@ -48,7 +48,7 @@ body {
 
 /* AJUSTES GERAIS DARK MODE - PREMIUM NAVY */
 .dark body { background-color: #020617; color: #F1F5F9; }
-.dark #menuZ, .dark nav { 
+.dark header, .dark #menuZ, .dark nav { 
     background: #020617 !important; 
     border-color: #1E293B !important; 
 }
@@ -386,6 +386,10 @@ body {
     padding-left: 12px;
     box-shadow: -15px 0 15px -10px white; 
 }
+.dark .sticky-input-container {
+    background: #1E293B;
+    box-shadow: -15px 0 15px -10px #1E293B;
+}
 
 /* Chip Ativo (Navy Blue) */
 .chip-selected { 
@@ -638,6 +642,12 @@ body {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
+}
+.dark .modal-sheet {
+    background: #0F172A;
+}
+.dark .modal-handle {
+    background-color: #334155;
 }
 
 /* Faz a gaveta subir quando ativada */
