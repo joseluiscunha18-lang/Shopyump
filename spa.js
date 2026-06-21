@@ -378,8 +378,10 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
     imagensCarrossel.forEach((img, index) => {
-        // Trocamos 'object-cover' por 'object-contain' e adicionamos 'p-4' (padding) e mix-blend-multiply para as imagens com fundo branco se fundirem bem com a cor cinza pálida do ecrã de fundo
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4"><img src="${img}" class="w-full h-full object-contain mix-blend-darken"></div>`;
+        // Adicionamos crossorigin="anonymous" e a trigger onload para ativar a nossa função que extrai a cor:
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-500 container-img">
+            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain mix-blend-darken">
+        </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     });
 
@@ -1335,3 +1337,45 @@ function viewInstitucional(pagina) {
 }
 
 
+// Função que analisa a borda da imagem e aplica a cor ao contentor pai
+function extrairCorBorda(imgElement) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 5;
+    canvas.height = 5;
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) return;
+
+    try {
+        // Desenha uma minúscula amostra do canto da imagem no canvas
+        ctx.drawImage(imgElement, 0, 0, 5, 5);
+        
+        // Pega no pixel exato do canto superior esquerdo (x: 0, y: 0)
+        const pixelData = ctx.getImageData(0, 0, 1, 1).data;
+        
+        const r = pixelData[0];
+        const g = pixelData[1];
+        const b = pixelData[2];
+        const alpha = pixelData[3] / 255;
+        
+        // Se este recanto for transparente e não sólido, não fazemos nada.
+        if (alpha < 0.1) return;
+
+        const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        
+        // Pinta o div que criaste (container pai) com esta exata cor
+        const parent = imgElement.parentElement;
+        if (parent) {
+            parent.style.backgroundColor = corDetectada;
+            
+            // Calculamos o Brilho. Se as imagens com fundo preto ou muito escuro 
+            // tiverem luz abaixo de 128, cancelamos o "mix-blend-darken" senão a foto desaparecia.
+            const brilho = (r * 299 + g * 587 + b * 114) / 1000;
+            if (brilho < 128) {
+                imgElement.classList.remove('mix-blend-darken');
+            }
+        }
+    } catch (error) {
+        console.warn("Aviso: Regras de CORS do sistema (Supabase) impediram a leitura do pixel da imagem", error);
+    }
+}
