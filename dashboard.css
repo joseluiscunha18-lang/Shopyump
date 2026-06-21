@@ -668,6 +668,135 @@ body {
     flex-shrink: 0;
 }
 
+/* =======================================================
+   REMOVER ZONAS BRANCAS NO MODO DARK (CRIAR PRODUTO)
+   ======================================================= */
+
+/* Fundos Principais dos Modais Gerais */
+.dark .modal-sheet {
+    background-color: #0F172A !important;
+}
+.dark .modal-handle {
+    background-color: #1E293B !important;
+}
+
+/* Modais: Textos e Títulos */
+.dark .modal-sheet h2,
+.dark .modal-sheet h3,
+.dark .modal-sheet span.text-slate-800 {
+    color: #ffffff !important;
+}
+.dark .modal-sheet .text-slate-900,
+.dark .modal-sheet .text-\[\#0F172A\] {
+    color: #ffffff !important;
+}
+.dark .modal-sheet p.text-slate-500,
+.dark .modal-sheet .text-slate-600 {
+    color: #94a3b8 !important;
+}
+
+/* Modal Categorias & JS Injetado */
+.dark #drawer-content .text-slate-800 {
+    color: #e2e8f0 !important;
+}
+.dark #drawer-content .active\:bg-slate-50:active {
+    background-color: #1E293B !important;
+}
+.dark #drawer-content .border-slate-50,
+.dark #drawer-content .border-l-2.border-slate-100 {
+    border-color: #1E293B !important;
+}
+.dark #modal-categorias .bg-slate-50\/50 {
+    background-color: #020617 !important;
+    border-color: #1E293B !important;
+}
+.dark #modal-categorias input {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+.dark #modal-categorias button.bg-\[\#0F172A\] {
+    background-color: #10b981 !important; /* Cor Premium (Emerald) p/ Dark */
+}
+
+/* Modal Cores e Botões Secundários */
+.dark #modal-cores .brand-color {
+    background-color: #3b82f6 !important;
+}
+.dark #modal-opcoes-foto button.bg-gray-50 {
+    background-color: #1E293B !important;
+    color: #ffffff !important;
+}
+.dark #modal-opcoes-foto button.text-red-500 {
+    color: #ef4444 !important;
+}
+
+/* Modal de Editor de Fotos (Máxima Imersão e Remoção de bordas brancas) */
+.dark #editor-sheet {
+    background-color: #020617 !important;
+}
+.dark #editor-sheet > .bg-white {
+    background-color: #0F172A !important;
+    border-color: #1E293B !important;
+}
+.dark #catalog-card {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+}
+.dark #catalog-card > div:first-child {
+    background-color: #0F172A !important;
+}
+.dark #catalogo-instrucoes {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+}
+.dark #catalogo-instrucoes .bg-gray-50, 
+.dark #catalogo-instrucoes .bg-white {
+    background-color: #0F172A !important;
+    border-color: #334155 !important;
+}
+.dark #editor-sheet button.bg-gray-50 {
+    background-color: #1E293B !important;
+    color: #F1F5F9 !important;
+    border-color: #334155 !important;
+}
+
+/* Seção de Variantes (Correção dos botões de Cor/Tamanho e Sombra Branca) */
+.dark .variant-section button.bg-white {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    color: #F1F5F9 !important;
+}
+.dark .variant-section input {
+    background-color: #0F172A !important;
+    border-color: #1E293B !important;
+    color: #ffffff !important;
+}
+.dark .sticky-input-container {
+    background-color: #1E293B !important;
+    box-shadow: -15px 0 15px -10px #1E293B !important;
+}
+.dark .chip-selected {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+/* Correção visual do seletor de Data de Promoção */
+.dark #area-datas-promo input {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+    color-scheme: dark; /* Força o ícone nativo do telemóvel a ficar escuro */
+}
+
+/* Correção das miniaturas na visualização da galeria */
+.dark .photo-slot {
+    background-color: #1E293B !important;
+    border-color: #334155 !important;
+    --tw-ring-color: transparent !important;
+}
+
 
 /* ══════════════════════════════════════════════════════════════
    TOGGLE SWITCHES (para os campos de criação de produto)
