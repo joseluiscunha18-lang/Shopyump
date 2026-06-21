@@ -221,7 +221,7 @@ function renderizarProdutosLista(produtosRender) {
         const fotoCapa = (p.fotos && p.fotos.length > 0) ? p.fotos[0] : 'https://placehold.co/100?text=Sem+Foto';
         html += `
             <div onclick="abrirModalAcoesProduto('${p.id}')" class="bg-white dark:bg-navy-900 p-3.5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-slate-100 dark:border-navy-800 flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer group hover:border-slate-200 dark:hover:border-navy-700">
-                <div class="flex items-center gap-3.5 w-full pr-2">
+                <div class="flex items-center gap-3.5 flex-1 min-w-0 pr-2">
                     <div class="w-14 h-14 rounded-[14px] bg-slate-50 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-700 shrink-0 relative">
                         <img src="${fotoCapa}" class="w-full h-full object-cover">
                         ${!p.ativo ? '<div class="absolute inset-0 bg-black/40 flex items-center justify-center"><i class="far fa-eye-slash text-white opacity-80 text-xs"></i></div>' : ''}
