@@ -378,8 +378,8 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
     imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-150 container-img bg-transparent">
-            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain mix-blend-darken transition-all duration-150">
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 container-img">
+            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     });
@@ -1338,20 +1338,26 @@ function viewInstitucional(pagina) {
 
 // Função que analisa a borda da imagem e aplica a cor ao contentor pai
 function extrairCorBorda(imgElement) {
+    const parentContainer = imgElement.parentElement;
+    
+    // Função auxiliar para forçar a amostra estar visível sem falhar (se falhar, usa fundo neutro)
+    const mostrarConteudoForcado = (fallbackColor = '#f8fafc') => {
+        if(parentContainer) {
+            if(!parentContainer.style.backgroundColor) { parentContainer.style.backgroundColor = fallbackColor; }
+            parentContainer.classList.remove('opacity-0');
+            parentContainer.classList.add('opacity-100');
+        }
+    };
+
     const canvas = document.createElement('canvas');
     canvas.width = 10;
     canvas.height = 10;
     const ctx = canvas.getContext('2d');
     
-    if (!ctx) return;
+    if (!ctx) return mostrarConteudoForcado();
 
     try {
-        // Correção 1: Desenhar o canto superior esquerdo SEM Redimensionar!
-        // Redimensionar cria "mistura" de cores cinzentas se a imagem for grande.
         ctx.drawImage(imgElement, 0, 0);
-        
-        // Correção 2: Pegar num pixel um bocadinho mais para "dentro" (x:2, y:2) 
-        // para evitar que um pequeno rebordo transparente force cores erradas.
         const pixelData = ctx.getImageData(2, 2, 1, 1).data;
         
         let r = pixelData[0];
@@ -1359,34 +1365,28 @@ function extrairCorBorda(imgElement) {
         let b = pixelData[2];
         const alpha = pixelData[3] / 255;
         
-        if (alpha < 0.1) return;
-
-        // Correção 3: Se o fundo for "quase branco" (Artefatos de compressão JPEG), tranca para "Branco Puro"
+        // Tranca para branco se tiver artefatos de JPEG (cinzentos sujos)
         if (r > 240 && g > 240 && b > 240) {
             r = 255; g = 255; b = 255;
         }
 
-        // Se o fundo for "quase preto", tranca para "Preto Puro"
+        // Tranca para preto se tiver artefatos
         if (r < 15 && g < 15 && b < 15) {
             r = 0; g = 0; b = 0;
         }
 
-        const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        
-        const parent = imgElement.parentElement;
-        if (parent) {
-            parent.style.backgroundColor = corDetectada;
-            
-            // Calcular Brilho
-            const brilho = (r * 299 + g * 587 + b * 114) / 1000;
-            if (brilho < 128) {
-                // Se for uma cor escura/preta, remover darken para não sumir o produto
-                imgElement.classList.remove('mix-blend-darken');
-                // Adicionar brilho extra caso seja fundo preto ajuda o produto a destacar
-                imgElement.classList.add('brightness-110');
+        if (alpha > 0.1) {
+            const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            if (parentContainer) {
+                parentContainer.style.backgroundColor = corDetectada;
             }
         }
+        
+        // 🚀 Aciona a "magia". Mostra o contêiner gradualmente sem piscar, e sem afetar a foto!
+        mostrarConteudoForcado(parentContainer?.style?.backgroundColor || '#f8fafc');
+
     } catch (error) {
-        console.warn("Aviso: Regras de CORS do sistema (Supabase) impediram a leitura do pixel da imagem", error);
+        console.warn("Aviso CORS/Carregamento", error);
+        mostrarConteudoForcado(); // Mostra na mesma mesmo com erros
     }
 }
