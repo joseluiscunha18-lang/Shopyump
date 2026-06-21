@@ -326,7 +326,7 @@ function viewHome() {
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 mix-blend-darken transition-all duration-300 group-active:scale-95">
+                        <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -353,7 +353,7 @@ function renderProdutoCardHorizontal(p) {
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                 </button>
-                <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 mix-blend-darken transition-all duration-300 group-active:scale-95">
+                <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
                 <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -377,12 +377,12 @@ function viewProduto(id) {
     const imagensCarrossel = (p.imagens && p.imagens.length > 0) ? p.imagens : [p.imagem]; 
     let carrosselHtml = ''; let dotsHtml = '';
 
-    imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 container-img">
-            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain">
+   imagensCarrossel.forEach((img, index) => {
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-300 container-img bg-slate-50">
+            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain opacity-0 transition-opacity duration-300 ease-out">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
-    });
+    }); 
 
     return `
         <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col">
@@ -951,12 +951,12 @@ function viewFavoritos() {
     produtosFavoritos.forEach(p => {
         html += `
             <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative">
+                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300">
                     <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 active:scale-90 transition-transform shadow-sm" 
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
                     </button>
-                    <img src="${p.imagem}" class="w-full h-full object-contain p-2 mix-blend-darken transition-transform duration-500 group-active:scale-95">
+                    <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1009,8 +1009,8 @@ function pesquisarProdutos(termo) {
     resultados.forEach(p => {
         html += `
             <div onclick="fecharPesquisa(); navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100">
-                    <img src="${p.imagem}" class="w-full h-full object-cover">
+                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300">
+                    <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300">
                 </div>
                 <div class="px-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1340,12 +1340,11 @@ function viewInstitucional(pagina) {
 function extrairCorBorda(imgElement) {
     const parentContainer = imgElement.parentElement;
     
-    // Função auxiliar para forçar a amostra estar visível sem falhar (se falhar, usa fundo neutro)
     const mostrarConteudoForcado = (fallbackColor = '#f8fafc') => {
-        if(parentContainer) {
-            if(!parentContainer.style.backgroundColor) { parentContainer.style.backgroundColor = fallbackColor; }
+        if(parentContainer && !parentContainer.style.backgroundColor) { 
+            parentContainer.style.backgroundColor = fallbackColor; 
         }
-        // Revela a imagem de forma suave!
+        // Revela a imagem puramente como ela é
         imgElement.classList.remove('opacity-0');
         imgElement.classList.add('opacity-100');
     };
@@ -1366,28 +1365,26 @@ function extrairCorBorda(imgElement) {
         let b = pixelData[2];
         const alpha = pixelData[3] / 255;
         
-        // Tranca para branco se tiver artefatos de JPEG (cinzentos sujos)
+        if (alpha < 0.1) return mostrarConteudoForcado();
+
         if (r > 240 && g > 240 && b > 240) {
             r = 255; g = 255; b = 255;
         }
 
-        // Tranca para preto se tiver artefatos
         if (r < 15 && g < 15 && b < 15) {
             r = 0; g = 0; b = 0;
         }
 
-        if (alpha > 0.1) {
-            const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-            if (parentContainer) {
-                parentContainer.style.backgroundColor = corDetectada;
-            }
+        const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        if (parentContainer) {
+            parentContainer.style.transition = 'background-color 0.3s ease';
+            parentContainer.style.backgroundColor = corDetectada;
         }
         
-        // 🚀 Aciona a "magia". Mostra o contêiner gradualmente sem piscar, e sem afetar a foto!
         mostrarConteudoForcado(parentContainer?.style?.backgroundColor || '#f8fafc');
 
     } catch (error) {
         console.warn("Aviso CORS/Carregamento", error);
-        mostrarConteudoForcado(); // Mostra na mesma mesmo com erros
+        mostrarConteudoForcado(); 
     }
 }
