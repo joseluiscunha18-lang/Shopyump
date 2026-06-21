@@ -72,7 +72,7 @@ body {
 /* CORREÇÃO DOS BOTÕES DO GRÁFICO NO MODO DARK */
 .dark .bg-\\[\\#f1f1f2\\] { background-color: rgba(30, 41, 59, 0.5) !important; border: 1px solid rgba(51, 65, 85, 0.5) !important; }
 .dark .text-slate-400 { color: #64748b !important; } 
-.dark .bg-white.text-slate-900 { background-color: #ffffff !important; color: #0f172a !important; } 
+/* A regra global que forçava os inputs a ficarem brancos foi removida! */ 
 
 /* CORREÇÃO VISUAL TIKTOK E ÍCONES */
 .dark .bg-black { background-color: #f1f5f9 !important; } 
@@ -699,6 +699,12 @@ body {
 .dark #drawer-content .text-slate-800 {
     color: #e2e8f0 !important;
 }
+.dark #drawer-content .bg-\[\#0F172A\] {
+    background-color: #1E293B !important; /* Realça as caixinhas dos ícones no escuro */
+}
+.dark #drawer-content .active\:text-\[\#0F172A\]:active {
+    color: #3b82f6 !important; /* Torna as opções clicáveis em azul, impedindo de ficarem pretas e ilegíveis */
+}
 .dark #drawer-content .active\:bg-slate-50:active {
     background-color: #1E293B !important;
 }
@@ -776,9 +782,11 @@ body {
     background-color: #1E293B !important;
     box-shadow: -15px 0 15px -10px #1E293B !important;
 }
+/* CORREÇÃO: Força máxima para o botão quando clicado (Vence a propriedade do botão inativo) */
+.dark .variant-section button.chip-selected,
 .dark .chip-selected {
     background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
+    border-color: #2563eb !important;
     color: #ffffff !important;
 }
 
