@@ -1,72 +1,68 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
         <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
-            <!-- Fundo modo claro (esconde no dark mode com suavidade) -->
-            <div class="absolute inset-0 w-full h-full z-0 transition-opacity duration-500 dark:opacity-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
-            
-            <!-- Fundo modo escuro (mostra no dark mode com gradiente requintado navy) -->
-            <div class="absolute inset-0 w-full h-full z-0 opacity-0 transition-opacity duration-500 dark:opacity-100 bg-gradient-to-b from-[#0F172A] to-[#020617]"></div>
-
+            <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-center mb-8 w-full gap-2">
                     <div class="flex-1 min-w-0">
-                        <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 dark:text-white tracking-tight leading-tight truncate">
-                            <div class="h-7 w-40 bg-slate-800/10 dark:bg-slate-700/50 animate-pulse rounded-md mt-1"></div>
+                        <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 tracking-tight leading-tight truncate">
+                            <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md mt-1"></div>
                         </h2>
+                        
                     </div>
-                    <div class="flex-shrink-0 flex items-center bg-white/35 dark:bg-slate-800/40 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-2xl shadow-sm p-1 gap-1">
-                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 dark:hover:bg-slate-700/50 active:scale-95 transition-all text-slate-700 dark:text-slate-300" title="Copiar Link">
+                    <div class="flex-shrink-0 flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm p-1 gap-1">
+                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
                             <i class="fa-regular fa-copy text-[14px]" id="icone-copiar"></i>
                         </button>
-                        <div class="w-[1px] h-4 bg-slate-400/30 dark:bg-slate-600/50"></div>
-                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 dark:hover:bg-slate-700/50 active:scale-95 transition-all text-slate-800 dark:text-slate-200 gap-1.5">
+                        <div class="w-[1px] h-4 bg-slate-400/30"></div>
+                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-800 gap-1.5">
                             <span class="text-[10px] font-black uppercase tracking-widest">Loja</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600 dark:text-slate-400"></i>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600"></i>
                         </a>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
-                    <div class="bg-white/35 dark:bg-slate-800/40 backdrop-blur-2xl border border-white dark:border-slate-700/50 rounded-[32px] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.04)] dark:shadow-none flex items-center transition-all">
-                        <div class="text-slate-800 dark:text-slate-200 flex-shrink-0">
+                    <div class="bg-white/35 backdrop-blur-2xl border border-white rounded-[32px] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.04)] flex items-center transition-all">
+                        <div class="text-slate-800 flex-shrink-0">
                             <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         </div>
                         <div class="ml-7 flex-1">
                             <div class="flex items-center justify-between">
                                 <div id="label-pedidos-pendentes" class="hidden items-center gap-1.5">
-                                    <p class="text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest">Pedidos Pendentes</p>
+                                    <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
                                 </div>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <h3 id="stat-pedidos">
-                                    <div class="h-10 w-24 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-[10px]"></div>
-                                </h3>
-                                <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80 dark:text-slate-400">no total</span>
+    <div class="h-10 w-24 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-[10px]"></div>
+</h3>
+                                <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80">no total</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-white/35 dark:bg-slate-800/40 backdrop-blur-xl border border-white/60 dark:border-slate-700/50 rounded-[28px] p-5 flex items-center shadow-sm dark:shadow-none">
-                            <div class="text-slate-700 dark:text-slate-300 flex-shrink-0">
+                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
+                            <div class="text-slate-700 flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-visitas" class="mb-1">
-                                    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
-                                </h4>
-                                <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest mt-1">Visitas Hoje</p>
+    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
+</h4>
+                                <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
                             </div>
                         </div>
-                        <div class="bg-white/35 dark:bg-slate-800/40 backdrop-blur-xl border border-white/60 dark:border-slate-700/50 rounded-[28px] p-5 flex items-center shadow-sm dark:shadow-none">
-                            <div class="text-slate-700 dark:text-slate-300 flex-shrink-0">
+                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
+                            <div class="text-slate-700 flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-produtos-ativos" class="mb-1">
-                                    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
-                                </h4>
-                                <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest mt-1">Produtos Ativos</p>
+    <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
+</h4>
+                                <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
                             </div>
                         </div>
                     </div>
@@ -282,9 +278,10 @@ function animarNumero(id, valorFinal) {
     
     const valorAlvo = parseInt(String(valorFinal).replace(/\D/g, ''));
     
+    // Se o valor for MAIOR QUE ZERO, metemos a fonte gigante em todos e atívamos as "labels" de legenda
     if (!isNaN(valorAlvo) && valorAlvo > 0) {
         if (id === 'stat-pedidos') {
-            elemento.className = "text-[52px] font-medium text-slate-900 dark:text-white tracking-tighter leading-none";
+            elemento.className = "text-[52px] font-medium text-slate-900 tracking-tighter leading-none";
             const labelTotal = document.getElementById('label-pedidos-total');
             if (labelTotal) labelTotal.classList.remove('hidden'); 
             
@@ -294,19 +291,20 @@ function animarNumero(id, valorFinal) {
                 labelPendentes.classList.add('flex');
             }
         } else if (id === 'stat-visitas') {
-            elemento.className = "text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1";
+            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
             const labelVisitas = document.getElementById('label-visitas-hoje');
             if (labelVisitas) labelVisitas.classList.remove('hidden');
         } else if (id === 'stat-produtos-ativos') {
-            elemento.className = "text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1";
+            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
             const labelProdutos = document.getElementById('label-produtos-ativos');
             if (labelProdutos) labelProdutos.classList.remove('hidden');
         }
     }
     
+    // Se o valor for ZERO, removemos as labels e reescremos nativamente o texto que tem de ficar no estado vazio!
     if (!isNaN(valorAlvo) && valorAlvo <= 0) {
         if (id === 'stat-pedidos') {
-            elemento.className = "text-[13px] font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-snug";
+            elemento.className = "text-[13px] font-medium text-slate-500 tracking-tight leading-snug";
             elemento.textContent = "Ainda não recebeu pedidos";
             const labelTotal = document.getElementById('label-pedidos-total');
             if (labelTotal) labelTotal.classList.add('hidden');
@@ -316,12 +314,12 @@ function animarNumero(id, valorFinal) {
                 labelPendentes.classList.remove('flex');
             }
         } else if (id === 'stat-visitas') {
-            elemento.className = "text-[11px] font-semibold text-slate-500 dark:text-slate-400 tracking-tight leading-snug mb-1";
+            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
             elemento.textContent = "Compartilhe sua loja para receber visitas";
             const labelVisitas = document.getElementById('label-visitas-hoje');
             if (labelVisitas) labelVisitas.classList.add('hidden');
         } else if (id === 'stat-produtos-ativos') {
-            elemento.className = "text-[11px] font-semibold text-slate-500 dark:text-slate-400 tracking-tight leading-snug mb-1";
+            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
             elemento.textContent = "Adicione seu primeiro produto";
             const labelProdutos = document.getElementById('label-produtos-ativos');
             if (labelProdutos) labelProdutos.classList.add('hidden');
@@ -329,6 +327,7 @@ function animarNumero(id, valorFinal) {
         return; 
     }
 
+    // Aplica o valor de target normal (só atinge esta linha para valores > 0)
     if (isNaN(valorAlvo)) { 
         elemento.textContent = valorFinal; 
     } else {
@@ -352,44 +351,50 @@ function confirmarComAnimacao(id) {
     }, 380);
 }
 
-// 1. Variáveis na memória para guardar os dados (CACHE)
+// 1. Variáveis na memória para guardar os dados (CACHE PERSISTENTE PWA)
 let dashboardCarregado = false;
-let memDashboard = {
+
+// ⚡ Tenta carregar do armazenamento do telemóvel primeiro (off-line fallback)
+let memDashboard = JSON.parse(localStorage.getItem('shopyump_dash_cache')) || {
     loja: null,
     produtos: null,
     pendentes: null,
-    visitasCache: null // NOVO: Guarda os dados do gráfico
+    visitasCache: null 
+};
+
+// 💾 Função mágica que guarda tudo no telemóvel sempre que há novos dados
+window.salvarCacheDashboard = function() {
+    localStorage.setItem('shopyump_dash_cache', JSON.stringify(memDashboard));
 };
 
 document.addEventListener('spa:page-loaded', (e) => {
     if (e.detail === 'dashboard') {
-        if (!dashboardCarregado) {
-            carregarDadosLojaDashboard().then(() => {
-                dashboardCarregado = true;
-            });
-        } else {
-            // Redesenha instantaneamente da memória (Zero consumo de requisições ao mudar de página)
+        
+        // 🚀 1. MAGIA PWA: Se já existe cache, desenha INSTANTANEAMENTE (Zero Loaders)
+        if (memDashboard.loja) {
             renderizarSaudacaoMemoria();
             if (memDashboard.produtos) renderizarProdutosDashboard(memDashboard.produtos);
             if (memDashboard.pendentes) renderizarPendentesDashboard(memDashboard.pendentes);
-            
-            // O gráfico agora só é desenhado a partir da memória instantânea. 
-            // Ele só voltará a puxar da base de dados se a magia do "Tempo Real" for ativada!
             if (memDashboard.visitasCache) {
-                animarNumero('stat-visitas', memDashboard.visitasCache.hoje); // Agora pega no valor de 'hoje'
+                animarNumero('stat-visitas', memDashboard.visitasCache.hoje);
                 animarNumero('valor-atual-texto', memDashboard.visitasCache.hoje);
                 atualizarGraficoDashboard(memDashboard.visitasCache.contagensArr, memDashboard.visitasCache.ordemNomes);
             }
         }
+
+        // 🔄 2. STALE-WHILE-REVALIDATE: Vai ao Supabase uma única vez por sessão confirmar se não houve perdas
+        // (Sendo que durante o uso ativo os WebSockets é que atualizam o resto!)
+        if (!dashboardCarregado) {
+            carregarDadosLojaDashboard().then(() => {
+                dashboardCarregado = true;
+            });
+        }
     }
 });
 
-// Permitir atualizações forçadas (ex: quando ouve um novo pedido via Socket)
+// Atualizações forçadas em background (Silenciosas)
 window.forcarAtualizacaoDashboard = () => {
-    dashboardCarregado = false;
-    carregarDadosLojaDashboard().then(() => {
-        dashboardCarregado = true;
-    });
+    carregarDadosLojaDashboard(); 
 };
 
 // ----------------------------------------------------
@@ -408,8 +413,9 @@ async function carregarDadosLojaDashboard() {
                 .maybeSingle();
                 
             if (loja) {
-                memDashboard.loja = loja; // Guarda na memória
-                renderizarSaudacaoMemoria(); // Aplica no visual
+                memDashboard.loja = loja;
+                window.salvarCacheDashboard(); // 💾 GUARDA NA CACHE DO TELEMÓVEL
+                renderizarSaudacaoMemoria();
                 
                 await carregarProdutosDashboard(loja.id);
                 await carregarPedidosPendentesDashboard(loja.id);
@@ -421,51 +427,22 @@ async function carregarDadosLojaDashboard() {
                     setTimeout(() => abrirModalBoasVindas(userId), 600);
                 }
 
-                // --- INÍCIO: MAGIA EM TEMPO REAL E NOTIFICAÇÕES ---
-                
-                // 1. Pedir permissão ao navegador/telemóvel para enviar Notificações
-                if (window.Notification && Notification.permission !== "granted") {
-                    Notification.requestPermission();
-                }
-
+                // --- INÍCIO: NOVO CÓDIGO TEMPO REAL (Visitas) ---
                 if (!window.inscricaoRealtimeVisitas) {
                     window.inscricaoRealtimeVisitas = window.supabaseClient
-                        .channel('realtime_dashboard_super')
-                        // Escuta novas visitas (Mantém o gráfico em tempo real)
+                        .channel('realtime_visitas_dashboard')
                         .on('postgres_changes', { 
-                            event: 'INSERT', schema: 'public', table: 'visitas', filter: `loja_id=eq.${loja.id}` 
-                        }, () => {
-                            carregarVisitasDashboard(loja.id);
-                        })
-                        // AQUI ESTÁ: Escuta Novos Pedidos (Quando a app estiver ABERTA)
-                        .on('postgres_changes', { 
-                            event: 'INSERT', schema: 'public', table: 'pedidos', filter: `loja_id=eq.${loja.id}` 
+                            event: 'INSERT', 
+                            schema: 'public', 
+                            table: 'visitas', 
+                            filter: `loja_id=eq.${loja.id}` 
                         }, (payload) => {
-                            
-                            // 1. Atualizar instantaneamente os números na tela
-                            carregarPedidosPendentesDashboard(loja.id);
-                            
-                            // 2. Tocar som e Exibir Notification HTML5 (Funciona até no PC)
-                            if (window.Notification && Notification.permission === "granted") {
-                                // Som catita de caixa registadora ou sino (Não quebra fluxo)
-                                const ding = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                                ding.play().catch(e => console.log('Autoplay bloqueado pelo navegador'));
-                                
-                                new Notification("Novo Pedido Recebido!", {
-                                    body: `Recebeste um pedido no valor de ${payload.new.total} MT. Verifica o painel.`,
-                                    icon: "https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192x192.png",
-                                    badge: "https://bpufeystnepnmvnprnaz.supabase.co/storage/v1/object/public/Logo/logo-192x192.png",
-                                    vibrate: [200, 100, 200]
-                                });
-                            }
+                            // MAGIA: Quando alguém entra na loja ("INSERT" em 'visitas'), reanima o gráfico sozinho!
+                            carregarVisitasDashboard(loja.id);
                         })
                         .subscribe();
                 }
-                
-                // 2. Invocar o Registo do Firebase Token em Background
-                registarTokenFirebaseNoSupabase(userId);
-
-                // --- FIM: MAGIA EM TEMPO REAL E NOTIFICAÇÕES ---
+                // --- FIM: NOVO CÓDIGO TEMPO REAL ---
 
            } else {
                 const h2Saudacao = document.getElementById('dash-saudacao');
@@ -489,46 +466,6 @@ async function carregarDadosLojaDashboard() {
         }
     } catch (e) {
         console.error("Erro ao carregar dados da loja no dashboard:", e);
-    }
-}
-
-// === NOVA LÓGICA FIREBASE PUSH OTIMIZADA PARA SERVICE WORKERS ===
-async function registarTokenFirebaseNoSupabase(userId) {
-    try {
-        if (!window.firebaseAppDashboard) {
-            import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js').then(async (firebaseApp) => {
-                const { initializeApp } = firebaseApp;
-                const { getMessaging, getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
-                
-                const firebaseConfig = {
-                    apiKey: "AIzaSyBTWweTX-vR2TJR--QLP9bIdCMbYEQdbuw",
-                    authDomain: "carbide-crowbar-479120-s7.firebaseapp.com",
-                    projectId: "carbide-crowbar-479120-s7",
-                    storageBucket: "carbide-crowbar-479120-s7.firebasestorage.app",
-                    messagingSenderId: "199596159576",
-                    appId: "1:199596159576:web:d4b53fb23220884d46902d"
-                };
-
-                window.firebaseAppDashboard = initializeApp(firebaseConfig);
-                const messaging = getMessaging(window.firebaseAppDashboard);
-                
-                // MÁGICA: Garante que o sw.js é lido e focado
-                const registration = await navigator.serviceWorker.ready;
-                
-                const token = await getToken(messaging, { 
-                    vapidKey: 'BA1AXI-cadqYm_aaklbj3DhNegd_nG8RHpLBqJi9P8IN8LLStznloOScJxu9lI0Vs9hUyUHgLqJ8MJ-lJ8TJWN4',
-                    serviceWorkerRegistration: registration
-                });
-
-                if (token) {
-                    console.log("🔥 Token Mágico FCM registado:", token);
-                    // Guarda o token na tabela 'lojas' usando o perfil_id atual
-                    await window.supabaseClient.from('lojas').update({ fcm_token: token }).eq('perfil_id', userId);
-                }
-            }).catch(err => console.log('Erro na integração nativa do Firebase', err));
-        }
-    } catch (erro) {
-        console.log("Aviso: Falha ao registar o PWA Token em background:", erro);
     }
 }
 
@@ -612,6 +549,7 @@ async function carregarVisitasDashboard(lojaId) {
                 contagensArr: contagensArr,
                 ordemNomes: ordemNomes
             };
+            window.salvarCacheDashboard(); // 💾 GUARDA NA CACHE DO TELEMÓVEL
             
             atualizarGraficoDashboard(contagensArr, ordemNomes);
         }
@@ -718,17 +656,7 @@ function renderizarSaudacaoMemoria() {
 // PRODUTOS
 // ----------------------------------------------------
 async function carregarProdutosDashboard(lojaId) {
-    const nomeCache = 'shopyump_produtos_pwa_' + lojaId;
-    
     try {
-        // 1. CARREGAMENTO INSTANTÂNEO (MAGIA CACHE PWA)
-        const cacheLocal = localStorage.getItem(nomeCache);
-        if (cacheLocal) {
-            memDashboard.produtos = JSON.parse(cacheLocal);
-            renderizarProdutosDashboard(memDashboard.produtos);
-        }
-
-        // 2. LÊ DO BANCO DE DADOS EM SEGUNDO PLANO
         const { data: produtos, error } = await window.supabaseClient
             .from('produtos')
             .select('*')
@@ -737,12 +665,11 @@ async function carregarProdutosDashboard(lojaId) {
             
         if (error) throw error;
         
-        // 3. ATUALIZA A CACHE SE HOUVER ALTERAÇÕES
-        localStorage.setItem(nomeCache, JSON.stringify(produtos || []));
+        memDashboard.produtos = produtos || [];
+        window.salvarCacheDashboard(); // 💾 GUARDA NA CACHE DO TELEMÓVEL
+        renderizarProdutosDashboard(memDashboard.produtos);
         
-        memDashboard.produtos = produtos || []; 
-        renderizarProdutosDashboard(memDashboard.produtos); 
-        
+        // Verifica silenciosamente se está na hora de lhe recomendarmos instalar a APP
         if (typeof window.verificarElegibilidadePwa === 'function') {
             window.verificarElegibilidadePwa();
         }
@@ -815,8 +742,9 @@ async function carregarPedidosPendentesDashboard(lojaId) {
         window.todosOsPedidos = [...(pedidos || [])];
         window.pedidosCarregados = true;
         
-        memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : []; // Guarda na memória
-        renderizarPendentesDashboard(memDashboard.pendentes); // Aplica no visual
+        memDashboard.pendentes = pedidos ? pedidos.filter(p => (p.status || 'pendente').toLowerCase() === 'pendente') : [];
+        window.salvarCacheDashboard(); // 💾 GUARDA NA CACHE DO TELEMÓVEL
+        renderizarPendentesDashboard(memDashboard.pendentes);
     } catch (e) {
         console.error("Erro ao carregar pedidos pendentes:", e);
     }

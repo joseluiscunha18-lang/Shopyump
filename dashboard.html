@@ -177,7 +177,11 @@
         </div>
         
         <script>
-            window.memUtilizador = window.memUtilizador || null;
+            // ⚡ Cache Global do Perfil
+        window.memUtilizador = JSON.parse(localStorage.getItem('shopyump_user_cache')) || null;
+        if(window.memUtilizador) {
+            setTimeout(window.atualizarInterfaceMenu, 10);
+        }
 
             async function Sair() {
                 if(window.supabaseClient) {
@@ -228,8 +232,9 @@
                         }
                     }
 
-                    // 👉 GUARDA NA CACHE GERAL: O Perfil e a Segurança vão usar isto e abrir instantaneamente!
+                    // 👉 GUARDA NA CACHE GERAL PWA P/ OFFLINE!
                     window.memUtilizador = { user, nome, foto, email, isGoogle };
+                    localStorage.setItem('shopyump_user_cache', JSON.stringify(window.memUtilizador));
                     
                     window.atualizarInterfaceMenu();
                 }
