@@ -209,6 +209,18 @@ function renderizar(rota, params) {
 
     atualizarBadge();
     atualizarMenuInferior(rota);
+
+    // MÁGICA 1: Salvação para garantir que NENHUMA FOTO ESCURA DESAPAREÇA devido à cache do telemóvel
+    setTimeout(() => {
+        const imagensEscondidas = document.querySelectorAll('img.opacity-0');
+        imagensEscondidas.forEach(img => {
+            img.classList.remove('opacity-0');
+            img.classList.add('opacity-100');
+            if(img.parentElement && !img.parentElement.style.backgroundColor) {
+                img.parentElement.style.backgroundColor = '#f8fafc';
+            }
+        });
+    }, 400);
 }
 
 function aplicarFiltro(tipo, valor) {
@@ -321,12 +333,12 @@ function viewHome() {
         produtosExibicao.forEach(p => {
             html += `
                 <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                    <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300">
+                    <div class="aspect-[4/5] rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                         <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
+                        <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full object-contain p-2 ${p.corFundo ? 'opacity-100' : 'opacity-0 transition-opacity duration-300'} group-active:scale-95">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -348,12 +360,12 @@ function renderProdutoCardHorizontal(p) {
     return `
         <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
         <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
-            <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300">
+            <div class="aspect-[4/5] rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                 </button>
-                <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
+                <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full object-contain p-2 ${p.corFundo ? 'opacity-100' : 'opacity-0 transition-opacity duration-300'} group-active:scale-95">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
                 <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -378,8 +390,11 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
    imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-300 container-img bg-slate-50">
-            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain opacity-0 transition-opacity duration-300 ease-out">
+        // Aproveita a cor que guardamos na memória apenas para a foto principal
+        let isMain = index === 0 && p.corFundo ? true : false;
+        
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-300 container-img" style="${isMain ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full object-contain ${isMain ? 'opacity-100' : 'opacity-0 transition-opacity duration-300 ease-out'}">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     }); 
@@ -1337,14 +1352,14 @@ function viewInstitucional(pagina) {
 
 
 // Função que analisa a borda da imagem e aplica a cor ao contentor pai
-function extrairCorBorda(imgElement) {
+function extrairCorBorda(imgElement, produtoId = null) {
     const parentContainer = imgElement.parentElement;
     
-    const mostrarConteudoForcado = (fallbackColor = '#f8fafc') => {
-        if(parentContainer && !parentContainer.style.backgroundColor) { 
+    // Mostra sem falhar a foto
+    const mostrarConteudoForcado = (fallbackColor = '') => {
+        if(parentContainer && !parentContainer.style.backgroundColor && fallbackColor) { 
             parentContainer.style.backgroundColor = fallbackColor; 
         }
-        // Revela a imagem puramente como ela é
         imgElement.classList.remove('opacity-0');
         imgElement.classList.add('opacity-100');
     };
@@ -1354,7 +1369,7 @@ function extrairCorBorda(imgElement) {
     canvas.height = 10;
     const ctx = canvas.getContext('2d');
     
-    if (!ctx) return mostrarConteudoForcado();
+    if (!ctx) return mostrarConteudoForcado('#f8fafc');
 
     try {
         ctx.drawImage(imgElement, 0, 0);
@@ -1365,26 +1380,34 @@ function extrairCorBorda(imgElement) {
         let b = pixelData[2];
         const alpha = pixelData[3] / 255;
         
-        if (alpha < 0.1) return mostrarConteudoForcado();
+        if (alpha < 0.1) return mostrarConteudoForcado('#f8fafc');
 
+        // Contornar sujos JPEG
         if (r > 240 && g > 240 && b > 240) {
             r = 255; g = 255; b = 255;
         }
 
+        // Contornar preto com artefatos
         if (r < 15 && g < 15 && b < 15) {
             r = 0; g = 0; b = 0;
         }
 
         const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        
         if (parentContainer) {
-            parentContainer.style.transition = 'background-color 0.3s ease';
             parentContainer.style.backgroundColor = corDetectada;
         }
         
-        mostrarConteudoForcado(parentContainer?.style?.backgroundColor || '#f8fafc');
+        // MÁGICA FINAL ✨: Guardar no objecto do produto no telemóvel para nunca mais analisar nem piscar ao recuar!
+        if (produtoId) {
+            let prodObj = produtos.find(x => x.id === produtoId);
+            if (prodObj) prodObj.corFundo = corDetectada;
+        }
+
+        mostrarConteudoForcado(corDetectada);
 
     } catch (error) {
         console.warn("Aviso CORS/Carregamento", error);
-        mostrarConteudoForcado(); 
+        mostrarConteudoForcado('#f8fafc'); 
     }
 }
