@@ -390,11 +390,11 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
    imagensCarrossel.forEach((img, index) => {
-        // Aproveita a cor que guardamos na memória apenas para a foto principal
+        // Aproveita a cor que guardamos na memória apenas para a foto principal de forma INSTANTÂNEA
         let isMain = index === 0 && p.corFundo ? true : false;
         
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-300 container-img" style="${isMain ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
-            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full object-contain ${isMain ? 'opacity-100' : 'opacity-0 transition-opacity duration-300 ease-out'}">
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 container-img" style="${isMain ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
+            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full object-contain ${isMain ? 'opacity-100' : 'opacity-0'}">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     }); 
@@ -1380,7 +1380,7 @@ function extrairCorBorda(imgElement, produtoId = null) {
         let b = pixelData[2];
         const alpha = pixelData[3] / 255;
         
-        if (alpha < 0.1) return mostrarConteudoForcado('#f8fafc');
+        if (alpha < 0.1) return mostrarConteudoForcado('transparent');
 
         // Contornar sujos JPEG
         if (r > 240 && g > 240 && b > 240) {
@@ -1395,6 +1395,7 @@ function extrairCorBorda(imgElement, produtoId = null) {
         const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
         
         if (parentContainer) {
+            // REMOVE O DELAY: Fica a nova cor logo sem passar pelo branco antes
             parentContainer.style.backgroundColor = corDetectada;
         }
         
