@@ -37,7 +37,7 @@ async function inicializarLoja() {
         lojaAtual = loja;
         numeroLojista = loja.whatsapp ? loja.whatsapp.replace(/\D/g, '') : '';
         
-        document.title = loja.nome + " | Shopink";
+        document.title = loja.nome + " | Shopyump";
         const topName = document.getElementById('top-shop-name');
         if (topName) topName.innerText = loja.nome;
 
