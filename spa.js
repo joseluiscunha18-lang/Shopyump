@@ -378,8 +378,8 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
     imagensCarrossel.forEach((img, index) => {
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-300 container-img bg-slate-50">
-            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this); this.classList.remove('opacity-0'); this.classList.add('opacity-100');" class="w-full h-full object-contain mix-blend-darken opacity-0 transition-opacity duration-500 ease-out">
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 transition-colors duration-150 container-img bg-transparent">
+            <img src="${img}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain mix-blend-darken transition-all duration-150">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     });
