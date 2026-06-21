@@ -321,12 +321,12 @@ function viewHome() {
         produtosExibicao.forEach(p => {
             html += `
                 <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                    <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative">
+                    <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300">
                         <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
+                        <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 mix-blend-darken transition-all duration-300 group-active:scale-95">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -348,12 +348,12 @@ function renderProdutoCardHorizontal(p) {
     return `
         <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
         <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
-            <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative">
+            <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                 </button>
-                <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
+                <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 mix-blend-darken transition-all duration-300 group-active:scale-95">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
                 <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -956,7 +956,7 @@ function viewFavoritos() {
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
                     </button>
-                    <img src="${p.imagem}" class="w-full h-full object-cover transition-transform duration-500 group-active:scale-95">
+                    <img src="${p.imagem}" class="w-full h-full object-contain p-2 mix-blend-darken transition-transform duration-500 group-active:scale-95">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1344,9 +1344,10 @@ function extrairCorBorda(imgElement) {
     const mostrarConteudoForcado = (fallbackColor = '#f8fafc') => {
         if(parentContainer) {
             if(!parentContainer.style.backgroundColor) { parentContainer.style.backgroundColor = fallbackColor; }
-            parentContainer.classList.remove('opacity-0');
-            parentContainer.classList.add('opacity-100');
         }
+        // Revela a imagem de forma suave!
+        imgElement.classList.remove('opacity-0');
+        imgElement.classList.add('opacity-100');
     };
 
     const canvas = document.createElement('canvas');
