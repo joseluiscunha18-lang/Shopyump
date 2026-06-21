@@ -97,7 +97,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <!-- DESCRIÇÃO -->
                 <section class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700">
                     <h2 class="text-[12px] font-black text-slate-900 dark:text-white mb-3">Descrição detalhada</h2>
-                    <textarea id="prod-desc" placeholder="Escreve aqui os detalhes do produto, material, cuidados..." class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl p-5 text-[13px] font-semibold text-slate-900 dark:text-white outline-none focus:border-[#0F172A] dark:focus:border-slate-400 focus:ring-4 focus:ring-slate-50 dark:focus:ring-slate-600 transition-all min-h-[100px] resize-none shadow-sm placeholder:font-medium placeholder:text-slate-400 dark:placeholder-slate-500"></textarea>
+                    <textarea id="prod-desc" placeholder="Escreve aqui os detalhes do produto, material, cuidados..." class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl p-5 text-[13px] font-semibold text-slate-900 dark:text-white outline-none focus:border-[#0F172A] focus:ring-4 focus:ring-slate-50 transition-all min-h-[100px] resize-none shadow-sm placeholder:font-medium placeholder:text-slate-400"></textarea>
                 </section>
 
                 <!-- INVENTÁRIO E VARIANTES -->
@@ -127,13 +127,13 @@ document.body.insertAdjacentHTML('beforeend', `
                             <label class="block text-[11px] font-semibold text-[#4A5568] dark:text-slate-400 mb-2 ml-1">Cores disponíveis</label>
                             <div class="flex gap-2 w-full">
                                 <div class="flex-1 flex overflow-x-auto gap-2 items-center no-scrollbar" id="container-cores">
-                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Preto</button>
-                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Branco</button>
-                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Azul</button>
+                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Preto</button>
+                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Branco</button>
+                                    <button type="button" class="h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition-all active:scale-95 shrink-0" onclick="toggleOption(this)">Azul</button>
                                 </div>
                                 <div class="shrink-0 w-[140px] relative flex items-center sticky-input-container">
                                     <input type="text" placeholder="+ Cor" oninput="validarInput(this, 'letras', 'btn-cor')"
-                                           class="w-full h-11 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl pl-4 pr-11 text-xs font-bold text-slate-900 dark:text-white outline-none focus:border-[#0F172A] dark:focus:border-slate-400 placeholder-slate-400 dark:placeholder-slate-500">
+                                           class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-11 text-xs font-bold text-slate-900 outline-none focus:border-[#0F172A] placeholder-slate-400">
                                     <button id="btn-cor" type="button" onclick="salvarPeloBotao(this, 'container-cores')"
                                             class="btn-add-hidden absolute right-1 top-1 h-9 w-9 bg-[#0F172A] text-white rounded-lg flex items-center justify-center shadow-sm z-20">
                                         <i class="fas fa-plus text-[10px]"></i>
@@ -210,19 +210,19 @@ document.body.insertAdjacentHTML('beforeend', `
                 <div class="modal-sheet drawer flex flex-col">
                     <div class="modal-handle"></div>
                     <div class="px-6 mb-4 flex justify-between items-center shrink-0">
-                        <h3 class="text-xl font-black text-slate-900 dark:text-white">Categorias</h3>
+                        <h3 class="text-xl font-black text-slate-900">Categorias</h3>
                     </div>
                     <div id="drawer-content" class="overflow-y-auto flex-1 pb-6 px-6">
                         <div class="flex flex-col items-center justify-center py-10 opacity-50">
-                            <i class="fas fa-circle-notch fa-spin text-3xl text-[#0F172A] dark:text-white mb-3"></i>
-                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">A carregar categorias...</p>
+                            <i class="fas fa-circle-notch fa-spin text-3xl text-[#0F172A] mb-3"></i>
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">A carregar categorias...</p>
                         </div>
                     </div>
-                    <div class="px-6 pt-3 pb-10 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 shrink-0">
-                        <label class="block text-[11px] font-semibold text-[#4A5568] dark:text-slate-400 mb-3 ml-1">Outra categoria</label>
+                    <div class="px-6 pt-3 pb-10 bg-slate-50/50 border-t border-slate-100 shrink-0">
+                        <label class="block text-[11px] font-semibold text-[#4A5568] mb-3 ml-1">Outra categoria</label>
                         <div class="flex gap-2">
-                            <input id="inputCategoriaOutro" type="text" placeholder="Digite o nome da categoria..." class="w-full rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 dark:text-white p-4 text-sm shadow-inner outline-none focus:border-[#0F172A] dark:focus:border-slate-400">
-                            <button onclick="confirmarCategoriaOutro()" class="bg-[#0F172A] dark:bg-slate-600 text-white px-6 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-md">
+                            <input id="inputCategoriaOutro" type="text" placeholder="Digite o nome da categoria..." class="w-full rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-inner outline-none focus:border-[#0F172A]">
+                            <button onclick="confirmarCategoriaOutro()" class="bg-[#0F172A] text-white px-6 rounded-2xl active:scale-95 transition-transform flex items-center justify-center shadow-md">
                                 <i class="fas fa-check"></i>
                             </button>
                         </div>
@@ -1030,7 +1030,7 @@ function addCustom(e, containerId) {
     // Criar o elemento
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = "h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all active:scale-95 shrink-0 animate-pop chip-selected";
+    btn.className = "h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold transition-all active:scale-95 shrink-0 animate-pop chip-selected";
     btn.innerText = val;
     btn.onclick = function() { toggleOption(this); };
 
@@ -1069,15 +1069,15 @@ function renderizarCategorias() {
     let html = '';
     categoriasEstrutura.forEach(cat => {
         html += `
-        <div class="border-b border-slate-50 dark:border-slate-800 mb-1">
-            <button onclick="smartToggle('${cat.id}', this, 'main')" class="w-full flex items-center justify-between p-4 group active:bg-slate-50 dark:active:bg-slate-800/50 rounded-2xl transition-all">
+        <div class="border-b border-slate-50 mb-1">
+            <button onclick="smartToggle('${cat.id}', this, 'main')" class="w-full flex items-center justify-between p-4 group active:bg-slate-50 rounded-2xl transition-all">
                 <div class="flex items-center gap-4">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] dark:bg-slate-700 text-white shadow-sm">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] text-white shadow-sm">
                         <i class="fas ${cat.icone}"></i>
                     </div>
-                    <span class="font-bold text-sm text-slate-800 dark:text-slate-200">${cat.nome}</span>
+                    <span class="font-bold text-sm text-slate-800">${cat.nome}</span>
                 </div>
-                <i class="fas fa-chevron-down text-slate-300 dark:text-slate-600 text-xs transition-transform duration-300"></i>
+                <i class="fas fa-chevron-down text-slate-300 text-xs transition-transform duration-300"></i>
             </button>
             
             <div id="${cat.id}" class="expand-content" data-level="main">
@@ -1087,15 +1087,15 @@ function renderizarCategorias() {
                         
                         if (sub.itens && sub.itens.length > 0) {
                             return `
-                            <button onclick="smartToggle('${subId}', this, 'sub')" class="flex w-full items-center justify-between py-3 pl-14 pr-6 text-sm font-bold text-slate-600 dark:text-slate-400 active:bg-slate-50 dark:active:bg-slate-800/50">
+                            <button onclick="smartToggle('${subId}', this, 'sub')" class="flex w-full items-center justify-between py-3 pl-14 pr-6 text-sm font-bold text-slate-600 active:bg-slate-50">
                                 <span>${sub.nome}</span>
-                                <i class="fas fa-plus text-[10px] text-slate-300 dark:text-slate-600 transition-transform"></i>
+                                <i class="fas fa-plus text-[10px] text-slate-300 transition-transform"></i>
                             </button>
                             <div id="${subId}" class="expand-content" data-level="sub">
-                                <div class="flex flex-col py-2 pl-16 pr-6 space-y-4 border-l-2 border-slate-100 dark:border-slate-700 ml-14 mb-2">
+                                <div class="flex flex-col py-2 pl-16 pr-6 space-y-4 border-l-2 border-slate-100 ml-14 mb-2">
                                     ${sub.itens.map(item => `
                                         <div onclick="selecionarCategoriaFinal('${cat.nome} > ${sub.nome} > ${item}', '${sub.icone}')" 
-                                             class="text-sm text-slate-500 dark:text-slate-400 font-medium cursor-pointer active:text-[#0F172A] dark:active:text-white active:font-bold py-1">
+                                             class="text-sm text-slate-500 font-medium cursor-pointer active:text-[#0F172A] active:font-bold py-1">
                                             ${item}
                                         </div>
                                     `).join('')}
@@ -1105,7 +1105,7 @@ function renderizarCategorias() {
                             // NÍVEL 2: SUBCATEGORIA (CLIQUE DIRETO)
                             return `
                             <div onclick="selecionarCategoriaFinal('${cat.nome} > ${sub.nome}', '${sub.icone}')" 
-                                 class="flex w-full items-center py-3 pl-14 pr-6 text-sm font-bold text-slate-600 dark:text-slate-400 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800/50">
+                                 class="flex w-full items-center py-3 pl-14 pr-6 text-sm font-bold text-slate-600 cursor-pointer active:bg-slate-50">
                                 ${sub.nome}
                             </div>`;
                         }
