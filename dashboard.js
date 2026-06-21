@@ -1,68 +1,72 @@
 document.body.insertAdjacentHTML('beforeend', `
     <template id="tpl-dashboard">
         <div class="relative w-full pb-16 overflow-hidden rounded-b-[40px]">
-            <div class="absolute inset-0 w-full h-full z-0" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
+            <!-- Fundo para modo claro (Desaparece no Dark Mode) -->
+            <div class="absolute inset-0 w-full h-full z-0 dark:hidden" style="background-color: #FDE6DA; background-image: url(&quot;data:image/svg+xml,%3Csvg width='375' height='812' viewBox='0 0 375 812' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='375' height='812' fill='%23FDE6DA'/%3E%3Cg filter='url(%23filter0_f)'%3E%3Ccircle cx='60' cy='80' r='220' fill='%23D4B5FD' fill-opacity='0.9'/%3E%3Ccircle cx='340' cy='50' r='200' fill='%23FBCFE8' fill-opacity='0.8'/%3E%3Ccircle cx='187' cy='406' r='280' fill='white' fill-opacity='0.3'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='filter0_f' x='-400' y='-400' width='1175' height='1612' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeGaussianBlur stdDeviation='90' result='effect1_foregroundBlur'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E&quot;); background-size: cover; background-position: center 20%;"></div>
+            
+            <!-- Fundo para modo Escuro (Azul escuro Gradiente elegante) -->
+            <div class="absolute inset-0 w-full h-full z-0 hidden dark:block bg-gradient-to-br from-[#1E293B] to-[#020617]"></div>
+
             <div class="relative z-10 px-6 pt-28 max-w-md mx-auto">
                 <div class="flex justify-between items-center mb-8 w-full gap-2">
                     <div class="flex-1 min-w-0">
-                        <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 tracking-tight leading-tight truncate">
-                            <div class="h-7 w-40 bg-slate-800/10 animate-pulse rounded-md mt-1"></div>
+                        <h2 id="dash-saudacao" class="text-[22px] font-semibold text-slate-900 dark:text-white tracking-tight leading-tight truncate">
+                            <div class="h-7 w-40 bg-slate-800/10 dark:bg-slate-700/50 animate-pulse rounded-md mt-1"></div>
                         </h2>
-                        
                     </div>
-                    <div class="flex-shrink-0 flex items-center bg-white/35 backdrop-blur-xl border border-white/50 rounded-2xl shadow-sm p-1 gap-1">
-                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-700" title="Copiar Link">
+                    <div class="flex-shrink-0 flex items-center bg-white/35 dark:bg-navy-800/50 backdrop-blur-xl border border-white/50 dark:border-navy-700 rounded-2xl shadow-sm p-1 gap-1">
+                        <button id="btn-copiar-loja" class="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 dark:hover:bg-navy-700/80 active:scale-95 transition-all text-slate-700 dark:text-slate-200" title="Copiar Link">
                             <i class="fa-regular fa-copy text-[14px]" id="icone-copiar"></i>
                         </button>
-                        <div class="w-[1px] h-4 bg-slate-400/30"></div>
-                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 active:scale-95 transition-all text-slate-800 gap-1.5">
+                        <div class="w-[1px] h-4 bg-slate-400/30 dark:bg-slate-600/50"></div>
+                        <a id="btn-ver-loja" href="#" target="_blank" class="px-3 h-9 flex items-center justify-center rounded-xl hover:bg-white/50 dark:hover:bg-navy-700/80 active:scale-95 transition-all text-slate-800 dark:text-slate-200 gap-1.5">
                             <span class="text-[10px] font-black uppercase tracking-widest">Loja</span>
-                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600"></i>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[11px] text-slate-600 dark:text-slate-400"></i>
                         </a>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-3">
-                    <div class="bg-white/35 backdrop-blur-2xl border border-white rounded-[32px] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.04)] flex items-center transition-all">
-                        <div class="text-slate-800 flex-shrink-0">
+                    <div class="bg-white/35 dark:bg-navy-800/40 backdrop-blur-2xl border border-white dark:border-navy-700/80 rounded-[32px] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.04)] dark:shadow-none flex items-center transition-all">
+                        <div class="text-slate-800 dark:text-white flex-shrink-0">
                             <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                         </div>
                         <div class="ml-7 flex-1">
                             <div class="flex items-center justify-between">
                                 <div id="label-pedidos-pendentes" class="hidden items-center gap-1.5">
-                                    <p class="text-[10px] font-black text-slate-600/90 uppercase tracking-widest">Pedidos Pendentes</p>
+                                    <p class="text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest">Pedidos Pendentes</p>
                                 </div>
                             </div>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <h3 id="stat-pedidos">
     <div class="h-10 w-24 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-[10px]"></div>
 </h3>
-                                <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80">no total</span>
+                                <span id="label-pedidos-total" class="hidden text-[12px] font-bold text-slate-600/80 dark:text-slate-400">no total</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
-                            <div class="text-slate-700 flex-shrink-0">
+                        <div class="bg-white/35 dark:bg-navy-800/40 backdrop-blur-xl border border-white/60 dark:border-navy-700/80 rounded-[28px] p-5 flex items-center shadow-sm dark:shadow-none">
+                            <div class="text-slate-700 dark:text-white flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-visitas" class="mb-1">
     <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
 </h4>
-                                <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Visitas Hoje</p>
+                                <p id="label-visitas-hoje" class="hidden text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest mt-1">Visitas Hoje</p>
                             </div>
                         </div>
-                        <div class="bg-white/35 backdrop-blur-xl border border-white/60 rounded-[28px] p-5 flex items-center shadow-sm">
-                            <div class="text-slate-700 flex-shrink-0">
+                        <div class="bg-white/35 dark:bg-navy-800/40 backdrop-blur-xl border border-white/60 dark:border-navy-700/80 rounded-[28px] p-5 flex items-center shadow-sm dark:shadow-none">
+                            <div class="text-slate-700 dark:text-white flex-shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                             </div>
                             <div class="ml-4">
                                 <h4 id="stat-produtos-ativos" class="mb-1">
     <div class="h-7 w-14 bg-slate-200/70 dark:bg-slate-700/50 animate-pulse rounded-lg"></div>
 </h4>
-                                <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 uppercase tracking-widest mt-1">Produtos Ativos</p>
+                                <p id="label-produtos-ativos" class="hidden text-[10px] font-black text-slate-600/90 dark:text-slate-400 uppercase tracking-widest mt-1">Produtos Ativos</p>
                             </div>
                         </div>
                     </div>
@@ -281,7 +285,7 @@ function animarNumero(id, valorFinal) {
     // Se o valor for MAIOR QUE ZERO, metemos a fonte gigante em todos e atívamos as "labels" de legenda
     if (!isNaN(valorAlvo) && valorAlvo > 0) {
         if (id === 'stat-pedidos') {
-            elemento.className = "text-[52px] font-medium text-slate-900 tracking-tighter leading-none";
+            elemento.className = "text-[52px] font-medium text-slate-900 dark:text-white tracking-tighter leading-none";
             const labelTotal = document.getElementById('label-pedidos-total');
             if (labelTotal) labelTotal.classList.remove('hidden'); 
             
@@ -291,11 +295,11 @@ function animarNumero(id, valorFinal) {
                 labelPendentes.classList.add('flex');
             }
         } else if (id === 'stat-visitas') {
-            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
+            elemento.className = "text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1";
             const labelVisitas = document.getElementById('label-visitas-hoje');
             if (labelVisitas) labelVisitas.classList.remove('hidden');
         } else if (id === 'stat-produtos-ativos') {
-            elemento.className = "text-2xl font-bold text-slate-900 tracking-tight leading-none mb-1";
+            elemento.className = "text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1";
             const labelProdutos = document.getElementById('label-produtos-ativos');
             if (labelProdutos) labelProdutos.classList.remove('hidden');
         }
@@ -304,7 +308,7 @@ function animarNumero(id, valorFinal) {
     // Se o valor for ZERO, removemos as labels e reescremos nativamente o texto que tem de ficar no estado vazio!
     if (!isNaN(valorAlvo) && valorAlvo <= 0) {
         if (id === 'stat-pedidos') {
-            elemento.className = "text-[13px] font-medium text-slate-500 tracking-tight leading-snug";
+            elemento.className = "text-[13px] font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-snug";
             elemento.textContent = "Ainda não recebeu pedidos";
             const labelTotal = document.getElementById('label-pedidos-total');
             if (labelTotal) labelTotal.classList.add('hidden');
@@ -314,12 +318,12 @@ function animarNumero(id, valorFinal) {
                 labelPendentes.classList.remove('flex');
             }
         } else if (id === 'stat-visitas') {
-            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
+            elemento.className = "text-[11px] font-semibold text-slate-500 dark:text-slate-400 tracking-tight leading-snug mb-1";
             elemento.textContent = "Compartilhe sua loja para receber visitas";
             const labelVisitas = document.getElementById('label-visitas-hoje');
             if (labelVisitas) labelVisitas.classList.add('hidden');
         } else if (id === 'stat-produtos-ativos') {
-            elemento.className = "text-[11px] font-semibold text-slate-500 tracking-tight leading-snug mb-1";
+            elemento.className = "text-[11px] font-semibold text-slate-500 dark:text-slate-400 tracking-tight leading-snug mb-1";
             elemento.textContent = "Adicione seu primeiro produto";
             const labelProdutos = document.getElementById('label-produtos-ativos');
             if (labelProdutos) labelProdutos.classList.add('hidden');
