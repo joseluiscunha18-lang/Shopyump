@@ -331,6 +331,10 @@ function viewHome() {
         html += `<div class="col-span-2 text-center py-10 text-slate-400 text-sm font-semibold">Nenhum produto encontrado.</div>`;
     } else {
         produtosExibicao.forEach(p => {
+            let imgClasses = p.isSquare 
+                ? "w-full h-full object-cover group-active:scale-95 transition-opacity duration-300"
+                : "w-full h-full object-contain p-2 group-active:scale-95 transition-opacity duration-300";
+
             html += `
                 <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
                     <div class="aspect-[4/5] rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
@@ -338,7 +342,7 @@ function viewHome() {
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                         </button>
-                        <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full object-contain p-2 ${p.corFundo ? 'opacity-100' : 'opacity-0 transition-opacity duration-300'} group-active:scale-95">
+                        <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="${imgClasses} ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                     </div>
                     <div class="px-1 flex flex-col gap-1 mt-1">
                         <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
