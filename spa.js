@@ -337,7 +337,7 @@ function viewHome() {
 
             html += `
                 <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                    <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+                    <div class="aspect-square rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                         <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
@@ -368,7 +368,7 @@ function renderProdutoCardHorizontal(p) {
     return `
         <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
         <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
-            <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+            <div class="aspect-square rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
@@ -385,7 +385,6 @@ function renderProdutoCardHorizontal(p) {
         </div>
     `;
 }
-
 function viewProduto(id) {
     const p = produtos.find(x => x.id === id);
     if (!p) return `<div class="p-5 text-center font-bold text-slate-400">Produto não encontrado.</div>`;
@@ -402,24 +401,24 @@ function viewProduto(id) {
         let pClasses = p.isSquare ? '' : 'p-4';
         let imgClasses = p.isSquare ? 'object-cover' : 'object-contain';
         
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center ${pClasses} container-img" style="${isMain && p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center ${pClasses} container-img" style="${isMain && p.corFundo ? 'background-color: ' + p.corFundo + ';' : (p.isSquare ? 'background-color: transparent;' : 'background-color: #f8fafc;')}">
             <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full ${imgClasses} ${isMain ? 'opacity-100' : 'opacity-0'}">
         </div>`;
-        dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
+        dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/90 border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     }); 
 
     return `
-        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col">
+        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-slate-50 flex flex-col overflow-y-auto no-scrollbar">
             
-            <div class="relative flex-1 bg-slate-50/50 overflow-hidden">
+            <div class="relative w-full ${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} flex-shrink-0 bg-slate-50 overflow-hidden">
                 <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
                 <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
                 
                 <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar" onscroll="atualizarDotsProduto(this)">${carrosselHtml}</div>
-                ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
+                ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white rounded-t-3xl -mt-5 relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
+            <div class="bg-white relative z-30 px-5 pt-6 pb-8 flex-1 flex flex-col gap-4 border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
@@ -430,8 +429,6 @@ function viewProduto(id) {
                         <div class="text-[22px] font-black text-black tracking-tight leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[13px] font-extrabold text-black ml-0.5">MT</span></div>
                     </div>
                 </div>
-
-               
 
                 <div class="grid grid-cols-2 gap-4 mt-1">
                     <div class="flex flex-col gap-2">
@@ -975,7 +972,7 @@ function viewFavoritos() {
     produtosFavoritos.forEach(p => {
         html += `
             <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
+                <div class="aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
                     <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 active:scale-90 transition-transform shadow-sm" 
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
@@ -1033,7 +1030,7 @@ function pesquisarProdutos(termo) {
     resultados.forEach(p => {
         html += `
             <div onclick="fecharPesquisa(); navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
+                <div class="aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
                     <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-contain' : 'object-contain p-2'} transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 mt-1">
