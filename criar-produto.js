@@ -350,9 +350,14 @@ document.body.insertAdjacentHTML('beforeend', `
                 <div class="modal-backdrop"></div>
                 <div class="modal-sheet drawer flex flex-col h-[90vh]">
                     <div class="modal-handle"></div>
-                    <div class="px-6 mb-4 flex justify-between items-center shrink-0">
-                        <h3 class="text-xl font-black text-slate-900">Ajustar Imagem</h3>
-                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">Proporção 1:1</p>
+                    <div class="px-6 mb-4 flex flex-col shrink-0 gap-1">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-black text-slate-900">Ajustar Imagem</h3>
+                            <button id="btn-rotate-cropper" type="button" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full flex justify-center items-center active:scale-90 transition-transform">
+                                <i class="fas fa-rotate-right"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] font-medium text-slate-500 line-clamp-1">Deslize e aumente com os dedos para encaixar.</p>
                     </div>
                     <!-- Área ESCURA para dar foco total ao recorte da imagem -->
                     <div class="flex-1 bg-[#020617] relative flex items-center justify-center overflow-hidden">
@@ -610,7 +615,7 @@ window.inicializarEventosEditor = function() {
                 aspectRatio: 1, // Fixa a moldura na proporção 1:1 quadrada (padrão loja)
                 viewMode: 1, 
                 dragMode: 'move', // Puxar com o dedo move a imagem perfeitamente
-                autoCropArea: 0.95,
+                autoCropArea: 1, // Atualizado para 1: A caixa vai ocupar os limites máximos nativamente
                 restore: false,
                 guides: true,
                 center: true,
@@ -624,6 +629,14 @@ window.inicializarEventosEditor = function() {
         };
         reader.readAsDataURL(file);
     });
+
+    // BOTÃO PARA GIRAR A IMAGEM 90 GRAUS
+    const btnRotateCropper = document.getElementById('btn-rotate-cropper');
+    if (btnRotateCropper) {
+        btnRotateCropper.onclick = function() {
+            if (currentCropper) currentCropper.rotate(90);
+        };
+    }
 
     // 5. O EVENTO DO BOTÃO CONFIRMAR O CORTE!
     const btnCropSave = document.getElementById('btn-crop-save');
