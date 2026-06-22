@@ -71,6 +71,12 @@ window.inicializarGestosModais = function() {
         }
 
         sheet.addEventListener('touchstart', e => {
+            // 🛑 NOVA REGRA: Impede o modal de fechar se tocares na área do cropper (área de edição da imagem)
+            if (e.target.closest('.cropper-area-bloqueada')) {
+                arrastando = false;
+                return;
+            }
+
             const areaScroll = e.target.closest('.overflow-y-auto, .overflow-y-scroll');
             if (areaScroll && areaScroll.scrollTop > 0) {
                 arrastando = false;
