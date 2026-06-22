@@ -400,7 +400,7 @@ function viewProduto(id) {
    imagensCarrossel.forEach((img, index) => {
         let isMain = (index === 0 && (p.corFundo || p.isSquare)) ? true : false;
         let pClasses = p.isSquare ? '' : 'p-4';
-        let imgClasses = p.isSquare ? 'object-cover' : 'object-contain';
+        let imgClasses = 'object-contain';
         
         carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center ${pClasses} container-img" style="${isMain && p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
             <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full ${imgClasses} ${isMain ? 'opacity-100' : 'opacity-0'}">
@@ -419,7 +419,7 @@ function viewProduto(id) {
                 ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white rounded-t-3xl -mt-5 relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
+            <div class="bg-white relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
