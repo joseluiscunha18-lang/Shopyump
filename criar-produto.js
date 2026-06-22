@@ -348,29 +348,33 @@ document.body.insertAdjacentHTML('beforeend', `
             <!-- NOVO MODAL: CROPPER (EDITOR DE FOTO 1:1) -->
             <div id="modal-cropper" class="modal-container z-[200]">
                 <div class="modal-backdrop"></div>
-                <div class="modal-sheet drawer flex flex-col h-[90vh]">
-                    <div class="modal-handle"></div>
-                    <div class="px-6 mb-4 flex flex-col shrink-0 gap-1">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-xl font-black text-slate-900">Ajustar Imagem</h3>
-                            <button id="btn-rotate-cropper" type="button" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full flex justify-center items-center active:scale-90 transition-transform">
-                                <i class="fas fa-rotate-right"></i>
-                            </button>
+                <!-- h-full em vez de 90vh evita bugar gestos -->
+                <div class="modal-sheet drawer flex flex-col h-[85vh]">
+                    <!-- O CABEÇALHO PERMITE ARRASTAR -->
+                    <div class="shrink-0 pb-4 bg-white z-10 rounded-t-[32px]">
+                        <div class="modal-handle"></div>
+                        <div class="px-6 flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-black text-slate-900">Ajustar Imagem</h3>
+                                <button id="btn-rotate-cropper" type="button" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl flex justify-center items-center gap-2 font-bold text-[11px] uppercase tracking-widest active:scale-95 transition-transform">
+                                    <i class="fas fa-rotate-right"></i> Girar 90º
+                                </button>
+                            </div>
+                            <p class="text-[11px] font-medium text-slate-500 leading-tight">Deslize e aumente com os dedos para encaixar.</p>
                         </div>
-                        <p class="text-[11px] font-medium text-slate-500 line-clamp-1">Deslize e aumente com os dedos para encaixar.</p>
                     </div>
-                    <!-- Área ESCURA para dar foco total ao recorte da imagem -->
-                    <div class="flex-1 bg-[#020617] relative flex items-center justify-center overflow-hidden">
+                    <!-- ÁREA DE IMAGEM (BLOQUEIA O GESTO DE ARRASTAR O MODAL) -->
+                    <div class="flex-1 bg-[#020617] relative flex items-center justify-center overflow-hidden cropper-area-bloqueada z-0">
                         <img id="image-to-crop" src="" class="block max-w-full max-h-full">
                     </div>
-                    <div class="p-6 shrink-0 bg-white border-t border-slate-100">
+                    <!-- BOTÃO DE CONFIRMAR -->
+                    <div class="p-6 shrink-0 bg-white border-t border-slate-100 cropper-area-bloqueada z-10">
                         <button id="btn-crop-save" type="button" class="w-full py-4 bg-[#0F172A] text-white rounded-[20px] font-black tracking-widest text-[14px] uppercase active:scale-[0.98] transition-transform shadow-xl flex justify-center items-center">
                             <i class="fas fa-crop-simple mr-2"></i> Confirmar Ajuste
                         </button>
                     </div>
                 </div>
             </div>
-
         </div>
     </template>
 `);
@@ -407,49 +411,78 @@ window.fecharModal = function(id) {
     }, 300);
 };
 
-// 3. Fechar ao Clicar no Fundo Escuro (Backdrop)
+// 3. Fechar ao Clicar no Fundo Escuro (Backdrop) com suporte à fila de Imagens!
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('modal-backdrop')) {
         const modalId = e.target.closest('.modal-container').id;
-        fecharModal(modalId);
+
+        // Se clicou fora do cropper e ainda há mais imagens na fila, avança pra próxima descartando a atual
+        if (modalId === 'modal-cropper' && typeof window.filaArquivosProcessar !== 'undefined' && window.filaArquivosProcessar.length > 0) {
+            window.filaArquivosProcessar.shift();
+            if (window.filaArquivosProcessar.length > 0) {
+                if (typeof window.processarProximaImagem === 'function') window.processarProximaImagem();
+                return;
+            }
+        }
+
+        window.fecharModal(modalId);
     }
 });
 
-// 4. Motor de Deslize Inteligente
+// 4. Motor de Deslize Inteligente Bloqueando a Área Escura do Cropper
 window.inicializarGestosModais = function() {
     document.querySelectorAll('.modal-sheet.drawer').forEach(sheet => {
-        // Evita duplicar o gesto se já estiver ativo
         if (sheet.hasAttribute('data-gesto-ativo')) return; 
         sheet.setAttribute('data-gesto-ativo', 'true');
         let startY = 0;
         
         sheet.addEventListener('touchstart', e => {
-            // Se estiver a fazer scroll numa lista interna, não ativa o deslize do modal
             const areaScroll = e.target.closest('.overflow-y-auto');
             if (areaScroll && areaScroll.scrollTop > 0) return;
             
+            // SE O TOQUE COMEÇAR NA QUELA ÁREA DO MEIO BLOQUEADA (A IMAGEM), NÃO MEXE O MODAL!
+            if (e.target.closest('.cropper-area-bloqueada')) return;
+
             startY = e.touches[0].clientY;
+            sheet.setAttribute('data-is-swiping', 'true'); // Marca que o deslize foi ativado pelo topo!
         }, {passive: true});
 
         sheet.addEventListener('touchmove', e => {
             const areaScroll = e.target.closest('.overflow-y-auto');
             if (areaScroll && areaScroll.scrollTop > 0) return;
 
+            // Só move se tiver marcado como "arrasto permitido" (viajou pela alça superior)
+            if (sheet.getAttribute('data-is-swiping') !== 'true') return;
+
             let diff = e.touches[0].clientY - startY;
-            if (diff > 0) { // Só puxa para baixo
+            if (diff > 0) {
                 sheet.style.transform = `translateY(${diff}px)`;
                 sheet.style.transition = 'none';
             }
         }, {passive: true});
 
         sheet.addEventListener('touchend', e => {
+            // Só executa o finalizador de swipe se realmente estávamos arrastando via cabeçalho
+            if (sheet.getAttribute('data-is-swiping') !== 'true') return;
+            sheet.removeAttribute('data-is-swiping');
+
             let diff = e.changedTouches[0].clientY - startY;
-            sheet.style.transition = ''; // Devolve a animação ao CSS
-            sheet.style.transform = '';  // Volta à posição original
+            sheet.style.transition = ''; 
+            sheet.style.transform = '';  
             
-            if (diff > 100) { // Se puxou muito para baixo, fecha
+            if (diff > 100) { 
                 const modalId = sheet.closest('.modal-container').id;
-                fecharModal(modalId);
+
+                // Se deslizou no topo do cropper e ainda há mais imagens, avança pra próxima
+                if (modalId === 'modal-cropper' && typeof window.filaArquivosProcessar !== 'undefined' && window.filaArquivosProcessar.length > 0) {
+                    window.filaArquivosProcessar.shift();
+                    if (window.filaArquivosProcessar.length > 0) {
+                        if (typeof window.processarProximaImagem === 'function') window.processarProximaImagem();
+                        return;
+                    }
+                }
+
+                window.fecharModal(modalId);
             }
         });
     });
@@ -583,8 +616,53 @@ let totalFotosSubmetidas = 0;
 let substituindoFoto = false;
 let fotoSelecionadaParaAcao = null;
 
-// VARIÁVEL DO NOVO EDITOR CROPPER
+// VARIÁVEL DO NOVO EDITOR CROPPER E FILA
 let currentCropper = null;
+window.filaArquivosProcessar = []; // Fila Global de Processamento
+
+window.processarProximaImagem = function() {
+    if (window.filaArquivosProcessar.length === 0) {
+        window.fecharModal('modal-cropper');
+        return;
+    }
+
+    // Se já passou de 5 imagens, pára tudo
+    if (!substituindoFoto && totalFotosSubmetidas >= 5) {
+        window.filaArquivosProcessar = [];
+        window.fecharModal('modal-cropper');
+        if (typeof window.mostrarNotificacao === 'function') window.mostrarNotificacao("Limite de 5 fotografias atingido.");
+        return;
+    }
+
+    const file = window.filaArquivosProcessar[0];
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const imageToCrop = document.getElementById('image-to-crop');
+        imageToCrop.src = event.target.result;
+        
+        window.abrirModal('modal-cropper');
+        
+        if (currentCropper) {
+            currentCropper.destroy();
+        }
+        
+        // @ts-ignore
+        currentCropper = new Cropper(imageToCrop, {
+            aspectRatio: 1, 
+            viewMode: 1, 
+            dragMode: 'move', 
+            autoCropArea: 1, 
+            restore: false,
+            guides: true,
+            center: true,
+            highlight: false,
+            cropBoxMovable: false, 
+            cropBoxResizable: false, 
+            toggleDragModeOnDblclick: false,
+        });
+    };
+    reader.readAsDataURL(file);
+};
 
 window.inicializarEventosEditor = function() {
     const galeriaInput = document.getElementById('galeria-input');
@@ -592,45 +670,17 @@ window.inicializarEventosEditor = function() {
     if (!galeriaInput) return;
 
     galeriaInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
+        if (!e.target.files || e.target.files.length === 0) return;
         
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            
-            // 1. CARREGA A IMAGEM NO MODAL DO CROPPER
-            const imageToCrop = document.getElementById('image-to-crop');
-            imageToCrop.src = event.target.result;
-            
-            // 2. ABRE O MODAL DO CROPPER ONDE O USUÁRIO VAI AJUSTAR
-            window.abrirModal('modal-cropper');
-            
-            // 3. LIMPA INSTÂNCIA ANTERIOR (EVITA BUGS)
-            if (currentCropper) {
-                currentCropper.destroy();
-            }
-            
-            // 4. INICIALIZA O EDITOR DE CORTE (1:1 com Pinch/Zoom e Arrastar)
-            currentCropper = new Cropper(imageToCrop, {
-                aspectRatio: 1, // Fixa a moldura na proporção 1:1 quadrada (padrão loja)
-                viewMode: 1, 
-                dragMode: 'move', // Puxar com o dedo move a imagem perfeitamente
-                autoCropArea: 1, // Atualizado para 1: A caixa vai ocupar os limites máximos nativamente
-                restore: false,
-                guides: true,
-                center: true,
-                highlight: false,
-                cropBoxMovable: false, // A caixa de corte fica fixa ao centro
-                cropBoxResizable: false, // Impede do user alterar a proporção sem querer
-                toggleDragModeOnDblclick: false,
-            });
-            
-            e.target.value = ''; // Limpa para se quiser escolher a mesma de novo
-        };
-        reader.readAsDataURL(file);
+        // Pega as imagens e mete na fila do editor
+        window.filaArquivosProcessar = Array.from(e.target.files);
+        
+        // Começa com a primeira imagem da fila
+        window.processarProximaImagem();
+        
+        e.target.value = ''; // Limpa pra permitir re-seleções
     });
 
-    // BOTÃO PARA GIRAR A IMAGEM 90 GRAUS
     const btnRotateCropper = document.getElementById('btn-rotate-cropper');
     if (btnRotateCropper) {
         btnRotateCropper.onclick = function() {
@@ -638,13 +688,12 @@ window.inicializarEventosEditor = function() {
         };
     }
 
-    // 5. O EVENTO DO BOTÃO CONFIRMAR O CORTE!
+    // O EVENTO DE GUARDAR O CROP!
     const btnCropSave = document.getElementById('btn-crop-save');
     if (btnCropSave) {
         btnCropSave.onclick = function() {
             if (!currentCropper) return;
             
-            // Imprime a nova imagem já quadrada em alta definição (1000x1000px)
             const canvas = currentCropper.getCroppedCanvas({
                 width: 1000,
                 height: 1000,
@@ -652,20 +701,23 @@ window.inicializarEventosEditor = function() {
             });
             const croppedSrc = canvas.toDataURL('image/jpeg', 0.9);
             
-            // Coloca a imagem tratada de volta na sua grelha da loja 
             if (substituindoFoto && fotoSelecionadaParaAcao) {
                 fotoSelecionadaParaAcao.querySelector('img').src = croppedSrc;
                 fotoSelecionadaParaAcao.style.backgroundColor = '#ffffff';
                 substituindoFoto = false;
+                
+                window.filaArquivosProcessar = []; // Interrompe fila se estávamos apenas a substituir uma foto especifica
+                window.fecharModal('modal-cropper');
             } else {
                 adicionarFotoGrelha(croppedSrc);
+                
+                // Concluiu com sucesso, então removemos a atual da fila e processamos a próxima!
+                window.filaArquivosProcessar.shift();
+                window.processarProximaImagem();
             }
-            
-            window.fecharModal('modal-cropper');
         };
     }
 
-    // Mantém os gestos dos modais ligados
     if (typeof window.inicializarGestosModais === 'function') {
         window.inicializarGestosModais();
     }
