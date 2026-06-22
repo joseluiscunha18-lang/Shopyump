@@ -332,7 +332,7 @@ function viewHome() {
     } else {
         produtosExibicao.forEach(p => {
             let imgClasses = p.isSquare 
-                ? "w-full h-full object-cover group-active:scale-95 transition-opacity duration-300"
+                ? "w-full h-full object-contain group-active:scale-95 transition-opacity duration-300"
                 : "w-full h-full object-contain p-2 group-active:scale-95 transition-opacity duration-300";
 
             html += `
@@ -362,7 +362,7 @@ function viewHome() {
 
 function renderProdutoCardHorizontal(p) {
     let imgClasses = p.isSquare 
-        ? "w-full h-full object-cover group-active:scale-95 transition-opacity duration-300"
+        ? "w-full h-full object-contain group-active:scale-95 transition-opacity duration-300"
         : "w-full h-full object-contain p-2 group-active:scale-95 transition-opacity duration-300";
 
     return `
@@ -980,7 +980,7 @@ function viewFavoritos() {
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
                     </button>
-                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-cover' : 'object-contain p-2'} group-active:scale-95 transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
+                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-contain' : 'object-contain p-2'} group-active:scale-95 transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1034,7 +1034,7 @@ function pesquisarProdutos(termo) {
         html += `
             <div onclick="fecharPesquisa(); navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
                 <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
-                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-cover' : 'object-contain p-2'} transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
+                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-contain' : 'object-contain p-2'} transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1372,9 +1372,9 @@ function extrairCorBorda(imgElement, produtoId = null) {
     // Mostra sem falhar a foto
     const mostrarConteudoForcado = (fallbackColor = '') => {
         if (isSquare) {
-            // Remove o padding para forçar 100% de ocupação e altera para object-cover
+            // Remove o padding para forçar 100% de ocupação e mantém object-contain para não cortar
             imgElement.classList.remove('p-2');
-            imgElement.classList.replace('object-contain', 'object-cover');
+            imgElement.classList.replace('object-cover', 'object-contain');
             if(parentContainer) {
                 parentContainer.classList.remove('p-4');
                 parentContainer.style.backgroundColor = 'transparent';
