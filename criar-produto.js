@@ -345,6 +345,27 @@ document.body.insertAdjacentHTML('beforeend', `
                 </div>
             </div>
 
+            <!-- NOVO MODAL: CROPPER (EDITOR DE FOTO 1:1) -->
+            <div id="modal-cropper" class="modal-container z-[200]">
+                <div class="modal-backdrop"></div>
+                <div class="modal-sheet drawer flex flex-col h-[90vh]">
+                    <div class="modal-handle"></div>
+                    <div class="px-6 mb-4 flex justify-between items-center shrink-0">
+                        <h3 class="text-xl font-black text-slate-900">Ajustar Imagem</h3>
+                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">Proporção 1:1</p>
+                    </div>
+                    <!-- Área ESCURA para dar foco total ao recorte da imagem -->
+                    <div class="flex-1 bg-[#020617] relative flex items-center justify-center overflow-hidden">
+                        <img id="image-to-crop" src="" class="block max-w-full max-h-full">
+                    </div>
+                    <div class="p-6 shrink-0 bg-white border-t border-slate-100">
+                        <button id="btn-crop-save" type="button" class="w-full py-4 bg-[#0F172A] text-white rounded-[20px] font-black tracking-widest text-[14px] uppercase active:scale-[0.98] transition-transform shadow-xl flex justify-center items-center">
+                            <i class="fas fa-crop-simple mr-2"></i> Confirmar Ajuste
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </template>
 `);
@@ -556,15 +577,12 @@ window.iniciarMotorArrasto = function() {
 let totalFotosSubmetidas = 0;
 let substituindoFoto = false;
 let fotoSelecionadaParaAcao = null;
-let isEdited = false;
-let selectedBgColor = '#F5F5F7';
 
+// VARIÁVEL DO NOVO EDITOR CROPPER
+let currentCropper = null;
 
-
-// Esta função agora é chamada pelo Fetch no criar-produto.html
 window.inicializarEventosEditor = function() {
     const galeriaInput = document.getElementById('galeria-input');
-    // Não precisamos de ligar o visual do Modal aqui, pois vamos inibi-lo por enquanto
     
     if (!galeriaInput) return;
 
@@ -575,29 +593,68 @@ window.inicializarEventosEditor = function() {
         const reader = new FileReader();
         reader.onload = function(event) {
             
-            // --- INIBIÇÃO DO EDITOR: Em vez de abrir o modal, salta logo para o resultado ---
-            isEdited = false;
+            // 1. CARREGA A IMAGEM NO MODAL DO CROPPER
+            const imageToCrop = document.getElementById('image-to-crop');
+            imageToCrop.src = event.target.result;
             
-            if (substituindoFoto && fotoSelecionadaParaAcao) {
-                // Se estava a trocar a imagem
-                fotoSelecionadaParaAcao.querySelector('img').src = event.target.result;
-                fotoSelecionadaParaAcao.style.backgroundColor = '#ffffff';
-                substituindoFoto = false;
-            } else {
-                // Se estava apenas a adicionar uma imagem
-                adicionarFotoGrelha(event.target.result);
+            // 2. ABRE O MODAL DO CROPPER ONDE O USUÁRIO VAI AJUSTAR
+            window.abrirModal('modal-cropper');
+            
+            // 3. LIMPA INSTÂNCIA ANTERIOR (EVITA BUGS)
+            if (currentCropper) {
+                currentCropper.destroy();
             }
             
-            e.target.value = ''; // Limpa o input para poder selecionar outra imagem depois
+            // 4. INICIALIZA O EDITOR DE CORTE (1:1 com Pinch/Zoom e Arrastar)
+            currentCropper = new Cropper(imageToCrop, {
+                aspectRatio: 1, // Fixa a moldura na proporção 1:1 quadrada (padrão loja)
+                viewMode: 1, 
+                dragMode: 'move', // Puxar com o dedo move a imagem perfeitamente
+                autoCropArea: 0.95,
+                restore: false,
+                guides: true,
+                center: true,
+                highlight: false,
+                cropBoxMovable: false, // A caixa de corte fica fixa ao centro
+                cropBoxResizable: false, // Impede do user alterar a proporção sem querer
+                toggleDragModeOnDblclick: false,
+            });
+            
+            e.target.value = ''; // Limpa para se quiser escolher a mesma de novo
         };
         reader.readAsDataURL(file);
     });
 
-    vincularBotoesInternos();
+    // 5. O EVENTO DO BOTÃO CONFIRMAR O CORTE!
+    const btnCropSave = document.getElementById('btn-crop-save');
+    if (btnCropSave) {
+        btnCropSave.onclick = function() {
+            if (!currentCropper) return;
+            
+            // Imprime a nova imagem já quadrada em alta definição (1000x1000px)
+            const canvas = currentCropper.getCroppedCanvas({
+                width: 1000,
+                height: 1000,
+                imageSmoothingQuality: 'high',
+            });
+            const croppedSrc = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Coloca a imagem tratada de volta na sua grelha da loja 
+            if (substituindoFoto && fotoSelecionadaParaAcao) {
+                fotoSelecionadaParaAcao.querySelector('img').src = croppedSrc;
+                fotoSelecionadaParaAcao.style.backgroundColor = '#ffffff';
+                substituindoFoto = false;
+            } else {
+                adicionarFotoGrelha(croppedSrc);
+            }
+            
+            window.fecharModal('modal-cropper');
+        };
+    }
 
-    // ACORDA O MOTOR: Ativa o gesto nos modais que acabaram de carregar
-    if (typeof inicializarGestosModais === 'function') {
-        inicializarGestosModais();
+    // Mantém os gestos dos modais ligados
+    if (typeof window.inicializarGestosModais === 'function') {
+        window.inicializarGestosModais();
     }
 };
 
