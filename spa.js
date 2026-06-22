@@ -409,17 +409,17 @@ function viewProduto(id) {
     }); 
 
     return `
-        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col">
+        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-slate-50 flex flex-col overflow-y-auto no-scrollbar">
             
-            <div class="relative flex-1 bg-slate-50/50 overflow-hidden">
+            <div class="relative w-full aspect-square flex-shrink-0 bg-slate-50 overflow-hidden">
                 <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
                 <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
                 
                 <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar" onscroll="atualizarDotsProduto(this)">${carrosselHtml}</div>
-                ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-8 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
+                ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white relative z-30 px-5 pt-6 pb-8 flex-shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] flex flex-col gap-4 border-t border-slate-100">
+            <div class="bg-white rounded-t-3xl -mt-6 relative z-30 px-5 pt-8 pb-8 flex-1 flex flex-col gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
