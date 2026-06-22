@@ -337,7 +337,7 @@ function viewHome() {
 
             html += `
                 <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                    <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+                    <div class="aspect-square rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                         <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                                 onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                             <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
@@ -368,7 +368,7 @@ function renderProdutoCardHorizontal(p) {
     return `
         <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
         <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
-            <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+            <div class="aspect-square rounded-2xl overflow-hidden mb-3.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
                 <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-slate-400 active:scale-90 transition-transform shadow-sm" 
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
@@ -975,7 +975,7 @@ function viewFavoritos() {
     produtosFavoritos.forEach(p => {
         html += `
             <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
+                <div class="aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
                     <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 active:scale-90 transition-transform shadow-sm" 
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
@@ -1033,7 +1033,7 @@ function pesquisarProdutos(termo) {
     resultados.forEach(p => {
         html += `
             <div onclick="fecharPesquisa(); navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="${p.isSquare ? 'aspect-square' : 'aspect-[4/5]'} bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
+                <div class="aspect-square bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
                     <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-contain' : 'object-contain p-2'} transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 mt-1">
