@@ -397,20 +397,17 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
    imagensCarrossel.forEach((img, index) => {
-        let isMain = (index === 0 && (p.corFundo || p.isSquare)) ? true : false;
-        let pClasses = p.isSquare ? '' : 'p-4';
-        let imgClasses = 'object-contain';
-        
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center ${pClasses} container-img" style="${isMain && p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
-            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full ${imgClasses} ${isMain ? 'opacity-100' : 'opacity-0'}">
+        carrosselHtml += `
+        <div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center bg-slate-50">
+            <img src="${img}" class="w-full h-full object-cover">
         </div>`;
-        dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
+        dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/90 border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     }); 
 
     return `
-        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-slate-50 flex flex-col overflow-y-auto no-scrollbar">
+        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col overflow-y-auto no-scrollbar">
             
-            <div class="relative w-full aspect-[4/4.3] flex-shrink-0 bg-slate-50 overflow-hidden">
+            <div class="relative w-full aspect-square flex-shrink-0 bg-slate-50 overflow-hidden">
                 <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
                 <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
                 
@@ -418,7 +415,7 @@ function viewProduto(id) {
                 ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white relative z-30 px-5 pt-6 pb-8 flex-1 flex flex-col gap-4 shadow-[0_-5px_15px_rgba(0,0,0,0.03)] border-t border-slate-100">
+            <div class="bg-white relative z-30 px-5 pt-6 pb-8 flex-1 flex flex-col gap-4 border-t border-slate-100">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
