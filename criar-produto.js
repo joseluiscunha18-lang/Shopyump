@@ -425,7 +425,7 @@ document.addEventListener('click', (e) => {
             }
         }
 
-        window.fecharModal(modalId);
+        fecharModal(modalId);
     }
 });
 
@@ -482,7 +482,7 @@ window.inicializarGestosModais = function() {
                     }
                 }
 
-                window.fecharModal(modalId);
+                fecharModal(modalId);
             }
         });
     });
