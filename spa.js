@@ -357,6 +357,10 @@ function viewHome() {
 }
 
 function renderProdutoCardHorizontal(p) {
+    let imgClasses = p.isSquare 
+        ? "w-full h-full object-cover group-active:scale-95 transition-opacity duration-300"
+        : "w-full h-full object-contain p-2 group-active:scale-95 transition-opacity duration-300";
+
     return `
         <!-- Largura ajustada para 150px, tornando o terceiro elemento visível no carregamento inicial (prova de que há mais para ver) -->
         <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex-shrink-0 w-[150px] snap-start">
@@ -365,7 +369,7 @@ function renderProdutoCardHorizontal(p) {
                         onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)">
                     <i class="${(JSON.parse(localStorage.getItem('shopyump_favs')) || []).includes(p.id) ? 'fas fa-heart text-red-500' : 'far fa-heart'} text-[11px]"></i>
                 </button>
-                <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full object-contain p-2 ${p.corFundo ? 'opacity-100' : 'opacity-0 transition-opacity duration-300'} group-active:scale-95">
+                <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="${imgClasses} ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
             </div>
             <div class="px-1 flex flex-col gap-1 mt-1">
                 <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -390,11 +394,12 @@ function viewProduto(id) {
     let carrosselHtml = ''; let dotsHtml = '';
 
    imagensCarrossel.forEach((img, index) => {
-        // Aproveita a cor que guardamos na memória apenas para a foto principal de forma INSTANTÂNEA
-        let isMain = index === 0 && p.corFundo ? true : false;
+        let isMain = (index === 0 && (p.corFundo || p.isSquare)) ? true : false;
+        let pClasses = p.isSquare ? '' : 'p-4';
+        let imgClasses = p.isSquare ? 'object-cover' : 'object-contain';
         
-        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center p-4 container-img" style="${isMain ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
-            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full object-contain ${isMain ? 'opacity-100' : 'opacity-0'}">
+        carrosselHtml += `<div class="w-full h-full flex-shrink-0 snap-center snap-always relative flex items-center justify-center ${pClasses} container-img" style="${isMain && p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: transparent;'}">
+            <img src="${img}" crossorigin="anonymous" ${!isMain ? `onload="extrairCorBorda(this, '${index === 0 ? p.id : ''}')"` : ''} class="w-full h-full ${imgClasses} ${isMain ? 'opacity-100' : 'opacity-0'}">
         </div>`;
         dotsHtml += `<div class="transition-all duration-300 rounded-full shadow-sm ${index === 0 ? 'bg-slate-900 border-[1px] border-white w-2 h-2 scale-110' : 'bg-white/border-[0.5px] border-black/10 w-2 h-2'}"></div>`;
     }); 
@@ -966,12 +971,12 @@ function viewFavoritos() {
     produtosFavoritos.forEach(p => {
         html += `
             <div onclick="navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300">
+                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2.5 border border-slate-100 relative transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
                     <button class="absolute top-2.5 right-2.5 z-10 w-7 h-7 bg-white/70 backdrop-blur-md rounded-full flex items-center justify-center text-red-500 active:scale-90 transition-transform shadow-sm" 
                             onclick="event.stopPropagation(); toggleFavorito('${p.id}', this); navegarPara('favoritos');">
                         <i class="fas fa-heart text-[11px]"></i>
                     </button>
-                    <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300 group-active:scale-95">
+                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-cover' : 'object-contain p-2'} group-active:scale-95 transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 flex flex-col gap-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1024,8 +1029,8 @@ function pesquisarProdutos(termo) {
     resultados.forEach(p => {
         html += `
             <div onclick="fecharPesquisa(); navegarPara('produto', '${p.id}')" class="cursor-pointer group flex flex-col">
-                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300">
-                    <img src="${p.imagem}" crossorigin="anonymous" onload="extrairCorBorda(this)" class="w-full h-full object-contain p-2 opacity-0 transition-opacity duration-300">
+                <div class="aspect-[4/5] bg-slate-50 rounded-2xl overflow-hidden mb-2 border border-slate-100 transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : ''}">
+                    <img src="${p.imagem}" crossorigin="anonymous" ${!p.corFundo && !p.isSquare ? `onload="extrairCorBorda(this, '${p.id}')"` : ''} class="w-full h-full ${p.isSquare ? 'object-cover' : 'object-contain p-2'} transition-opacity duration-300 ${p.corFundo || p.isSquare ? 'opacity-100' : 'opacity-0'}">
                 </div>
                 <div class="px-1 mt-1">
                     <h3 class="text-[14px] font-extrabold text-black line-clamp-2 leading-tight break-words pr-1">${p.nome}</h3>
@@ -1355,14 +1360,41 @@ function viewInstitucional(pagina) {
 function extrairCorBorda(imgElement, produtoId = null) {
     const parentContainer = imgElement.parentElement;
     
+    // Verificar se é 1:1 com pequena margem de erro (ex: 5px de tolerância) para não ter falhas
+    const w = imgElement.naturalWidth || imgElement.width;
+    const h = imgElement.naturalHeight || imgElement.height;
+    const isSquare = (w > 0 && h > 0 && Math.abs(w - h) <= 5);
+
     // Mostra sem falhar a foto
     const mostrarConteudoForcado = (fallbackColor = '') => {
-        if(parentContainer && !parentContainer.style.backgroundColor && fallbackColor) { 
-            parentContainer.style.backgroundColor = fallbackColor; 
+        if (isSquare) {
+            // Remove o padding para forçar 100% de ocupação e altera para object-cover
+            imgElement.classList.remove('p-2');
+            imgElement.classList.replace('object-contain', 'object-cover');
+            if(parentContainer) {
+                parentContainer.classList.remove('p-4');
+                parentContainer.style.backgroundColor = 'transparent';
+            }
+        } else {
+            // Mantém adaptável e aplica cor de fundo
+            if(parentContainer && !parentContainer.style.backgroundColor && fallbackColor) { 
+                parentContainer.style.backgroundColor = fallbackColor; 
+            }
         }
         imgElement.classList.remove('opacity-0');
         imgElement.classList.add('opacity-100');
     };
+
+    if (isSquare) {
+        if (produtoId) {
+            let prodObj = produtos.find(x => x.id === produtoId);
+            if (prodObj) {
+                prodObj.corFundo = 'transparent';
+                prodObj.isSquare = true;
+            }
+        }
+        return mostrarConteudoForcado('transparent');
+    }
 
     const canvas = document.createElement('canvas');
     canvas.width = 10;
@@ -1382,27 +1414,19 @@ function extrairCorBorda(imgElement, produtoId = null) {
         
         if (alpha < 0.1) return mostrarConteudoForcado('transparent');
 
-        // Contornar sujos JPEG
-        if (r > 240 && g > 240 && b > 240) {
-            r = 255; g = 255; b = 255;
-        }
-
-        // Contornar preto com artefatos
-        if (r < 15 && g < 15 && b < 15) {
-            r = 0; g = 0; b = 0;
-        }
+        if (r > 240 && g > 240 && b > 240) { r = 255; g = 255; b = 255; }
+        if (r < 15 && g < 15 && b < 15) { r = 0; g = 0; b = 0; }
 
         const corDetectada = `rgba(${r}, ${g}, ${b}, ${alpha})`;
         
-        if (parentContainer) {
-            // REMOVE O DELAY: Fica a nova cor logo sem passar pelo branco antes
-            parentContainer.style.backgroundColor = corDetectada;
-        }
+        if (parentContainer) parentContainer.style.backgroundColor = corDetectada;
         
-        // MÁGICA FINAL ✨: Guardar no objecto do produto no telemóvel para nunca mais analisar nem piscar ao recuar!
         if (produtoId) {
             let prodObj = produtos.find(x => x.id === produtoId);
-            if (prodObj) prodObj.corFundo = corDetectada;
+            if (prodObj) {
+                prodObj.corFundo = corDetectada;
+                prodObj.isSquare = false;
+            }
         }
 
         mostrarConteudoForcado(corDetectada);
