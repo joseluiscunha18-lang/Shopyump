@@ -372,7 +372,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         <!-- BARRA DE ZOOM -->
                         <div class="flex items-center gap-3 mb-5 px-2">
                             <i class="fas fa-search-minus text-slate-400 text-sm"></i>
-                            <input type="range" id="cropper-zoom-range" min="0" max="100" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer outline-none accent-[#0F172A]">
+                            <input type="range" id="cropper-zoom-range" min="0" max="100" value="0" style="touch-action: none;" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer outline-none accent-[#0F172A]">
                             <i class="fas fa-search-plus text-slate-400 text-sm"></i>
                         </div>
 
