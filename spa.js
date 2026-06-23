@@ -409,7 +409,7 @@ function viewProduto(id) {
     }); 
 
     return `
-        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-slate-50 flex flex-col overflow-y-auto no-scrollbar">
+        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col overflow-y-auto no-scrollbar">
             
             <!-- Usamos aspect-[4/4.5] para reduzir a altura ligeiramente, dando mais respiro e eliminamos as faixas brancas usando a cor extraída -->
             <div class="relative w-full ${p.isSquare ? 'aspect-square' : 'aspect-[4/4.5]'} flex-shrink-0 overflow-hidden transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
@@ -420,7 +420,7 @@ function viewProduto(id) {
                 ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white relative z-30 px-5 pt-5 pb-3 flex-1 flex flex-col gap-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] border-t border-slate-100">
+            <div class="bg-white rounded-none relative z-30 px-5 pt-5 pb-10 flex-1 flex flex-col gap-3 border-none">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
