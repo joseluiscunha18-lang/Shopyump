@@ -367,8 +367,15 @@ document.body.insertAdjacentHTML('beforeend', `
                     <div class="flex-1 bg-[#020617] relative flex items-center justify-center overflow-hidden cropper-area-bloqueada z-0">
                         <img id="image-to-crop" src="" class="block max-w-full max-h-full">
                     </div>
-                    <!-- BOTÃO DE CONFIRMAR -->
+                    <!-- CONTROLOS DE ZOOM E BOTÃO DE CONFIRMAR -->
                     <div class="p-6 shrink-0 bg-white border-t border-slate-100 cropper-area-bloqueada z-10">
+                        <!-- BARRA DE ZOOM -->
+                        <div class="flex items-center gap-3 mb-5 px-2">
+                            <i class="fas fa-search-minus text-slate-400 text-sm"></i>
+                            <input type="range" id="cropper-zoom-range" min="0" max="100" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer outline-none accent-[#0F172A]">
+                            <i class="fas fa-search-plus text-slate-400 text-sm"></i>
+                        </div>
+
                         <button id="btn-crop-save" type="button" class="w-full py-4 bg-[#0F172A] text-white rounded-[20px] font-black tracking-widest text-[14px] uppercase active:scale-[0.98] transition-transform shadow-xl flex justify-center items-center">
                             <i class="fas fa-crop-simple mr-2"></i> Confirmar Ajuste
                         </button>
@@ -646,6 +653,9 @@ window.processarProximaImagem = function() {
             currentCropper.destroy();
         }
         
+        const zoomRange = document.getElementById('cropper-zoom-range');
+        if (zoomRange) zoomRange.value = 0;
+
         // @ts-ignore
         currentCropper = new Cropper(imageToCrop, {
             aspectRatio: 1, 
@@ -659,6 +669,42 @@ window.processarProximaImagem = function() {
             cropBoxMovable: false, 
             cropBoxResizable: false, 
             toggleDragModeOnDblclick: false,
+            ready: function() {
+                if (zoomRange) {
+                    // Descobre o rácio inicial que a imagem tem para se encaixar
+                    const containerData = currentCropper.getContainerData();
+                    const imageData = currentCropper.getImageData();
+                    const initialRatio = imageData.aspectRatio > 1 
+                        ? containerData.width / imageData.naturalWidth 
+                        : containerData.height / imageData.naturalHeight;
+                    
+                    currentCropper.initialRatio = initialRatio || 0.1;
+
+                    // Limpa listeners antigos clonando o input
+                    const clone = zoomRange.cloneNode(true);
+                    zoomRange.parentNode.replaceChild(clone, zoomRange);
+                    
+                    // Evento: Quando o utilizador mexe na barra de 0 a 100
+                    clone.addEventListener('input', function() {
+                        if (currentCropper && currentCropper.initialRatio) {
+                            // Multiplica de 1x (zoom zero) até 4x
+                            const scaleMultiplier = 1 + (this.value / 100) * 3; 
+                            currentCropper.zoomTo(currentCropper.initialRatio * scaleMultiplier);
+                        }
+                    });
+                    
+                    // Evento: Sincroniza a barra quando o utilizador faz zoom com dois dedos (pinch-to-zoom)
+                    imageToCrop.addEventListener('zoom', function(event) {
+                        if (currentCropper && currentCropper.initialRatio) {
+                            const currentRatio = event.detail.ratio;
+                            let percent = ((currentRatio / currentCropper.initialRatio) - 1) / 3 * 100;
+                            if (percent < 0) percent = 0;
+                            if (percent > 100) percent = 100;
+                            clone.value = percent;
+                        }
+                    });
+                }
+            }
         });
     };
     reader.readAsDataURL(file);
