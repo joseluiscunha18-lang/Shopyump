@@ -684,24 +684,35 @@ window.processarProximaImagem = function() {
                     const clone = zoomRange.cloneNode(true);
                     zoomRange.parentNode.replaceChild(clone, zoomRange);
                     
-                    let isZoomingFromSlider = false; // <-- PROTEÇÃO ADICIONADA
+                    let isSliderActive = false;
+                    const setSliderActive = () => { isSliderActive = true; };
+                    const setSliderInactive = () => { isSliderActive = false; };
+                    
+                    // Deteta ativamente se o dedo/rato está em cima do slider para não o interromper
+                    clone.addEventListener('touchstart', setSliderActive, {passive: true});
+                    clone.addEventListener('touchend', setSliderInactive, {passive: true});
+                    clone.addEventListener('touchcancel', setSliderInactive, {passive: true});
+                    clone.addEventListener('mousedown', setSliderActive, {passive: true});
+                    clone.addEventListener('mouseup', setSliderInactive, {passive: true});
+                    clone.addEventListener('mouseleave', setSliderInactive, {passive: true});
 
                     // Evento: Quando o utilizador mexe na barra de 0 a 100
                     clone.addEventListener('input', function() {
                         if (currentCropper && currentCropper.initialRatio) {
-                            isZoomingFromSlider = true; // Avisar que a barra está no controlo
-                            
                             // Multiplica de 1x (zoom zero) até 4x
                             const scaleMultiplier = 1 + (this.value / 100) * 3; 
                             currentCropper.zoomTo(currentCropper.initialRatio * scaleMultiplier);
-                            
-                            isZoomingFromSlider = false; // Devolver o controlo
                         }
                     });
                     
+                    // Limpar listener antigo para não acumular e crashar com várias fotos
+                    if (imageToCrop._zoomHandler) {
+                        imageToCrop.removeEventListener('zoom', imageToCrop._zoomHandler);
+                    }
+
                     // Evento: Sincroniza a barra quando o utilizador faz zoom com dois dedos (pinch-to-zoom)
-                    imageToCrop.addEventListener('zoom', function(event) {
-                        if (isZoomingFromSlider) return; // <-- ABORTA SE O ZOOM VEIO DA BARRA!
+                    imageToCrop._zoomHandler = function(event) {
+                        if (isSliderActive) return; // <-- O SEGREDO: Se o dedo estiver na barra, NÃO ATUALIZA O VALOR PROGRAMATICAMENTE!
 
                         if (currentCropper && currentCropper.initialRatio) {
                             const currentRatio = event.detail.ratio;
@@ -710,7 +721,8 @@ window.processarProximaImagem = function() {
                             if (percent > 100) percent = 100;
                             clone.value = percent;
                         }
-                    });
+                    };
+                    imageToCrop.addEventListener('zoom', imageToCrop._zoomHandler);
                 }
             }
         });
