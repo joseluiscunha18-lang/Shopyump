@@ -420,7 +420,7 @@ function viewProduto(id) {
                 ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
             </div>
 
-            <div class="bg-white rounded-none relative z-30 px-5 pt-5 pb-10 flex-1 flex flex-col gap-3 border-none">
+            <div class="bg-white relative z-30 px-5 pt-5 pb-6 flex flex-col gap-3">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex flex-col flex-1 pr-2">
                         <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
