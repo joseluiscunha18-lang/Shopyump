@@ -684,17 +684,25 @@ window.processarProximaImagem = function() {
                     const clone = zoomRange.cloneNode(true);
                     zoomRange.parentNode.replaceChild(clone, zoomRange);
                     
+                    let isZoomingFromSlider = false; // <-- PROTEÇÃO ADICIONADA
+
                     // Evento: Quando o utilizador mexe na barra de 0 a 100
                     clone.addEventListener('input', function() {
                         if (currentCropper && currentCropper.initialRatio) {
+                            isZoomingFromSlider = true; // Avisar que a barra está no controlo
+                            
                             // Multiplica de 1x (zoom zero) até 4x
                             const scaleMultiplier = 1 + (this.value / 100) * 3; 
                             currentCropper.zoomTo(currentCropper.initialRatio * scaleMultiplier);
+                            
+                            isZoomingFromSlider = false; // Devolver o controlo
                         }
                     });
                     
                     // Evento: Sincroniza a barra quando o utilizador faz zoom com dois dedos (pinch-to-zoom)
                     imageToCrop.addEventListener('zoom', function(event) {
+                        if (isZoomingFromSlider) return; // <-- ABORTA SE O ZOOM VEIO DA BARRA!
+
                         if (currentCropper && currentCropper.initialRatio) {
                             const currentRatio = event.detail.ratio;
                             let percent = ((currentRatio / currentCropper.initialRatio) - 1) / 3 * 100;
