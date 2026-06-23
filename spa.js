@@ -398,7 +398,6 @@ function viewProduto(id) {
 
    imagensCarrossel.forEach((img, index) => {
         let isMain = (index === 0 && (p.corFundo || p.isSquare)) ? true : false;
-        // Removido o padding para as imagens preencherem melhor e não deixarem um "quadro" branco
         let pClasses = ''; 
         let imgClasses = p.isSquare ? 'object-cover' : 'object-contain';
         
@@ -409,90 +408,91 @@ function viewProduto(id) {
     }); 
 
     return `
-        <div class="animate-fade-in fixed top-0 left-0 w-full h-[100dvh] z-50 bg-white flex flex-col overflow-y-auto no-scrollbar">
-            
-            <!-- Usamos aspect-[4/4.5] para reduzir a altura ligeiramente, dando mais respiro e eliminamos as faixas brancas usando a cor extraída -->
-            <div class="relative w-full ${p.isSquare ? 'aspect-square' : 'aspect-[4/4.5]'} flex-shrink-0 overflow-hidden transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
-                <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
-                <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
+        <div class="animate-fade-in fixed inset-0 z-50 bg-white overflow-y-auto no-scrollbar">
+            <div class="flex flex-col min-h-max pb-safe">
                 
-                <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar" onscroll="atualizarDotsProduto(this)">${carrosselHtml}</div>
-                ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
-            </div>
-
-            <div class="bg-white relative z-30 px-5 pt-5 pb-6 flex flex-col gap-3">
-                <div class="flex justify-between items-start gap-4">
-                    <div class="flex flex-col flex-1 pr-2">
-                        <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
-                        <h1 class="text-[20px] font-extrabold text-black leading-tight break-words">${p.nome}</h1>
-                    </div>
-                    <div class="text-right whitespace-nowrap flex flex-col items-end pt-0.5">
-                        ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[12px] text-slate-400 font-semibold line-through mb-1">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
-                        <div class="text-[22px] font-black text-black tracking-tight leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[13px] font-extrabold text-black ml-0.5">MT</span></div>
-                    </div>
+                <div class="relative w-full ${p.isSquare ? 'aspect-square' : 'aspect-[4/4.5]'} flex-shrink-0 overflow-hidden transition-colors duration-300" style="${p.corFundo ? 'background-color: ' + p.corFundo + ';' : 'background-color: #f8fafc;'}">
+                    <button onclick="navegarPara('home')" class="absolute top-6 left-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-arrow-left text-sm"></i></button>
+                    <button onclick="partilharProduto('${p.id}', '${p.nome}')" class="absolute top-6 right-5 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md shadow-sm active:scale-95 transition-all text-slate-900"><i class="fas fa-share-nodes text-sm"></i></button>
+                    
+                    <div class="flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar" onscroll="atualizarDotsProduto(this)">${carrosselHtml}</div>
+                    ${imagensCarrossel.length > 1 ? `<div id="produto-dots" class="absolute bottom-10 left-0 right-0 flex justify-center gap-1.5 z-20 pointer-events-none">${dotsHtml}</div>` : ''}
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-1">
-                    <div class="flex flex-col gap-2">
-                        ${p.tamanhos && p.tamanhos.length > 0 ? `
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-900">Tamanho</span>
-                            <div class="flex flex-wrap gap-1.5" id="container-tamanhos">
-                                ${p.tamanhos.map((t) => `
-                                    <button onclick="selecionarTamanho('${t}', this)" class="btn-tamanho px-3 h-8 border border-slate-200 bg-white text-slate-600 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center justify-center shadow-sm">${t}</button>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+                <div class="bg-white px-5 pt-5 pb-6 flex flex-col gap-4">
+                    <div class="flex justify-between items-start gap-4">
+                        <div class="flex flex-col flex-1 pr-2">
+                            <span class="text-[10.5px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">${p.categoria}</span>
+                            <h1 class="text-[20px] font-extrabold text-black leading-tight break-words">${p.nome}</h1>
+                        </div>
+                        <div class="text-right whitespace-nowrap flex flex-col items-end pt-0.5">
+                            ${p.precoOriginal && p.preco < p.precoOriginal ? `<span class="text-[12px] text-slate-400 font-semibold line-through mb-1">${p.precoOriginal.toLocaleString('pt-MZ')} MT</span>` : ''}
+                            <div class="text-[22px] font-black text-black tracking-tight leading-none">${p.preco.toLocaleString('pt-MZ')} <span class="text-[13px] font-extrabold text-black ml-0.5">MT</span></div>
+                        </div>
                     </div>
 
-                    <div class="flex flex-col gap-2">
-                        ${p.cores && p.cores.length > 0 ? `
-                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-900">Cor</span>
-                            <div class="flex flex-wrap gap-1.5" id="container-cores">
-                                ${p.cores.map((c) => `
-                                    <button onclick="selecionarCor('${c.nome}', this)" class="btn-cor relative w-fit px-3 h-8 rounded-full shadow-sm transition-all duration-200 border border-slate-200 bg-white text-slate-600 text-[11px] font-bold">${c.nome}</button>
-                                `).join('')}
-                            </div>
-                        ` : ''}
+                    <div class="grid grid-cols-2 gap-4 mt-1">
+                        <div class="flex flex-col gap-2">
+                            ${p.tamanhos && p.tamanhos.length > 0 ? `
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-900">Tamanho</span>
+                                <div class="flex flex-wrap gap-1.5" id="container-tamanhos">
+                                    ${p.tamanhos.map((t) => `
+                                        <button onclick="selecionarTamanho('${t}', this)" class="btn-tamanho px-3 h-8 border border-slate-200 bg-white text-slate-600 rounded-full text-[11px] font-bold transition-all duration-200 flex items-center justify-center shadow-sm">${t}</button>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            ${p.cores && p.cores.length > 0 ? `
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-900">Cor</span>
+                                <div class="flex flex-wrap gap-1.5" id="container-cores">
+                                    ${p.cores.map((c) => `
+                                        <button onclick="selecionarCor('${c.nome}', this)" class="btn-cor relative w-fit px-3 h-8 rounded-full shadow-sm transition-all duration-200 border border-slate-200 bg-white text-slate-600 text-[11px] font-bold">${c.nome}</button>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
-                </div>
 
-                <div class="flex flex-col mt-1">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-900 mb-1">Descrição</span>
-                    ${p.desc.length > 90 ? `
-                        <p class="text-[11px] font-medium leading-relaxed text-slate-500 line-clamp-2">${p.desc}</p>
-                        <button onclick="abrirDescricaoModal()" class="text-[10px] font-bold text-slate-400 flex items-center justify-center gap-1 mt-1.5 mx-auto active:scale-95 transition-transform">
-                            Ler mais <i class="fas fa-chevron-down text-[8px]"></i>
-                        </button>
-                    ` : `
-                        <p class="text-[11px] font-medium leading-relaxed text-slate-500">${p.desc || 'Nenhuma descrição fornecida.'}</p>
-                    `}
-                </div>
-
-                <div id="modal-desc" onclick="fecharDescricaoModal()" class="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
-                    <div id="modal-desc-content" onclick="event.stopPropagation()" class="bg-white w-full rounded-t-3xl pt-3 pb-6 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[80vh] flex flex-col gap-4 relative">
-                        <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-1"></div>
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                            <h3 class="text-[11px] font-black uppercase tracking-widest text-slate-900">Detalhes do Produto</h3>
-                            <button onclick="fecharDescricaoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 active:scale-90 transition-transform">
-                                <i class="fas fa-times text-sm"></i>
+                    <div class="flex flex-col mt-1 mb-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-900 mb-1">Descrição</span>
+                        ${p.desc.length > 90 ? `
+                            <p class="text-[11px] font-medium leading-relaxed text-slate-500 line-clamp-2">${p.desc}</p>
+                            <button onclick="abrirDescricaoModal()" class="text-[10px] font-bold text-slate-400 flex items-center justify-center gap-1 mt-1.5 mx-auto active:scale-95 transition-transform">
+                                Ler mais <i class="fas fa-chevron-down text-[8px]"></i>
                             </button>
-                        </div>
-                        <div id="modal-scroll-area" class="text-[13px] font-medium leading-relaxed text-slate-600 pb-6 overflow-y-auto no-scrollbar">
-                            ${p.desc.replace(/\\n/g, '<br>')}
+                        ` : `
+                            <p class="text-[11px] font-medium leading-relaxed text-slate-500">${p.desc || 'Nenhuma descrição fornecida.'}</p>
+                        `}
+                    </div>
+
+                    <div id="modal-desc" onclick="fecharDescricaoModal()" class="fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 flex items-end">
+                        <div id="modal-desc-content" onclick="event.stopPropagation()" class="bg-white w-full rounded-t-3xl pt-3 pb-6 px-6 transform translate-y-full transition-transform duration-300 ease-out max-h-[80vh] flex flex-col gap-4 relative">
+                            <div class="w-10 h-1.5 bg-slate-200 rounded-full mx-auto mb-1"></div>
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                                <h3 class="text-[11px] font-black uppercase tracking-widest text-slate-900">Detalhes do Produto</h3>
+                                <button onclick="fecharDescricaoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 active:scale-90 transition-transform">
+                                    <i class="fas fa-times text-sm"></i>
+                                </button>
+                            </div>
+                            <div id="modal-scroll-area" class="text-[13px] font-medium leading-relaxed text-slate-600 pb-6 overflow-y-auto no-scrollbar">
+                                ${p.desc.replace(/\\n/g, '<br>')}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex gap-2.5 mt-1">
-                    <button onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)" class="w-12 h-12 flex-shrink-0 bg-white border border-slate-200 rounded-full flex items-center justify-center active:bg-slate-50 transition-colors shadow-sm ${isFav ? 'text-red-500' : 'text-slate-400'}">
-                        <i class="${isFav ? 'fas' : 'far'} fa-heart text-base pointer-events-none"></i>
-                    </button>
-                    <button onclick="addCarrinho('${p.id}')" class="flex-1 h-12 bg-white border border-slate-200 text-slate-900 rounded-full font-black text-[11px] uppercase tracking-wide active:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fas fa-shopping-cart text-[10px]"></i> Adicionar
-                    </button>
-                    <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.2] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
-                        Comprar Agora
-                    </button>
+                    <div class="flex gap-2.5 mt-auto">
+                        <button onclick="event.stopPropagation(); toggleFavorito('${p.id}', this)" class="w-12 h-12 flex-shrink-0 bg-white border border-slate-200 rounded-full flex items-center justify-center active:bg-slate-50 transition-colors shadow-sm ${isFav ? 'text-red-500' : 'text-slate-400'}">
+                            <i class="${isFav ? 'fas' : 'far'} fa-heart text-base pointer-events-none"></i>
+                        </button>
+                        <button onclick="addCarrinho('${p.id}')" class="flex-1 h-12 bg-white border border-slate-200 text-slate-900 rounded-full font-black text-[11px] uppercase tracking-wide active:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fas fa-shopping-cart text-[10px]"></i> Adicionar
+                        </button>
+                        <button onclick="prepararCompraDireta('${p.id}')" class="flex-[1.2] h-12 bg-[#0F172A] text-white rounded-full font-black text-[11px] uppercase tracking-wide shadow-xl shadow-slate-900/20 active:scale-[0.98] transition-transform flex items-center justify-center">
+                            Comprar Agora
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
