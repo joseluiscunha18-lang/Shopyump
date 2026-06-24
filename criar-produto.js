@@ -372,7 +372,7 @@ document.body.insertAdjacentHTML('beforeend', `
                         <!-- BARRA DE ZOOM -->
                         <div class="flex items-center gap-3 mb-5 px-2">
                             <i class="fas fa-search-minus text-slate-400 text-sm"></i>
-                            <input type="range" id="cropper-zoom-range" min="0" max="100" value="0" style="touch-action: none;" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer outline-none accent-[#0F172A]">
+                            <input type="range" id="cropper-zoom-range" min="0" max="100" value="0" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer outline-none accent-[#0F172A]">
                             <i class="fas fa-search-plus text-slate-400 text-sm"></i>
                         </div>
 
@@ -685,19 +685,29 @@ window.processarProximaImagem = function() {
                     zoomRange.parentNode.replaceChild(clone, zoomRange);
                     
                     let isSliderActive = false;
-                    const setSliderActive = () => { isSliderActive = true; };
-                    const setSliderInactive = () => { isSliderActive = false; };
+                    const setSliderActive = (e) => { 
+                        isSliderActive = true; 
+                        e.stopPropagation(); // Impede o Cropper ou Modal de roubar o toque
+                    };
+                    const setSliderInactive = (e) => { 
+                        isSliderActive = false; 
+                        e.stopPropagation();
+                    };
                     
                     // Deteta ativamente se o dedo/rato está em cima do slider para não o interromper
-                    clone.addEventListener('touchstart', setSliderActive, {passive: true});
-                    clone.addEventListener('touchend', setSliderInactive, {passive: true});
-                    clone.addEventListener('touchcancel', setSliderInactive, {passive: true});
-                    clone.addEventListener('mousedown', setSliderActive, {passive: true});
-                    clone.addEventListener('mouseup', setSliderInactive, {passive: true});
-                    clone.addEventListener('mouseleave', setSliderInactive, {passive: true});
+                    clone.addEventListener('touchstart', setSliderActive, {passive: false});
+                    clone.addEventListener('touchmove', (e) => e.stopPropagation(), {passive: false}); // Mantém exclusividade do toque
+                    clone.addEventListener('touchend', setSliderInactive, {passive: false});
+                    clone.addEventListener('touchcancel', setSliderInactive, {passive: false});
+                    
+                    clone.addEventListener('mousedown', setSliderActive, {passive: false});
+                    clone.addEventListener('mousemove', (e) => e.stopPropagation(), {passive: false});
+                    clone.addEventListener('mouseup', setSliderInactive, {passive: false});
+                    clone.addEventListener('mouseleave', setSliderInactive, {passive: false});
 
                     // Evento: Quando o utilizador mexe na barra de 0 a 100
-                    clone.addEventListener('input', function() {
+                    clone.addEventListener('input', function(e) {
+                        e.stopPropagation();
                         if (currentCropper && currentCropper.initialRatio) {
                             // Multiplica de 1x (zoom zero) até 4x
                             const scaleMultiplier = 1 + (this.value / 100) * 3; 
