@@ -100,7 +100,8 @@ async function inicializarLoja() {
                     imagens: p.fotos || [], desc: p.descricao || '', tamanhos: tamanhosArr, cores: coresArr
                 };
             });
-            document.getElementById('loader-global').classList.add('opacity-0', 'pointer-events-none');
+            const loaderGlobal = document.getElementById('loader-global');
+            if (loaderGlobal) loaderGlobal.classList.add('opacity-0', 'pointer-events-none');
             document.getElementById('bottom-nav').classList.remove('hidden');
             
             const params = new URLSearchParams(window.location.search);
@@ -114,7 +115,8 @@ async function inicializarLoja() {
             
             atualizarBadge();
         } else {
-            document.getElementById('loader-global').classList.add('opacity-0', 'pointer-events-none');
+            const loaderGlobal = document.getElementById('loader-global');
+            if (loaderGlobal) loaderGlobal.classList.add('opacity-0', 'pointer-events-none');
             mostrarEstadoVazioGlobal("Esta loja ainda não tem produtos", "Pede ao vendedor para atualizar o catálogo.");
         }
     } catch (e) {
