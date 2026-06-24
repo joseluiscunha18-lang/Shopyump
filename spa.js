@@ -270,7 +270,7 @@ function viewHome() {
     // 4. Juntamos tudo: os "outros" aparecem primeiro, empurrando as novidades para o fundo do catálogo!
     let produtosExibicao = [...outrosProdutos, ...novidadesFiltradas];
 
-    let lojaDisplayTitle = lojaAtual ? lojaAtual.nome : "LOJA";
+    let lojaDisplayTitle = lojaAtual ? lojaAtual.nome : "";
     
     let imgBannerUrl = (lojaAtual && lojaAtual.banner_url) ? lojaAtual.banner_url : (produtos.length > 0 ? produtos[0].imagem : 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1000&q=80');
     let textoBotaoBanner = (lojaAtual && lojaAtual.banner_botao) ? lojaAtual.banner_botao : 'Ver Coleção';
